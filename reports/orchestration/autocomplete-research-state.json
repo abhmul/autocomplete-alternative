@@ -67,7 +67,7 @@
     },
     {
       "id": "T050",
-      "status": "pending",
+      "status": "complete",
       "task_file": "reports/orchestration/tasks/T050-synthesis.json"
     },
     {
@@ -121,7 +121,7 @@
     ],
     "final_report": {
       "path": "reports/autocomplete-subscription-options-2026-05-28.json",
-      "trust": "untrusted_until_verified"
+      "trust": "synthesized_unverified"
     }
   },
   "blockers": []
