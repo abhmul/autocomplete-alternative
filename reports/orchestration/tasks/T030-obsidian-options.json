@@ -1,0 +1,42 @@
+{
+  "id": "T030",
+  "type": "research",
+  "priority": 80,
+  "dependencies": [
+    "T000",
+    "T005"
+  ],
+  "title": "Research Obsidian.md live autocomplete options",
+  "relevant_files": {
+    "read_first": [
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T005-web-and-schema.json"
+    ],
+    "read_if_needed": []
+  },
+  "scope": "Find and evaluate Obsidian.md options for live inline/tab-style autocomplete or closest equivalents using GPT, Claude, OpenAI-compatible APIs, local models, or subscription-based access. Include official Obsidian plugin listings, GitHub repositories, and maintenance status.",
+  "goals": [
+    "Determine whether true Copilot-like live inline suggestions exist in Obsidian plugins.",
+    "Classify every option by interaction mode: true_inline_tab, inline_not_tab, completion_popup, command_or_selection_generation, chat_or_sidebar, custom_only, or not_applicable.",
+    "Research plugins such as Obsidian Copilot, Text Generator, Smart Composer, Local GPT/Ollama-related plugins, and any dedicated autocomplete plugins.",
+    "Identify setup complexity, UX gaps versus VS Code inline suggestions, privacy posture, and cost model.",
+    "Flag plugin API limitations or editor-mode constraints if relevant."
+  ],
+  "non_goals": [
+    "Do not research VS Code except for cross-editor projects.",
+    "Do not write the final report."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Use current web sources for plugin status."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T030-obsidian-options.json as valid JSON.",
+    "Include a ranked option list with evidence, pros, cons, and confidence.",
+    "Explicitly separate true live tab autocomplete from command/chat/selection-based generation."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T030-obsidian-options.json"
+}

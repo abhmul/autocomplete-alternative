@@ -1,0 +1,46 @@
+{
+  "id": "T055",
+  "type": "verify completeness",
+  "priority": 55,
+  "dependencies": [
+    "T050"
+  ],
+  "title": "Check final report schema and claim traceability",
+  "relevant_files": {
+    "read_first": [
+      "reports/autocomplete-subscription-options-2026-05-28.json",
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T005-web-and-schema.json"
+    ],
+    "read_if_needed": [
+      "reports/orchestration/handoffs/T010-subscription-constraints.json",
+      "reports/orchestration/handoffs/T020-vscode-options.json",
+      "reports/orchestration/handoffs/T030-obsidian-options.json",
+      "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+    ]
+  },
+  "scope": "Validate the final JSON report's structure and traceability before factual verification.",
+  "goals": [
+    "Confirm the JSON parses.",
+    "Confirm required sections exist.",
+    "Confirm major recommendations trace to source-backed worker findings or are labeled inference/speculation.",
+    "Confirm VS Code and Obsidian are addressed separately and jointly."
+  ],
+  "non_goals": [
+    "Do not perform a broad factual web audit.",
+    "Do not rewrite the whole report."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "If a small report patch is needed, keep it minimal and document it."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T055-schema-and-traceability-check.json as valid JSON.",
+    "Final report remains parseable by jq.",
+    "List any required corrections clearly."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T055-schema-and-traceability-check.json"
+}

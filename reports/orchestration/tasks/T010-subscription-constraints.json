@@ -1,0 +1,42 @@
+{
+  "id": "T010",
+  "type": "research",
+  "priority": 90,
+  "dependencies": [
+    "T000",
+    "T005"
+  ],
+  "title": "Research GPT and Claude subscription constraints for IDE autocomplete",
+  "relevant_files": {
+    "read_first": [
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T005-web-and-schema.json"
+    ],
+    "read_if_needed": []
+  },
+  "scope": "Determine what is and is not possible using consumer or team subscriptions for ChatGPT/OpenAI and Claude/Anthropic as of 2026-05-28, especially whether those subscriptions include API access usable by VS Code or Obsidian autocomplete plugins. Distinguish official subscription access from separate paid API billing and unofficial browser/session automation.",
+  "goals": [
+    "Use current official sources for ChatGPT/OpenAI and Claude/Anthropic subscription/API claims.",
+    "For each subscription tier or access path, record subscription_tier, includes_api_access, direct_extension_use_supported, requires_separate_api_billing, unofficial_session_automation_risk, source_urls, last_checked, and confidence.",
+    "Identify whether any official IDE or extension supports using a ChatGPT or Claude subscription directly for inline tab autocomplete.",
+    "Summarize legal/ToS, reliability, latency, and security implications of browser-cookie/session scraping if encountered.",
+    "List verified source URLs and quote only short snippets if needed."
+  ],
+  "non_goals": [
+    "Do not comprehensively evaluate every VS Code extension.",
+    "Do not write the final report."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Prefer official sources for claims about subscriptions and API access."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T010-subscription-constraints.json as valid JSON.",
+    "Every major claim has a source URL and confidence level.",
+    "Explicitly answer whether GPT/Claude subscriptions can be used directly for tab-style autocomplete."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T010-subscription-constraints.json"
+}

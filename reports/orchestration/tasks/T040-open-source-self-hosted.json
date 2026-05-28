@@ -1,0 +1,42 @@
+{
+  "id": "T040",
+  "type": "research",
+  "priority": 75,
+  "dependencies": [
+    "T000",
+    "T005"
+  ],
+  "title": "Research open-source and self-hosted architecture options",
+  "relevant_files": {
+    "read_first": [
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T005-web-and-schema.json"
+    ],
+    "read_if_needed": []
+  },
+  "scope": "Evaluate practical architectures for cross-editor live autocomplete using open-source components, local models, OpenAI-compatible proxies, and Anthropic/OpenAI APIs. Include whether a shared backend can serve both VS Code and Obsidian and what custom plugin work would be required.",
+  "goals": [
+    "Research FIM-capable code/text models and serving stacks relevant to autocomplete, such as Ollama, llama.cpp, vLLM, Tabby, LiteLLM, OpenRouter, and OpenAI-compatible endpoints.",
+    "Rate feasibility separately for local-only, API-key, OpenAI-compatible proxy, and unofficial subscription/session-proxy architectures.",
+    "Identify which approaches support low-latency streaming or completions suitable for inline suggestions.",
+    "Assess feasibility of using GPT/Claude subscriptions versus API keys in each architecture.",
+    "Provide an implementation path for a custom Obsidian plugin if no off-the-shelf true autocomplete exists."
+  ],
+  "non_goals": [
+    "Do not write code.",
+    "Do not write the final report."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Use current web sources for project status."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T040-open-source-self-hosted.json as valid JSON.",
+    "Include architecture patterns, required components, risks, and source URLs.",
+    "Clearly rate feasibility for VS Code and Obsidian separately."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+}

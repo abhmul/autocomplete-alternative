@@ -1,0 +1,38 @@
+{
+  "id": "T000",
+  "type": "exploration",
+  "priority": 100,
+  "dependencies": [],
+  "title": "Initialize and critique orchestration state",
+  "relevant_files": {
+    "read_first": [
+      "reports/orchestration/autocomplete-research-state.json"
+    ],
+    "read_if_needed": [
+      "AGENTS.md",
+      "CLAUDE.md"
+    ]
+  },
+  "scope": "Review the objective, deliverable, constraints, task queue, and quality gates. Identify any missing research dimensions or verification needs before the substantive workers run.",
+  "goals": [
+    "Confirm that the state file captures the user request accurately.",
+    "Identify weak assumptions in the task split.",
+    "Recommend any additional tasks needed for a reliable final report."
+  ],
+  "non_goals": [
+    "Do not research specific autocomplete products in depth.",
+    "Do not write the final report."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Keep output as valid JSON."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T000-init-state.json with assessment, recommended task changes, and any blockers.",
+    "Include status complete or incomplete.",
+    "Use concise evidence-backed reasoning."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T000-init-state.json"
+}

@@ -1,0 +1,98 @@
+{
+  "objective": "Find a practical way to replace GitHub Copilot with live tab-style autocomplete in both VS Code and Obsidian.md using existing GPT or Claude subscriptions where possible, considering a wide range of options including open-source projects.",
+  "deliverables": [
+    {
+      "path": "reports/autocomplete-subscription-options-2026-05-28.json",
+      "format": "JSON",
+      "description": "Deep-research breakdown of options, constraints, recommendations, sources, and confidence levels."
+    }
+  ],
+  "constraints": {
+    "current_date": "2026-05-28",
+    "forbidden_reads": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md"
+    ],
+    "project_rules": [
+      "Be concise, direct, and precise.",
+      "Challenge weak assumptions and unsupported claims.",
+      "Separate fact, preference, and speculation.",
+      "Verify or cite nontrivial claims.",
+      "Treat files tagged human-written as read-only unless explicitly asked to edit.",
+      "Run checkpoint skill before ending file-modifying sessions."
+    ],
+    "quality_gates": [
+      "Use current web research for subscription, product, and project status claims.",
+      "Prefer primary sources: official docs, marketplace listings, GitHub repositories, package/plugin pages.",
+      "Include independent verification before finalizing.",
+      "Output must be valid JSON and live under reports/."
+    ]
+  },
+  "queue": [
+    {
+      "id": "T000",
+      "status": "complete",
+      "task_file": "reports/orchestration/tasks/T000-init-state.json"
+    },
+    {
+      "id": "T005",
+      "status": "complete",
+      "task_file": "reports/orchestration/tasks/T005-web-and-schema.json"
+    },
+    {
+      "id": "T010",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T010-subscription-constraints.json"
+    },
+    {
+      "id": "T020",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T020-vscode-options.json"
+    },
+    {
+      "id": "T030",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T030-obsidian-options.json"
+    },
+    {
+      "id": "T040",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T040-open-source-self-hosted.json"
+    },
+    {
+      "id": "T050",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T050-synthesis.json"
+    },
+    {
+      "id": "T055",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T055-schema-and-traceability-check.json"
+    },
+    {
+      "id": "T060",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T060-independent-verification.json"
+    }
+  ],
+  "artifacts": {
+    "handoffs": [
+      {
+        "task_id": "T000",
+        "path": "reports/orchestration/handoffs/T000-init-state.json",
+        "trust": "worker_assessment"
+      },
+      {
+        "task_id": "T005",
+        "path": "reports/orchestration/handoffs/T005-web-and-schema.json",
+        "trust": "worker_assessment"
+      }
+    ],
+    "final_report": {
+      "path": "reports/autocomplete-subscription-options-2026-05-28.json",
+      "trust": "untrusted_until_verified"
+    }
+  },
+  "blockers": []
+}

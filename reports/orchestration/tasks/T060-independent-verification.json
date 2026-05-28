@@ -1,0 +1,47 @@
+{
+  "id": "T060",
+  "type": "verify correctness",
+  "priority": 50,
+  "dependencies": [
+    "T050",
+    "T055"
+  ],
+  "title": "Independently verify final JSON report",
+  "relevant_files": {
+    "read_first": [
+      "reports/autocomplete-subscription-options-2026-05-28.json",
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T055-schema-and-traceability-check.json"
+    ],
+    "read_if_needed": [
+      "reports/orchestration/handoffs/T010-subscription-constraints.json",
+      "reports/orchestration/handoffs/T020-vscode-options.json",
+      "reports/orchestration/handoffs/T030-obsidian-options.json",
+      "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+    ]
+  },
+  "scope": "Audit the final JSON for factual accuracy, source support, internal consistency, completeness against the user request, and JSON validity. Perform narrow web checks for high-risk or surprising claims.",
+  "goals": [
+    "Validate that the final report answers the requested question for both VS Code and Obsidian.",
+    "Check that subscription/API claims are supported by current official sources.",
+    "Check that each recommended project actually supports the claimed editor and autocomplete mode.",
+    "Write a verification handoff with pass/fail, corrections, and residual uncertainty."
+  ],
+  "non_goals": [
+    "Do not rewrite the whole report unless necessary.",
+    "Do not skip independent source checks for subscription claims."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "If editing the final report, keep changes minimal and document them."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T060-independent-verification.json as valid JSON.",
+    "If corrections are needed, either patch the final report or provide exact required changes.",
+    "Final report remains parseable by jq."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T060-independent-verification.json"
+}

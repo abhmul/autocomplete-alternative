@@ -1,0 +1,39 @@
+{
+  "id": "T005",
+  "type": "verify assumptions",
+  "priority": 95,
+  "dependencies": [
+    "T000"
+  ],
+  "title": "Confirm web research capability and source capture schema",
+  "relevant_files": {
+    "read_first": [
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json"
+    ],
+    "read_if_needed": []
+  },
+  "scope": "Confirm that workers can access current web sources and define a minimal common JSON schema for all research handoffs.",
+  "goals": [
+    "Verify current web access by checking at least one official OpenAI or Anthropic docs page and one extension/plugin/project page.",
+    "Define common fields for claims, options, sources, confidence, evidence type, and last_checked date.",
+    "Include a mode taxonomy for autocomplete UX: true_inline_tab, inline_not_tab, completion_popup, command_or_selection_generation, chat_or_sidebar, custom_only, not_applicable.",
+    "Add specific fields to distinguish subscription UI access, official API access, separate API billing, and unofficial session automation."
+  ],
+  "non_goals": [
+    "Do not perform the substantive product research.",
+    "Do not write the final report."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Use concise JSON output."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T005-web-and-schema.json as valid JSON.",
+    "If web access fails, record a blocker and suggested recovery.",
+    "Provide a schema that T010-T040 and T050 can follow."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T005-web-and-schema.json"
+}

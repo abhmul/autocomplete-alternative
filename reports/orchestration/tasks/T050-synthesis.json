@@ -1,0 +1,48 @@
+{
+  "id": "T050",
+  "type": "writing",
+  "priority": 60,
+  "dependencies": [
+    "T010",
+    "T020",
+    "T030",
+    "T040"
+  ],
+  "title": "Synthesize final JSON research report",
+  "relevant_files": {
+    "read_first": [
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T005-web-and-schema.json",
+      "reports/orchestration/handoffs/T010-subscription-constraints.json",
+      "reports/orchestration/handoffs/T020-vscode-options.json",
+      "reports/orchestration/handoffs/T030-obsidian-options.json",
+      "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+    ],
+    "read_if_needed": []
+  },
+  "scope": "Write the final JSON report requested by the user, combining worker findings into a concise but deep decision-oriented breakdown.",
+  "goals": [
+    "Create reports/autocomplete-subscription-options-2026-05-28.json as valid JSON.",
+    "Include executive summary, bottom-line recommendation, option matrix, detailed options, implementation paths, source list, uncertainties, and rejected/weak options.",
+    "Include decision paths for different assumptions: no separate API spend, willing to pay API usage, local-only/privacy-first, and highest autocomplete quality.",
+    "Separate facts, recommendations, preferences, speculation, and confidence levels.",
+    "Preserve citations from worker handoffs."
+  ],
+  "non_goals": [
+    "Do not perform new broad research unless handoffs expose a narrow gap.",
+    "Do not mark the report as verified."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Use valid JSON only for the final report."
+  ],
+  "success_criteria": [
+    "Write reports/autocomplete-subscription-options-2026-05-28.json.",
+    "Final report is parseable by jq.",
+    "All major claims have source URLs or are marked as inference/speculation."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/autocomplete-subscription-options-2026-05-28.json"
+}

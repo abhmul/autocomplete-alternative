@@ -1,0 +1,43 @@
+{
+  "id": "T020",
+  "type": "research",
+  "priority": 80,
+  "dependencies": [
+    "T000",
+    "T005"
+  ],
+  "title": "Research VS Code live tab-style autocomplete options",
+  "relevant_files": {
+    "read_first": [
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T005-web-and-schema.json"
+    ],
+    "read_if_needed": []
+  },
+  "scope": "Find and evaluate VS Code options that can replace GitHub Copilot-style inline/tab autocomplete. Include commercial, open-source, local-model, and API-key based approaches. Focus on compatibility with OpenAI-compatible APIs, Anthropic APIs, local models, and whether they can use ChatGPT/Claude subscriptions directly.",
+  "goals": [
+    "Cover open-source projects such as Continue, Tabby, twinny, and other credible current candidates.",
+    "Include credible commercial baselines such as Tabnine, Codeium/Windsurf, Supermaven, Sourcegraph Cody, and any VS Code fork or non-extension product only if clearly marked as near-scope.",
+    "Evaluate inline/FIM support, acceptance UX, latency expectations, and context handling rather than generic chat quality.",
+    "Include extension marketplace/GitHub/docs URLs, maintenance signals, licensing, provider support, and whether inline suggestions are supported.",
+    "Identify setup complexity, expected UX quality, privacy posture, and cost model.",
+    "Flag unsupported or speculative options clearly."
+  ],
+  "non_goals": [
+    "Do not research Obsidian except when a VS Code option has a cross-editor path.",
+    "Do not write the final report."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Use current web sources for product status."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T020-vscode-options.json as valid JSON.",
+    "Include a ranked option list with evidence, pros, cons, and confidence.",
+    "Include source URLs for marketplace/docs/repositories."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T020-vscode-options.json"
+}
