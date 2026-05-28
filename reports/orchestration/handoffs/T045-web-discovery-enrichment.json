@@ -1,0 +1,630 @@
+{
+  "schema_version": "autocomplete-research-handoff-v1",
+  "task_id": "T045",
+  "status": "complete",
+  "last_checked": "2026-05-28",
+  "title": "Web-discovery enrichment and source coverage verification",
+  "summary": "Ketch was available and materially changed the source picture. The official OpenAI/Anthropic conclusion still holds: their own IDE products are agent/chat/edit surfaces, not documented live inline Tab autocomplete. However, T020 should be corrected: there are now/currently discoverable VS Code extensions with true inline autocomplete that were missed, especially Kilo Code and a low-maturity non-official Codex Autocomplete extension. Kilo also documents ChatGPT Plus/Pro OAuth for core agentic workflows, while its autocomplete docs route FIM completions through Kilo Gateway/BYOK rather than ChatGPT subscription. For Obsidian, Claudian is a significant missed Claude Code/Codex community plugin, but it is chat/agent/inline-edit, not live ghost-text autocomplete.",
+  "web_discovery": {
+    "ketch_available": true,
+    "ketch_version": "ketch v0.9.2",
+    "routes_used": [
+      "ketch search for focused web discovery",
+      "ketch scrape for direct retrieval of official docs, marketplace listings, and GitHub pages",
+      "ketch docs for OpenAI Codex docs discovery and CodeMirror/VS Code API spot checks",
+      "ketch code for repository/source discovery and endpoint/code confirmation",
+      "Python urllib direct HTTP checks for GitHub API, VS Marketplace gallery API, and Obsidian registry/stats JSON",
+      "curl fallback only to confirm OpenAI Help Center Cloudflare/browser challenge behavior"
+    ],
+    "non_browser_policy_followed": true,
+    "rendered_or_sessionful_pages_flagged_needs_review": true
+  },
+  "sources": [
+    {
+      "source_id": "src-t045-openai-codex-auth",
+      "title": "Authentication – Codex | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/auth",
+      "final_url": "https://developers.openai.com/codex/auth",
+      "publisher": "OpenAI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Codex supports 'Sign in with ChatGPT for subscription access' and 'Sign in with an API key for usage-based access'; API key usage is billed through the OpenAI Platform at standard API rates."
+    },
+    {
+      "source_id": "src-t045-openai-codex-pricing",
+      "title": "Pricing – Codex | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/pricing",
+      "final_url": "https://developers.openai.com/codex/pricing",
+      "publisher": "OpenAI",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Plus includes Codex on the web, CLI, IDE extension, and iOS; API Key use is 'Pay only for the tokens Codex uses, based on API pricing'; Pro includes access to GPT-5.3-Codex-Spark research preview, which is not available in the API at launch."
+    },
+    {
+      "source_id": "src-t045-openai-codex-ide-docs",
+      "title": "IDE extension – Codex | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/ide",
+      "final_url": "https://developers.openai.com/codex/ide",
+      "publisher": "OpenAI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say the Codex VS Code extension lets users use Codex side by side or delegate tasks to Codex Cloud; after install it appears in the editor sidebar; setup prompts sign-in with ChatGPT account or API key."
+    },
+    {
+      "source_id": "src-t045-openai-codex-ide-features",
+      "title": "Features – Codex IDE | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/ide/features",
+      "final_url": "https://developers.openai.com/codex/ide/features",
+      "publisher": "OpenAI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Feature docs describe prompting Codex to chat, edit, preview changes, switch models, choose approval modes, delegate to cloud, use web search, and generate images; no inline Tab autocomplete feature was found in this page."
+    },
+    {
+      "source_id": "src-t045-codex-autocomplete-marketplace",
+      "title": "Codex Autocomplete - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=kc99.codex-autocomplete",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=kc99.codex-autocomplete",
+      "publisher": "Visual Studio Marketplace / kc99",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Listing says this is a free, open-source VS Code extension with Cursor-style inline ghost text completions using Codex OAuth, Tab to accept, and existing Codex plan limits or credits; it warns 'This is not an official OpenAI extension' and currently only macOS is supported. Marketplace API reported 408 installs, 131 downloads, lastUpdated 2026-03-20, version 1.0.1."
+    },
+    {
+      "source_id": "src-t045-codex-autocomplete-github",
+      "title": "GitHub repository: kevchan9922/codex_autocomplete",
+      "url": "https://github.com/kevchan9922/codex_autocomplete",
+      "final_url": "https://github.com/kevchan9922/codex_autocomplete",
+      "publisher": "GitHub / kevchan9922",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape_and_github_api",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README repeats Codex OAuth, inline ghost text, Tab accept, full-line and partial-line completion, and non-official warning. GitHub API: created 2026-03-09, pushed 2026-03-23, 3 stars, 2 forks, archived false, MIT license."
+    },
+    {
+      "source_id": "src-t045-codex-autocomplete-config",
+      "title": "codex_autocomplete configuration.md",
+      "url": "https://github.com/kevchan9922/codex_autocomplete/blob/HEAD/configuration.md",
+      "final_url": "https://github.com/kevchan9922/codex_autocomplete/blob/ee2bd4da30a0ae259dd5644ab51f6a81b809d31b/configuration.md",
+      "publisher": "GitHub / kevchan9922",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape_and_ketch_code",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Configuration docs set default endpoint to https://chatgpt.com/backend-api/codex/responses for OAuth flow and https://api.openai.com/v1/responses for API key flow; settings include automatic|hotkey trigger, latency, context, model, and rate limits."
+    },
+    {
+      "source_id": "src-t045-codexcomplete-marketplace",
+      "title": "CodexComplete - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=MaorKavod.codexcomplete",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=MaorKavod.codexcomplete",
+      "publisher": "Visual Studio Marketplace / Maor Kavod",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape_and_marketplace_api",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Listing says CodexComplete provides Copilot-style inline suggestions using OpenAI API models, requires command 'Set OpenAI API Key', stores the API key in SecretStorage, and has local diagnostics; Marketplace API reported 49 installs, 202 downloads, lastUpdated 2026-04-27, version 0.0.16."
+    },
+    {
+      "source_id": "src-t045-kilo-autocomplete-docs",
+      "title": "Autocomplete | Kilo Code docs",
+      "url": "https://kilo.ai/docs/code-with-ai/features/autocomplete",
+      "final_url": "https://kilo.ai/docs/code-with-ai/features/autocomplete",
+      "publisher": "Kilo Code",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Kilo Code autocomplete uses Fill-in-the-Middle routed through the Kilo Gateway, is enabled by default, shows inline ghost text accepted with Tab, and supports Codestral billed through Kilo or free with BYOK Mistral plus Mercury Edit 2 via BYOK."
+    },
+    {
+      "source_id": "src-t045-kilo-vscode-marketplace",
+      "title": "Kilo Code: AI Coding Agent, Copilot, and Autocomplete - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=kilocode.Kilo-Code",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=kilocode.Kilo-Code",
+      "publisher": "Visual Studio Marketplace / Kilo Code",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape_and_marketplace_api",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Listing calls Kilo an open-source AI coding agent with 'Inline Autocomplete' and 'API keys optional'. Marketplace API reported 1,142,537 installs, rating 3.81 over 187 ratings, lastUpdated 2026-05-28, version 7.3.16."
+    },
+    {
+      "source_id": "src-t045-kilo-chatgpt-provider-docs",
+      "title": "Using ChatGPT Plus/Pro with Kilo Code",
+      "url": "https://kilo.ai/docs/ai-providers/openai-chatgpt-plus-pro",
+      "final_url": "https://kilo.ai/docs/ai-providers/openai-chatgpt-plus-pro",
+      "publisher": "Kilo Code",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say ChatGPT Plus or Pro can run OpenAI coding models inside Kilo Code with OAuth and no API key; usage counts against ChatGPT subscription rather than separate API usage; docs list full agentic workflows and core functionality, while cloud features require Kilo Gateway."
+    },
+    {
+      "source_id": "src-t045-kilo-github-api",
+      "title": "GitHub API repository metadata for Kilo-Org/kilocode",
+      "url": "https://api.github.com/repos/Kilo-Org/kilocode",
+      "final_url": "https://api.github.com/repos/Kilo-Org/kilocode",
+      "publisher": "GitHub / Kilo-Org",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Repository metadata: unarchived, pushed_at 2026-05-28T21:19:13Z, stars 19665, forks 2605, open issues 1257, license MIT."
+    },
+    {
+      "source_id": "src-t045-roo-chatgpt-provider-docs",
+      "title": "ChatGPT Plus/Pro | Roo Code Documentation",
+      "url": "https://docs.roocode.com/providers/openai-chatgpt-plus-pro",
+      "final_url": "https://docs.roocode.com/providers/openai-chatgpt-plus-pro",
+      "publisher": "Roo Code",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Roo Code can select API Provider 'OpenAI – ChatGPT Plus/Pro', sign in to OpenAI Codex, and count usage against ChatGPT subscription rather than separate API usage; arbitrary OpenAI API models are not available."
+    },
+    {
+      "source_id": "src-t045-roo-github-api",
+      "title": "GitHub API repository metadata for RooCodeInc/Roo-Code",
+      "url": "https://api.github.com/repos/RooCodeInc/Roo-Code",
+      "final_url": "https://api.github.com/repos/RooCodeInc/Roo-Code",
+      "publisher": "GitHub / RooCodeInc",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Repository metadata: archived true, pushed_at 2026-05-15T18:08:47Z, stars 24166, forks 3281, license Apache-2.0."
+    },
+    {
+      "source_id": "src-t045-claude-code-vscode-docs",
+      "title": "Use Claude Code in VS Code - Claude Code Docs",
+      "url": "https://code.claude.com/docs/en/vs-code",
+      "final_url": "https://code.claude.com/docs/en/vs-code",
+      "publisher": "Anthropic / Claude Code Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs describe Claude Code as a VS Code graphical interface for plans, diffs, @-mentions, prompt box, permissions, sessions, and terminal access; the page does not document inline ghost-text/tab autocomplete."
+    },
+    {
+      "source_id": "src-t045-claude-code-inline-issue",
+      "title": "Feature request: Inline/tab code completions in VS Code and JetBrains extensions",
+      "url": "https://github.com/anthropics/claude-code/issues/45573",
+      "final_url": "https://github.com/anthropics/claude-code/issues/45573",
+      "publisher": "GitHub / anthropics/claude-code issue",
+      "source_type": "issue_or_discussion",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Issue text states Claude Code's IDE extensions do not support inline tab completions and asks for completions using existing Claude Code subscription. This is user-reported issue evidence, not official product documentation."
+    },
+    {
+      "source_id": "src-t045-claude-agent-sdk-credit",
+      "title": "Use the Claude Agent SDK with your Claude plan",
+      "url": "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan",
+      "final_url": "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Starting June 15, 2026, eligible Pro, Max, Team, and Enterprise users can claim a monthly Agent SDK credit for Agent SDK usage, claude -p, and third-party apps built on Agent SDK; over-credit usage moves to usage credits at standard API rates if enabled."
+    },
+    {
+      "source_id": "src-t045-claudian-github",
+      "title": "GitHub repository: YishenTu/claudian",
+      "url": "https://github.com/YishenTu/claudian",
+      "final_url": "https://github.com/YishenTu/claudian",
+      "publisher": "GitHub / YishenTu",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape_and_github_api",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README says Claudian embeds AI coding agents Claude Code, Codex, and Opencode in Obsidian, with chat sidebar, inline edit, slash commands, plan mode, file read/write/search/bash, Claude subscription/API requirement, and optional Codex CLI. GitHub API: 11976 stars, pushed 2026-05-25, archived false, MIT."
+    },
+    {
+      "source_id": "src-t045-obsidian-registry-claudian",
+      "title": "Obsidian community plugin registry entry for Claudian",
+      "url": "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json",
+      "final_url": "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json",
+      "publisher": "Obsidian / GitHub obsidianmd/obsidian-releases",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Registry entry id=realclaudian, name=Claudian, repo=yishentu/claudian, description says it embeds Claude Code/Codex as an AI collaborator in the vault with file read/write, search, bash commands, and multi-step workflows; stats JSON reported downloads=729914, updated=2026-05-23T12:23:36Z."
+    },
+    {
+      "source_id": "src-t045-roasbeef-obsidian-claude-code",
+      "title": "GitHub repository: Roasbeef/obsidian-claude-code",
+      "url": "https://github.com/Roasbeef/obsidian-claude-code",
+      "final_url": "https://github.com/Roasbeef/obsidian-claude-code",
+      "publisher": "GitHub / Roasbeef",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "ketch_scrape_and_github_api",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README says it embeds Claude as a persistent Obsidian sidebar assistant using the Claude Agent SDK, requiring Anthropic API key or Claude Max/Pro subscription via CLAUDE_CODE_OAUTH_TOKEN; it exposes Claude Code tools and Obsidian-specific tools. GitHub API: 206 stars, pushed 2026-01-28, archived false."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim-t045-official-codex-subscription-access-but-not-tab",
+      "text": "Official Codex supports ChatGPT sign-in for subscription-based Codex access and API key sign-in for usage-based access, but the official Codex IDE docs and marketplace still describe a sidebar/chat/edit/cloud-agent workflow, not live inline Tab autocomplete.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-t045-openai-codex-auth",
+        "src-t045-openai-codex-pricing",
+        "src-t045-openai-codex-ide-docs",
+        "src-t045-openai-codex-ide-features"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This supports T010's official-product conclusion while improving the OpenAI subscription/API boundary evidence."
+    },
+    {
+      "claim_id": "claim-t045-codex-autocomplete-nonofficial-subscription-candidate",
+      "text": "A non-official VS Code extension named Codex Autocomplete now provides/source-claims true inline ghost-text autocomplete with Tab accept using Codex OAuth and existing Codex plan limits or credits; this is a material missed candidate for ChatGPT-subscription-backed autocomplete, but it is macOS-only, tiny, not official OpenAI, and uses a chatgpt.com Codex backend endpoint, so it needs policy/security/runtime review before recommendation.",
+      "claim_type": "integration",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-t045-codex-autocomplete-marketplace",
+        "src-t045-codex-autocomplete-github",
+        "src-t045-codex-autocomplete-config"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Corrects T020 wording that no current VS Code option found could use a ChatGPT UI subscription directly. It does not contradict the no-official-inline-autocomplete conclusion."
+    },
+    {
+      "claim_id": "claim-t045-codexcomplete-api-key-not-subscription",
+      "text": "CodexComplete is another new VS Code inline autocomplete extension, but its documented setup is OpenAI API-key based rather than ChatGPT subscription reuse.",
+      "claim_type": "integration",
+      "evidence_type": "official_marketplace_listing",
+      "source_ids": [
+        "src-t045-codexcomplete-marketplace"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Low install count and POC wording make it less material than Kilo or Codex Autocomplete."
+    },
+    {
+      "claim_id": "claim-t045-kilo-code-autocomplete-missed",
+      "text": "Kilo Code should be added to the VS Code option set: it is a current, high-install, open-source VS Code extension with documented inline ghost-text Tab autocomplete using FIM models via Kilo Gateway/BYOK.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-t045-kilo-autocomplete-docs",
+        "src-t045-kilo-vscode-marketplace",
+        "src-t045-kilo-github-api"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "T020 explicitly excluded Kilo-style tools unless later primary-source evidence for true inline Tab completion was found; this pass found that evidence."
+    },
+    {
+      "claim_id": "claim-t045-kilo-chatgpt-provider-not-autocomplete-evidence",
+      "text": "Kilo Code documents ChatGPT Plus/Pro OAuth for core local agentic workflows with usage charged to the ChatGPT subscription, but its autocomplete docs separately route autocomplete through Kilo Gateway/BYOK FIM models; do not infer that Kilo autocomplete is covered by ChatGPT subscription unless a Kilo/OpenAI source says so explicitly.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-t045-kilo-chatgpt-provider-docs",
+        "src-t045-kilo-autocomplete-docs",
+        "src-t045-openai-codex-auth"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This is important for final recommendation wording: one extension can offer both subscription-backed agent workflows and separately billed/provider-backed autocomplete."
+    },
+    {
+      "claim_id": "claim-t045-roo-chatgpt-provider-near-scope",
+      "text": "Roo Code docs also document ChatGPT Plus/Pro OAuth via OpenAI Codex for agent workflows, but the checked repository metadata marks RooCodeInc/Roo-Code archived and this pass did not find Roo true-inline autocomplete evidence comparable to Kilo's autocomplete docs.",
+      "claim_type": "project_status",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-t045-roo-chatgpt-provider-docs",
+        "src-t045-roo-github-api"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Synthesis can mention Roo only as near-scope/subscription-agent context, not as a primary autocomplete recommendation."
+    },
+    {
+      "claim_id": "claim-t045-claude-code-still-no-tab-autocomplete",
+      "text": "No new evidence was found that official Claude Code for VS Code provides live inline Tab autocomplete; current docs describe agent/chat/plans/diffs, and a Claude Code issue explicitly requests inline/tab completions because they are absent.",
+      "claim_type": "ux_mode",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-t045-claude-code-vscode-docs",
+        "src-t045-claude-code-inline-issue"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The GitHub issue is secondary/user-reported but aligns with official-doc absence."
+    },
+    {
+      "claim_id": "claim-t045-claude-agent-sdk-credit-future-near-scope",
+      "text": "Claude Agent SDK monthly credits for paid Claude plans are future-dated to June 15, 2026 as of this research date and cover Agent SDK/claude -p/third-party Agent SDK apps, not an already available inline autocomplete path.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-t045-claude-agent-sdk-credit"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Obsidian Claude Code/Agent SDK plugins may become cheaper after the credit launch, but that remains chat/agent/command UX unless an inline plugin appears."
+    },
+    {
+      "claim_id": "claim-t045-claudian-obsidian-missed-major-source",
+      "text": "Claudian is a significant missed Obsidian community plugin for using Claude Code/Codex inside an Obsidian vault, with registry and repository evidence; it supports chat/sidebar, inline edit, and agent workflows, but not live ghost-text Tab autocomplete.",
+      "claim_type": "integration",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-t045-claudian-github",
+        "src-t045-obsidian-registry-claudian"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "T030 should not be rewritten, but synthesis should consume this as an important subscription/account-adjacent Obsidian tool."
+    },
+    {
+      "claim_id": "claim-t045-roasbeef-obsidian-claude-agent-sdk-near-scope",
+      "text": "Roasbeef/obsidian-claude-code is another Obsidian Claude Agent SDK/sidebar tool that can use an Anthropic API key or Claude Pro/Max-style OAuth token, but it is not a live inline autocomplete plugin and was not found in the official community registry under that repository name during this pass.",
+      "claim_type": "integration",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-t045-roasbeef-obsidian-claude-code"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Useful as near-scope evidence of Obsidian + Claude subscription/Agent SDK activity."
+    }
+  ],
+  "options": [
+    {
+      "option_id": "opt-t045-codex-autocomplete-vscode",
+      "name": "Codex Autocomplete",
+      "category": "vscode_extension",
+      "platforms": [
+        "vscode",
+        "macos"
+      ],
+      "autocomplete_mode": "true_inline_tab",
+      "access_model": {
+        "subscription_ui_access": "unknown",
+        "official_api_access": "optional",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "unknown",
+        "subscription_names": [
+          "ChatGPT/Codex plan limits or credits (reported by project)"
+        ],
+        "api_names": [
+          "Codex OAuth backend",
+          "OpenAI Responses API in API-key mode"
+        ],
+        "risk_level": "high",
+        "access_notes": "The extension source/listing reports Codex OAuth and existing plan limits, but it is explicitly not official OpenAI, has tiny adoption, macOS-only support, and defaults to a chatgpt.com backend endpoint. Treat as needs-review before recommending."
+      },
+      "strengths": [
+        "Closest discovered match to ChatGPT/Codex-subscription-backed inline autocomplete in stock VS Code.",
+        "True ghost text with Tab accept is documented.",
+        "Open-source implementation can be inspected."
+      ],
+      "limitations": [
+        "Not official OpenAI extension.",
+        "Very low maturity/adoption signals.",
+        "macOS-only per listing.",
+        "No runtime test or policy review performed.",
+        "Backend endpoint/auth support for third-party autocomplete is not independently confirmed by OpenAI-specific source."
+      ],
+      "source_ids": [
+        "src-t045-codex-autocomplete-marketplace",
+        "src-t045-codex-autocomplete-github",
+        "src-t045-codex-autocomplete-config"
+      ],
+      "claim_ids": [
+        "claim-t045-codex-autocomplete-nonofficial-subscription-candidate"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "medium",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-t045-kilo-code-vscode",
+      "name": "Kilo Code",
+      "category": "vscode_extension",
+      "platforms": [
+        "vscode"
+      ],
+      "autocomplete_mode": "true_inline_tab",
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "ChatGPT Plus",
+          "ChatGPT Pro"
+        ],
+        "api_names": [
+          "Kilo Gateway",
+          "Mistral Codestral BYOK",
+          "Inception Mercury Edit 2 BYOK",
+          "OpenAI Codex OAuth for core agent workflows"
+        ],
+        "risk_level": "medium",
+        "access_notes": "ChatGPT Plus/Pro OAuth is documented for Kilo core local agent workflows. Autocomplete is separately documented as FIM through Kilo Gateway/BYOK, so synthesis should not present ChatGPT subscription as paying for Kilo autocomplete unless separately verified."
+      },
+      "strengths": [
+        "Current high-install open-source VS Code extension.",
+        "True inline Tab autocomplete is documented.",
+        "FIM model routing is explicit.",
+        "Can also use ChatGPT Plus/Pro for agent workflows in the same tool."
+      ],
+      "limitations": [
+        "Autocomplete does not appear to use the ChatGPT subscription path from checked docs.",
+        "Kilo Gateway/BYOK account, billing, and privacy need separate review.",
+        "Large agent surface/browser automation features may be more permission-sensitive than a narrow autocomplete extension."
+      ],
+      "source_ids": [
+        "src-t045-kilo-autocomplete-docs",
+        "src-t045-kilo-vscode-marketplace",
+        "src-t045-kilo-chatgpt-provider-docs",
+        "src-t045-kilo-github-api"
+      ],
+      "claim_ids": [
+        "claim-t045-kilo-code-autocomplete-missed",
+        "claim-t045-kilo-chatgpt-provider-not-autocomplete-evidence"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-t045-claudian-obsidian",
+      "name": "Claudian",
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "autocomplete_mode": "chat_or_sidebar",
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "optional",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "Claude subscription via Claude Code CLI",
+          "Codex subscription/CLI where configured"
+        ],
+        "api_names": [
+          "Claude Code CLI",
+          "Codex CLI",
+          "OpenCode"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Subscription/account support is inherited through underlying official CLIs/providers. Main UX is sidebar/agent/inline edit, not continuous live ghost text."
+      },
+      "strengths": [
+        "Large current Obsidian community/plugin signal.",
+        "Bridges Claude Code/Codex into vault workflows.",
+        "Can perform vault read/write/search/bash workflows."
+      ],
+      "limitations": [
+        "Not live inline Tab autocomplete.",
+        "Agent write/bash permissions are sensitive for a notes vault.",
+        "Desktop-only and dependent on external CLIs/provider auth."
+      ],
+      "source_ids": [
+        "src-t045-claudian-github",
+        "src-t045-obsidian-registry-claudian"
+      ],
+      "claim_ids": [
+        "claim-t045-claudian-obsidian-missed-major-source"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    }
+  ],
+  "corrections": [
+    {
+      "target_handoff": "T020",
+      "severity": "material",
+      "text": "The T020 excluded/low-fit note for generic Cline/Roo/Kilo tools is stale for Kilo: primary docs and marketplace evidence show Kilo Code has true inline Tab autocomplete. Add Kilo Code as a VS Code autocomplete option."
+    },
+    {
+      "target_handoff": "T020",
+      "severity": "material",
+      "text": "The T020 subscription bottom line should be narrowed: no official provider extension found, but a non-official Codex Autocomplete extension claims Codex OAuth inline autocomplete using existing plan limits/credits. It should be treated as low-maturity/high-risk, not ignored."
+    },
+    {
+      "target_handoff": "T030",
+      "severity": "material",
+      "text": "Add Claudian to Obsidian near-scope subscription/account tools. It is a significant community plugin for Claude Code/Codex in Obsidian, but it is not true live ghost-text autocomplete."
+    },
+    {
+      "target_handoff": "T010",
+      "severity": "minor",
+      "text": "OpenAI official Codex auth/pricing docs now provide stronger accessible source support for the ChatGPT-sign-in versus API-key billing distinction than the blocked OpenAI Help Center pages."
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "gap_id": "gap-t045-openai-help-browser-challenge",
+      "text": "OpenAI Help Center articles for ChatGPT-vs-Platform billing and using Codex with ChatGPT plan returned Cloudflare/browser challenge or HTTP 403 via ketch/curl in this environment.",
+      "needs_review": true,
+      "source_urls": [
+        "https://help.openai.com/en/articles/9039756-billing-settings-in-chatgpt-vs-platform",
+        "https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan"
+      ],
+      "impact": "Do not treat these pages as no evidence. Use accessible OpenAI Codex auth/pricing docs for now; browser verifier can add exact Help Center quotes later."
+    },
+    {
+      "gap_id": "gap-t045-codex-autocomplete-policy-runtime",
+      "text": "Codex Autocomplete was not installed or run; no policy/ToS review was completed for third-party use of Codex OAuth/backend endpoints.",
+      "needs_review": true,
+      "source_urls": [
+        "https://marketplace.visualstudio.com/items?itemName=kc99.codex-autocomplete",
+        "https://github.com/kevchan9922/codex_autocomplete"
+      ],
+      "impact": "Synthesis may mention it as an experimental candidate, but should not recommend it as the default subscription-reuse solution."
+    },
+    {
+      "gap_id": "gap-t045-kilo-openai-support-specificity",
+      "text": "Kilo docs say ChatGPT Plus/Pro OAuth usage counts against subscription; OpenAI Codex auth docs support ChatGPT sign-in generally, but this pass did not find an OpenAI-hosted page naming Kilo specifically.",
+      "needs_review": true,
+      "source_urls": [
+        "https://kilo.ai/docs/ai-providers/openai-chatgpt-plus-pro",
+        "https://developers.openai.com/codex/auth"
+      ],
+      "impact": "Wording should cite Kilo for the Kilo-specific provider and OpenAI for the general Codex auth model."
+    },
+    {
+      "gap_id": "gap-t045-obsidian-community-rendering",
+      "text": "Several Obsidian community plugin pages rendered only an app shell/footer through ketch; raw registry and GitHub were used instead.",
+      "needs_review": false,
+      "source_urls": [
+        "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json",
+        "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json"
+      ],
+      "impact": "Registry JSON is adequate for plugin existence/metadata; browser review only needed for UI-specific community-page display."
+    }
+  ],
+  "recommended_synthesis_changes": [
+    "Keep the main official-provider answer: neither official OpenAI Codex IDE nor official Claude Code VS Code is a documented Copilot-style live inline Tab autocomplete replacement using the existing subscription.",
+    "Do not say no third-party VS Code subscription-reuse candidate exists. Instead: one experimental non-official Codex OAuth inline autocomplete extension exists, but maturity/platform/policy risks make it a needs-review option rather than a primary recommendation.",
+    "Add Kilo Code as a strong current VS Code autocomplete option. Rank it near other practical VS Code options, but separate its ChatGPT Plus/Pro agent provider from its Kilo Gateway/BYOK autocomplete path.",
+    "Add Claudian to the Obsidian near-scope/subscription-account tooling section, not the true inline autocomplete section.",
+    "For OpenAI subscription constraints, prefer official Codex auth/pricing docs over inaccessible Help Center pages; still flag blocked Help Center pages as browser-review items.",
+    "For Claude, maintain the no-inline-autocomplete conclusion and mention the June 15, 2026 Agent SDK credit only as future near-scope support for Agent SDK/third-party agent apps, not current live autocomplete."
+  ],
+  "blockers": [
+    {
+      "blocker": "Some OpenAI Help Center and OpenAI blog pages required browser/Cloudflare access.",
+      "impact": "Exact Help Center phrasing for billing and Codex plan articles could not be quoted directly from those pages in this pass.",
+      "suggested_recovery": "A browser-capable verifier should retrieve the Help Center pages and any OpenAI Codex-Spark announcement if final synthesis wants to quote them."
+    },
+    {
+      "blocker": "No extensions/plugins were installed or run.",
+      "impact": "All UX/maturity judgments are source-based; latency, stability, auth flow, and data handling are not empirically verified.",
+      "suggested_recovery": "If the final recommendation hinges on Codex Autocomplete or Kilo, do a local install/auth/runtime test in a disposable VS Code profile before operational use."
+    }
+  ],
+  "confidence": "high"
+}
