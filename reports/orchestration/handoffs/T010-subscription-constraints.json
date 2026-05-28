@@ -1,0 +1,777 @@
+{
+  "schema_version": "autocomplete-research-handoff-v1",
+  "task_id": "T010",
+  "status": "complete",
+  "title": "Research GPT and Claude subscription constraints for IDE autocomplete",
+  "last_checked": "2026-05-28",
+  "summary": "As of 2026-05-28, I found no official path where a ChatGPT/OpenAI or Claude/Anthropic consumer/team subscription can be used directly for Copilot-style inline Tab autocomplete in VS Code or Obsidian. OpenAI and Anthropic both have official coding agents that can use subscriptions in IDEs: OpenAI Codex in VS Code/compatible editors and Anthropic Claude Code in VS Code. Those products are agent/chat/edit/review surfaces, not continuous inline tab-completion engines. Arbitrary VS Code or Obsidian autocomplete plugins need separate official API access and API billing unless they use a future/limited official agent-subscription mechanism. Browser-cookie/session scraping is unsupported and high-risk.",
+  "direct_answers": {
+    "can_chatgpt_subscription_be_used_directly_for_tab_style_autocomplete": "No verified official path. ChatGPT plans can include Codex usage in the official Codex IDE extension, but the documented UX is panel/chat/edit/cloud-agent work, not inline Tab autocomplete. Third-party autocomplete extensions require an OpenAI API key or another billed provider path.",
+    "can_claude_subscription_be_used_directly_for_tab_style_autocomplete": "No verified official path. Claude Pro/Max/Team/Enterprise can be used with official Claude Code and the Claude Code VS Code extension, but the documented UX is agentic coding, editor-integrated diffs, plans, and conversation history, not inline Tab autocomplete. Third-party autocomplete extensions require Claude API/Console billing unless they use an applicable official Agent SDK credit path after it becomes available.",
+    "any_official_ide_extension_supports_subscription_directly": "Yes for agentic IDE assistants: OpenAI Codex and Anthropic Claude Code. No for official inline Tab autocomplete based on the sources checked.",
+    "obsidian_subscription_reuse": "No official OpenAI or Anthropic Obsidian inline-autocomplete plugin using ChatGPT/Claude subscriptions was identified in official sources checked; API-key plugins would be separate-billed.",
+    "unofficial_session_automation": "Not recommended: likely terms-risky, brittle, latency-sensitive, and security-sensitive because it depends on account cookies/session tokens or reverse-engineered web flows rather than official APIs."
+  },
+  "sources": [
+    {
+      "source_id": "src-openai-chatgpt-pricing",
+      "title": "ChatGPT Plans | Free, Go, Plus, Pro, Business, and Enterprise",
+      "url": "https://openai.com/chatgpt/pricing/",
+      "final_url": "https://openai.com/chatgpt/pricing/",
+      "publisher": "OpenAI",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch_reader",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Plus lists 'Expanded Codex usage'; Pro lists '5x or 20x more usage' and 'more Codex usage'; the page separates ChatGPT plans from API Platform links."
+    },
+    {
+      "source_id": "src-openai-api-pricing",
+      "title": "OpenAI API Pricing",
+      "url": "https://openai.com/api/pricing/",
+      "final_url": "https://openai.com/api/pricing/",
+      "publisher": "OpenAI",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch_reader",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The page is titled 'OpenAI API Pricing' and lists token prices such as GPT-5.5 input/cached-input/output per 1M tokens."
+    },
+    {
+      "source_id": "src-openai-api-docs-overview",
+      "title": "API Platform Developer quickstart",
+      "url": "https://developers.openai.com/api/docs",
+      "final_url": "https://developers.openai.com/api/docs",
+      "publisher": "OpenAI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The quickstart says 'Make your first API request' and shows 'Create API key' plus an Authorization header using 'Bearer $OPENAI_API_KEY'."
+    },
+    {
+      "source_id": "src-openai-codex-ide-docs",
+      "title": "IDE extension – Codex | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/ide",
+      "final_url": "https://developers.openai.com/codex/ide",
+      "publisher": "OpenAI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The page says the Codex VS Code extension lets you use Codex side by side in your IDE; 'ChatGPT Plus, Pro, Business, Edu, and Enterprise plans include Codex'; sign-in can use a ChatGPT account or API key."
+    },
+    {
+      "source_id": "src-openai-codex-ide-features",
+      "title": "Features – Codex IDE | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/ide/features",
+      "final_url": "https://developers.openai.com/codex/ide/features",
+      "publisher": "OpenAI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The page describes using Codex in the editor to 'chat, edit, and preview changes', choose Chat/Agent/Agent Full Access modes, and delegate work to cloud tasks."
+    },
+    {
+      "source_id": "src-openai-codex-pricing",
+      "title": "Pricing – Codex | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/pricing",
+      "final_url": "https://developers.openai.com/codex/pricing",
+      "publisher": "OpenAI",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The Codex pricing page has an 'API Key' option: 'Codex in the CLI, SDK, or IDE extension' and 'Pay only for the tokens Codex uses, based on API pricing'; it also says all users may run extra local tasks with an API key charged at standard API rates."
+    },
+    {
+      "source_id": "src-openai-codex-vscode-marketplace",
+      "title": "Codex – OpenAI’s coding agent - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=OpenAI.chatgpt",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=OpenAI.chatgpt",
+      "publisher": "Visual Studio Marketplace / OpenAI",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The listing says Codex is included in ChatGPT Plus, Pro, Business, Edu, and Enterprise plans; it describes adding Codex as a panel in VS Code to chat, edit, preview changes, and delegate tasks to the cloud."
+    },
+    {
+      "source_id": "src-openai-terms-of-use",
+      "title": "OpenAI Terms of Use",
+      "url": "https://openai.com/policies/terms-of-use/",
+      "final_url": "https://openai.com/policies/terms-of-use/",
+      "publisher": "OpenAI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch_reader",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "OpenAI says users may not share account credentials, automatically or programmatically extract data or Output, or interfere with services including circumventing rate limits or restrictions."
+    },
+    {
+      "source_id": "src-claude-pricing",
+      "title": "Plans & Pricing | Claude by Anthropic",
+      "url": "https://claude.com/pricing",
+      "final_url": "https://claude.com/pricing",
+      "publisher": "Anthropic / Claude",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The pricing page lists Pro as including Claude Code, Max as everything in Pro with higher usage, Team seats as including Claude Code and Claude Cowork, Enterprise as seat price plus usage at API rates, and an API section with per-MTok token prices."
+    },
+    {
+      "source_id": "src-claude-subscription-api-separate",
+      "title": "I have a paid Claude subscription... Why do I have to pay separately to use the Claude API and Console?",
+      "url": "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+      "final_url": "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The help article says Claude paid plans and Claude Console are separate products; a paid Claude subscription 'doesn't include access to the Claude API or Console' and API access requires separately setting up Console access."
+    },
+    {
+      "source_id": "src-claude-code-pro-max-support",
+      "title": "Use Claude Code with your Pro or Max plan",
+      "url": "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan",
+      "final_url": "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The article says Pro and Max users have access to Claude on web/desktop/mobile and Claude Code in terminal with one unified subscription; it warns that ANTHROPIC_API_KEY makes Claude Code use API charges instead of subscription usage."
+    },
+    {
+      "source_id": "src-claude-code-team-enterprise-support",
+      "title": "Use Claude Code with your Team or Enterprise plan",
+      "url": "https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan",
+      "final_url": "https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The article says Claude Code is included with every Team plan seat and included with the single Enterprise seat on new/self-serve plans, with caveats for older Enterprise seat types."
+    },
+    {
+      "source_id": "src-claude-code-docs-overview",
+      "title": "Overview - Claude Code Docs",
+      "url": "https://code.claude.com/docs/en/overview",
+      "final_url": "https://code.claude.com/docs/en/overview",
+      "publisher": "Anthropic / Claude Code Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The overview says Claude Code is an AI-powered coding assistant; most surfaces require a Claude subscription or Anthropic Console account; the VS Code extension provides inline diffs, @-mentions, plan review, and conversation history."
+    },
+    {
+      "source_id": "src-claude-code-vscode-docs",
+      "title": "Use Claude Code in VS Code - Claude Code Docs",
+      "url": "https://code.claude.com/docs/en/ide-integrations",
+      "final_url": "https://code.claude.com/docs/en/ide-integrations",
+      "publisher": "Anthropic / Claude Code Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The VS Code docs call the extension a native graphical interface; it supports reviewing/editing plans, auto-accepting edits, @-mentioning files, conversation history, and multiple conversations."
+    },
+    {
+      "source_id": "src-claude-code-vscode-marketplace",
+      "title": "Claude Code for VS Code - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code",
+      "publisher": "Visual Studio Marketplace / Anthropic",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The listing says the extension can use latest Claude models with a Pro, Max, Team, or Enterprise subscription, or pay-as-you-go pricing; it reads/writes code, runs terminal commands with permission, and proposes changes in the editor."
+    },
+    {
+      "source_id": "src-claude-api-overview",
+      "title": "API overview - Claude API Docs",
+      "url": "https://docs.anthropic.com/en/api/overview",
+      "final_url": "https://platform.claude.com/docs/en/api/overview",
+      "publisher": "Anthropic",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch_reader",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The API overview says the Claude API is at https://api.anthropic.com and requires a Claude Console account plus an API key or Workload Identity Federation."
+    },
+    {
+      "source_id": "src-claude-api-rate-limits",
+      "title": "Rate limits - Claude API Docs",
+      "url": "https://docs.anthropic.com/en/api/rate-limits",
+      "final_url": "https://platform.claude.com/docs/en/api/rate-limits",
+      "publisher": "Anthropic",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch_reader",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The page describes API spend limits, rate limits, usage tiers, credit purchases, and monthly spend limits for API organizations."
+    },
+    {
+      "source_id": "src-claude-agent-sdk-plan-credit",
+      "title": "Use the Claude Agent SDK with your Claude plan",
+      "url": "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan",
+      "final_url": "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The article says Pro, Max, Team, and Enterprise users are eligible for a monthly Agent SDK credit starting June 15, 2026, covering Agent SDK usage, claude -p, GitHub Actions, and third-party apps that authenticate with the Claude subscription through the Agent SDK."
+    },
+    {
+      "source_id": "src-anthropic-consumer-terms",
+      "title": "Anthropic Consumer Terms of Service",
+      "url": "https://www.anthropic.com/legal/consumer-terms",
+      "final_url": "https://www.anthropic.com/legal/consumer-terms",
+      "publisher": "Anthropic",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch_reader",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Anthropic says users may not share account login/API key credentials, crawl/scrape/harvest data, access services through automated or non-human means except via an API key or explicit permission, or bypass protective measures."
+    },
+    {
+      "source_id": "src-anthropic-commercial-terms",
+      "title": "Anthropic Commercial Terms of Service",
+      "url": "https://www.anthropic.com/legal/commercial-terms",
+      "final_url": "https://www.anthropic.com/legal/commercial-terms",
+      "publisher": "Anthropic",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch_reader",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The Commercial Terms govern API keys and Console-related services and prohibit reverse engineering or duplicating the services and supporting third-party attempts to do so."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim-t010-openai-api-requires-key",
+      "text": "Official OpenAI API use is an API-key/platform path, not merely possession of a ChatGPT UI subscription.",
+      "claim_type": "api_access",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-openai-api-docs-overview", "src-openai-api-pricing"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The API docs show OPENAI_API_KEY-based requests and the API pricing page has separate token pricing."
+    },
+    {
+      "claim_id": "claim-t010-chatgpt-plans-include-codex-not-general-api",
+      "text": "ChatGPT Plus/Pro/Business/Edu/Enterprise can include OpenAI Codex usage, but this is not the same as unrestricted OpenAI API access for arbitrary autocomplete plugins.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-openai-chatgpt-pricing", "src-openai-codex-ide-docs", "src-openai-codex-pricing", "src-openai-api-docs-overview"],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "OpenAI Help Center pages that likely state ChatGPT/API billing separation directly returned 403 in this environment, so this claim is based on accessible official pricing/docs distinctions."
+    },
+    {
+      "claim_id": "claim-t010-openai-codex-official-extension-subscription-supported",
+      "text": "The official OpenAI Codex VS Code extension supports ChatGPT-plan sign-in/usage for covered plans and can also be used with an API key path.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-openai-codex-ide-docs", "src-openai-codex-vscode-marketplace", "src-openai-codex-pricing"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Marketplace and docs both state ChatGPT plans include Codex; pricing documents API-key usage as a separate option."
+    },
+    {
+      "claim_id": "claim-t010-openai-codex-not-tab-autocomplete",
+      "text": "The official OpenAI Codex IDE experience documented in sources is a coding-agent panel for chat, edits, previews, cloud delegation, and commands; no official inline Tab autocomplete capability was found in those sources.",
+      "claim_type": "ux_mode",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-openai-codex-ide-docs", "src-openai-codex-ide-features", "src-openai-codex-vscode-marketplace"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This is an absence claim over checked official Codex docs/marketplace, not a complete audit of every OpenAI product page."
+    },
+    {
+      "claim_id": "claim-t010-openai-third-party-autocomplete-requires-api-billing",
+      "text": "A third-party VS Code or Obsidian autocomplete plugin using OpenAI models officially should use an OpenAI API key or compatible official API route, with separate API metering/billing rather than ChatGPT UI subscription reuse.",
+      "claim_type": "billing",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-openai-api-docs-overview", "src-openai-api-pricing", "src-openai-codex-pricing"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Codex itself is the main official subscription-based exception, but it is not inline autocomplete."
+    },
+    {
+      "claim_id": "claim-t010-claude-subscriptions-do-not-include-api-console",
+      "text": "Claude Pro, Max, Team, and Enterprise subscriptions do not include Claude API or Claude Console access; API/Console access must be set up separately.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-claude-subscription-api-separate", "src-claude-api-overview"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The Claude Help Center states this directly."
+    },
+    {
+      "claim_id": "claim-t010-claude-api-requires-console-key",
+      "text": "Official Claude API use requires a Claude Console account and API key or Workload Identity Federation; API organizations are governed by API spend/rate limits.",
+      "claim_type": "api_access",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-claude-api-overview", "src-claude-api-rate-limits"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This is the supported path for arbitrary plugins that need Claude model calls."
+    },
+    {
+      "claim_id": "claim-t010-claude-code-pro-max-subscription-supported",
+      "text": "Claude Pro and Max subscriptions can be used with Claude Code as a unified subscription, with Claude Code usage sharing plan limits unless API credits/API keys are chosen.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-claude-code-pro-max-support", "src-claude-pricing"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The support page also warns that ANTHROPIC_API_KEY causes API charges rather than subscription usage."
+    },
+    {
+      "claim_id": "claim-t010-claude-code-team-enterprise-subscription-supported",
+      "text": "Claude Team and many Enterprise seats include Claude Code access through the subscription, with seat-type and usage-based-billing caveats for Enterprise.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-claude-code-team-enterprise-support", "src-claude-pricing"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Older Enterprise configurations may require Chat + Claude Code or Premium seats."
+    },
+    {
+      "claim_id": "claim-t010-claude-code-vscode-not-tab-autocomplete",
+      "text": "The official Claude Code VS Code extension supports agentic coding, plans, diffs, editor proposals, terminal commands, and conversation tabs; no official inline Tab autocomplete capability was found in checked sources.",
+      "claim_type": "ux_mode",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-claude-code-docs-overview", "src-claude-code-vscode-docs", "src-claude-code-vscode-marketplace"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Docs mention 'inline diffs', which is different from live ghost-text/tab completion."
+    },
+    {
+      "claim_id": "claim-t010-claude-agent-sdk-credit-not-current-yet",
+      "text": "Anthropic documents a separate monthly Agent SDK credit for Pro/Max/Team/Enterprise users starting June 15, 2026; as of 2026-05-28 this is a future-dated access path, not currently usable for autocomplete.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-claude-agent-sdk-plan-credit"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The credit covers third-party apps built on the Agent SDK, but the source does not establish an inline autocomplete IDE product."
+    },
+    {
+      "claim_id": "claim-t010-claude-third-party-autocomplete-requires-api-billing",
+      "text": "A third-party VS Code or Obsidian autocomplete plugin using Claude models officially should use Claude Console/API credentials and separate API billing, unless it is an eligible Agent SDK app after the future monthly-credit path is available.",
+      "claim_type": "billing",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-claude-subscription-api-separate", "src-claude-api-overview", "src-claude-agent-sdk-plan-credit"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Interactive Claude Code is a supported subscription path, but not inline autocomplete."
+    },
+    {
+      "claim_id": "claim-t010-no-official-subscription-tab-autocomplete",
+      "text": "No official OpenAI or Anthropic IDE extension checked supports using a ChatGPT or Claude subscription directly for Copilot-like inline Tab autocomplete.",
+      "claim_type": "integration",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-openai-codex-ide-features", "src-openai-codex-vscode-marketplace", "src-claude-code-vscode-docs", "src-claude-code-vscode-marketplace"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This answers the task's central autocomplete question. It is not a comprehensive audit of every marketplace listing, only official OpenAI/Anthropic sources checked."
+    },
+    {
+      "claim_id": "claim-t010-no-official-obsidian-subscription-autocomplete-found",
+      "text": "No official OpenAI or Anthropic Obsidian inline-autocomplete plugin using ChatGPT/Claude subscriptions was found in the official sources checked.",
+      "claim_type": "integration",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-openai-codex-ide-docs", "src-claude-code-docs-overview", "src-claude-code-vscode-docs"],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Obsidian plugin ecosystem review is assigned to T030; this claim only covers official provider sources in T010 scope."
+    },
+    {
+      "claim_id": "claim-t010-openai-session-automation-risk",
+      "text": "Unofficial ChatGPT browser/session automation for autocomplete has high policy risk because OpenAI terms restrict credential sharing, automatic/programmatic extraction, and bypassing restrictions or rate limits.",
+      "claim_type": "privacy_or_policy_risk",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-openai-terms-of-use"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Specific legality depends on exact implementation and jurisdiction; terms-risk is clear enough to avoid recommending it."
+    },
+    {
+      "claim_id": "claim-t010-anthropic-session-automation-risk",
+      "text": "Unofficial Claude browser/session automation for autocomplete has high policy risk because Anthropic consumer terms restrict credential sharing, scraping/harvesting, automated access except via API key or explicit permission, and bypassing protective measures.",
+      "claim_type": "privacy_or_policy_risk",
+      "evidence_type": "official_docs",
+      "source_ids": ["src-anthropic-consumer-terms"],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This includes browser-cookie/session reuse by local tools or proxy servers unless explicitly authorized."
+    },
+    {
+      "claim_id": "claim-t010-session-scraping-operational-risk",
+      "text": "Browser-cookie/session scraping is likely unreliable and latency-sensitive for live autocomplete because web UIs are not stable, low-latency API contracts, and it adds security exposure by handling account sessions in editor plugins or local proxies.",
+      "claim_type": "performance_or_latency",
+      "evidence_type": "inference_from_sources",
+      "source_ids": ["src-openai-terms-of-use", "src-anthropic-consumer-terms"],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "This is engineering/security inference from unsupported/non-API access, not a benchmark."
+    }
+  ],
+  "subscription_access_matrix": [
+    {
+      "provider": "OpenAI",
+      "access_path": "ChatGPT Plus / Pro / Business / Edu / Enterprise subscription",
+      "subscription_tier": "Plus, Pro, Business, Edu, Enterprise",
+      "includes_api_access": false,
+      "direct_extension_use_supported": "Yes for official OpenAI Codex IDE extension; no verified official inline Tab autocomplete.",
+      "requires_separate_api_billing": "No for included Codex subscription usage within plan limits; yes for arbitrary OpenAI API calls or third-party autocomplete plugins.",
+      "unofficial_session_automation_risk": "High if browser/session scraping is attempted; none required for official Codex sign-in.",
+      "source_urls": [
+        "https://developers.openai.com/codex/ide",
+        "https://marketplace.visualstudio.com/items?itemName=OpenAI.chatgpt",
+        "https://developers.openai.com/codex/pricing",
+        "https://developers.openai.com/api/docs",
+        "https://openai.com/api/pricing/"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "high",
+      "notes": "Official Codex is agentic coding, not tab autocomplete."
+    },
+    {
+      "provider": "OpenAI",
+      "access_path": "ChatGPT Free / Go plans",
+      "subscription_tier": "Free, Go",
+      "includes_api_access": false,
+      "direct_extension_use_supported": "Limited Codex access appears in ChatGPT pricing/Codex pricing, but the Marketplace tagline only explicitly names Plus/Pro/Business/Edu/Enterprise for included Codex.",
+      "requires_separate_api_billing": "Yes for arbitrary OpenAI API use or third-party autocomplete plugins.",
+      "unofficial_session_automation_risk": "High if browser/session scraping is attempted.",
+      "source_urls": [
+        "https://openai.com/chatgpt/pricing/",
+        "https://developers.openai.com/codex/pricing",
+        "https://developers.openai.com/api/docs"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "medium",
+      "notes": "Not central to paid-subscription replacement, but included because current pricing pages mention these plans."
+    },
+    {
+      "provider": "OpenAI",
+      "access_path": "OpenAI API Platform / API key",
+      "subscription_tier": "Not a ChatGPT subscription; pay-as-you-go or organization billing API path",
+      "includes_api_access": true,
+      "direct_extension_use_supported": "Supported by extensions/plugins that accept OpenAI API keys; official Codex can also use API key for local/IDE usage with limitations.",
+      "requires_separate_api_billing": true,
+      "unofficial_session_automation_risk": "None required when using official API key.",
+      "source_urls": [
+        "https://developers.openai.com/api/docs",
+        "https://openai.com/api/pricing/",
+        "https://developers.openai.com/codex/pricing"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "high",
+      "notes": "This is the official route for third-party autocomplete integrations, but separate from ChatGPT subscription."
+    },
+    {
+      "provider": "Anthropic",
+      "access_path": "Claude Pro / Max subscription",
+      "subscription_tier": "Pro, Max 5x, Max 20x",
+      "includes_api_access": false,
+      "direct_extension_use_supported": "Yes for official Claude Code/Claude Code VS Code extension; no verified official inline Tab autocomplete.",
+      "requires_separate_api_billing": "No for Claude Code subscription usage within limits; yes for Claude API/Console, API keys, or arbitrary third-party autocomplete plugins.",
+      "unofficial_session_automation_risk": "High if browser/session scraping is attempted; none required for official Claude Code subscription login.",
+      "source_urls": [
+        "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+        "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan",
+        "https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code",
+        "https://code.claude.com/docs/en/ide-integrations"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "high",
+      "notes": "Claude Code usage shares subscription limits; API-key environment variables route usage to billed API instead."
+    },
+    {
+      "provider": "Anthropic",
+      "access_path": "Claude Team / Enterprise subscription",
+      "subscription_tier": "Team Standard/Premium, Enterprise seat types",
+      "includes_api_access": false,
+      "direct_extension_use_supported": "Yes for official Claude Code on eligible seats; no verified official inline Tab autocomplete.",
+      "requires_separate_api_billing": "No for included Claude Code usage where covered by seat/plan; yes for Claude API/Console credentials and arbitrary third-party autocomplete plugins. Some usage-based Enterprise usage is billed at API rates.",
+      "unofficial_session_automation_risk": "High if browser/session scraping is attempted; none required for official Claude Code subscription login.",
+      "source_urls": [
+        "https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan",
+        "https://claude.com/pricing",
+        "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "high",
+      "notes": "Older Enterprise seat models have caveats; new/self-serve Enterprise includes Claude Code per source."
+    },
+    {
+      "provider": "Anthropic",
+      "access_path": "Claude Console / Claude API key",
+      "subscription_tier": "Not a Claude chat subscription; API/Console billing path",
+      "includes_api_access": true,
+      "direct_extension_use_supported": "Supported by extensions/plugins that accept Anthropic API keys; Claude Code can also use API/pay-as-you-go.",
+      "requires_separate_api_billing": true,
+      "unofficial_session_automation_risk": "None required when using official API key.",
+      "source_urls": [
+        "https://docs.anthropic.com/en/api/overview",
+        "https://docs.anthropic.com/en/api/rate-limits",
+        "https://claude.com/pricing"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "high",
+      "notes": "This is the official route for third-party autocomplete integrations, but separate from Claude subscription."
+    },
+    {
+      "provider": "Anthropic",
+      "access_path": "Claude Agent SDK monthly credit for plan users",
+      "subscription_tier": "Pro, Max, Team, Enterprise; planned start 2026-06-15",
+      "includes_api_access": "Limited future Agent SDK credit, not general API/Console access and not active on 2026-05-28.",
+      "direct_extension_use_supported": "Potentially for third-party apps built on Agent SDK after launch; no verified inline Tab autocomplete product in checked sources.",
+      "requires_separate_api_billing": "No until monthly credit is exhausted if usage credits are disabled; after credit, usage moves to usage credits at standard API rates if enabled.",
+      "unofficial_session_automation_risk": "None required for official Agent SDK authentication; high for non-SDK session scraping.",
+      "source_urls": [
+        "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "high",
+      "notes": "Future-dated and should not be treated as available on 2026-05-28."
+    },
+    {
+      "provider": "OpenAI and Anthropic",
+      "access_path": "Unofficial browser-cookie/session automation or reverse-engineered web endpoints",
+      "subscription_tier": "Any ChatGPT or Claude subscription",
+      "includes_api_access": false,
+      "direct_extension_use_supported": "No official support; would be custom/unofficial automation.",
+      "requires_separate_api_billing": "May avoid official API billing technically, but at high policy, security, reliability, and account-risk cost; not recommended.",
+      "unofficial_session_automation_risk": "High.",
+      "source_urls": [
+        "https://openai.com/policies/terms-of-use/",
+        "https://www.anthropic.com/legal/consumer-terms"
+      ],
+      "last_checked": "2026-05-28",
+      "confidence": "high",
+      "notes": "This is not an official API access path and is especially unsuitable for low-latency editor autocomplete."
+    }
+  ],
+  "options": [
+    {
+      "option_id": "option-openai-codex-vscode",
+      "name": "OpenAI Codex VS Code extension",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "vscode-compatible-editors"],
+      "autocomplete_mode": "chat_or_sidebar",
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "optional",
+        "requires_separate_api_billing": "no_for_chatgpt_plan_usage_yes_for_api_key_usage",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["ChatGPT Plus", "ChatGPT Pro", "ChatGPT Business", "ChatGPT Edu", "ChatGPT Enterprise"],
+        "api_names": ["OpenAI API", "Codex API-key path"],
+        "risk_level": "low",
+        "access_notes": "Supported official agent extension, but not a live inline Tab autocomplete engine."
+      },
+      "strengths": ["Official OpenAI VS Code extension", "Uses ChatGPT plans for Codex where covered", "Can chat, edit, preview changes, and delegate cloud tasks"],
+      "limitations": ["Not documented as inline Tab autocomplete", "API-key mode is separately billed and has feature limitations", "Not an Obsidian solution"],
+      "source_ids": ["src-openai-codex-ide-docs", "src-openai-codex-ide-features", "src-openai-codex-vscode-marketplace", "src-openai-codex-pricing"],
+      "claim_ids": ["claim-t010-openai-codex-official-extension-subscription-supported", "claim-t010-openai-codex-not-tab-autocomplete"],
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "option-openai-codex-jetbrains",
+      "name": "OpenAI Codex JetBrains integration",
+      "category": "other",
+      "platforms": ["jetbrains"],
+      "autocomplete_mode": "chat_or_sidebar",
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "optional",
+        "requires_separate_api_billing": "no_for_chatgpt_plan_usage_yes_for_api_key_usage",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["ChatGPT plans", "JetBrains AI subscription"],
+        "api_names": ["OpenAI API"],
+        "risk_level": "low",
+        "access_notes": "Relevant only as evidence that official subscription IDE integrations are agentic; not VS Code/Obsidian autocomplete."
+      },
+      "strengths": ["Officially documented IDE integration", "Supports ChatGPT sign-in, API key, or JetBrains AI subscription"],
+      "limitations": ["Out of target editor scope", "No inline Tab autocomplete evidence in checked source"],
+      "source_ids": ["src-openai-codex-ide-docs"],
+      "claim_ids": ["claim-t010-openai-codex-official-extension-subscription-supported", "claim-t010-no-official-subscription-tab-autocomplete"],
+      "recommendation_fit": "poor",
+      "confidence": "medium",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "option-claude-code-vscode",
+      "name": "Claude Code for VS Code",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "vscode-compatible-editors"],
+      "autocomplete_mode": "chat_or_sidebar",
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "optional",
+        "requires_separate_api_billing": "no_for_subscription_usage_yes_for_api_key_or_payg_usage",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Claude Pro", "Claude Max", "Claude Team", "Claude Enterprise"],
+        "api_names": ["Claude API", "Claude Console", "Anthropic API key"],
+        "risk_level": "low",
+        "access_notes": "Official extension can use eligible subscriptions or pay-as-you-go/API; documented UX is agentic, not inline tab completion."
+      },
+      "strengths": ["Official Anthropic VS Code extension", "Supports Pro/Max/Team/Enterprise subscriptions", "Editor-integrated diffs, plans, context, and agentic edits"],
+      "limitations": ["Not documented as live inline Tab autocomplete", "API key or ANTHROPIC_API_KEY routes can create API charges", "Not an Obsidian solution"],
+      "source_ids": ["src-claude-code-pro-max-support", "src-claude-code-team-enterprise-support", "src-claude-code-docs-overview", "src-claude-code-vscode-docs", "src-claude-code-vscode-marketplace"],
+      "claim_ids": ["claim-t010-claude-code-pro-max-subscription-supported", "claim-t010-claude-code-team-enterprise-subscription-supported", "claim-t010-claude-code-vscode-not-tab-autocomplete"],
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "option-openai-api-key-third-party-autocomplete",
+      "name": "Third-party autocomplete using OpenAI API key",
+      "category": "api_provider",
+      "platforms": ["vscode", "obsidian", "custom"],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": ["OpenAI API"],
+        "risk_level": "low",
+        "access_notes": "Officially supportable if the extension/plugin uses OpenAI's API and the user accepts separate API billing."
+      },
+      "strengths": ["Official API path", "Potentially usable by VS Code or Obsidian plugins that support OpenAI-compatible APIs"],
+      "limitations": ["Does not reuse ChatGPT subscription", "Costs are metered separately", "Autocomplete UX depends on the specific plugin and model latency/FIM support"],
+      "source_ids": ["src-openai-api-docs-overview", "src-openai-api-pricing"],
+      "claim_ids": ["claim-t010-openai-api-requires-key", "claim-t010-openai-third-party-autocomplete-requires-api-billing"],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "option-claude-api-key-third-party-autocomplete",
+      "name": "Third-party autocomplete using Claude API key",
+      "category": "api_provider",
+      "platforms": ["vscode", "obsidian", "custom"],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": ["Claude API", "Claude Console"],
+        "risk_level": "low",
+        "access_notes": "Officially supportable if the extension/plugin uses Anthropic's API and the user accepts separate API billing."
+      },
+      "strengths": ["Official Anthropic API path", "Potentially usable by VS Code or Obsidian plugins that support Anthropic API"],
+      "limitations": ["Does not reuse Claude subscription", "Costs are metered separately", "Autocomplete UX depends on plugin, latency, context strategy, and model suitability"],
+      "source_ids": ["src-claude-subscription-api-separate", "src-claude-api-overview", "src-claude-api-rate-limits"],
+      "claim_ids": ["claim-t010-claude-subscriptions-do-not-include-api-console", "claim-t010-claude-api-requires-console-key", "claim-t010-claude-third-party-autocomplete-requires-api-billing"],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "option-claude-agent-sdk-subscription-credit-planned",
+      "name": "Claude Agent SDK with Claude plan monthly credit",
+      "category": "custom_architecture",
+      "platforms": ["custom", "vscode", "obsidian"],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "unknown",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "not_until_credit_exhausted_if_available_then_usage_credits_or_stop",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Claude Pro", "Claude Max", "Claude Team", "Claude Enterprise"],
+        "api_names": ["Claude Agent SDK"],
+        "risk_level": "medium",
+        "access_notes": "Future-dated for 2026-06-15 and scoped to Agent SDK usage; not verified as an inline autocomplete solution."
+      },
+      "strengths": ["Officially documented future subscription-linked third-party-app path", "Could reduce separate API spend for eligible Agent SDK usage after launch"],
+      "limitations": ["Not active as of 2026-05-28", "Credit-limited", "No checked source establishes tab autocomplete UX", "After credit exhaustion usage credits bill at standard API rates if enabled"],
+      "source_ids": ["src-claude-agent-sdk-plan-credit"],
+      "claim_ids": ["claim-t010-claude-agent-sdk-credit-not-current-yet"],
+      "recommendation_fit": "unknown",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "option-unofficial-session-automation",
+      "name": "Unofficial ChatGPT/Claude browser-cookie or session proxy automation",
+      "category": "custom_architecture",
+      "platforms": ["vscode", "obsidian", "custom"],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "not_supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "required",
+        "subscription_names": ["ChatGPT subscriptions", "Claude subscriptions"],
+        "api_names": [],
+        "risk_level": "high",
+        "access_notes": "Avoid. Terms, security, reliability, latency, and account-safety risks dominate any subscription-reuse benefit."
+      },
+      "strengths": ["Could appear to reuse a UI subscription without API billing"],
+      "limitations": ["Unsupported", "Terms-risky", "Brittle against UI/auth changes", "Session/cookie handling is security-sensitive", "Poor fit for low-latency live autocomplete", "May trigger account/rate-limit protections"],
+      "source_ids": ["src-openai-terms-of-use", "src-anthropic-consumer-terms"],
+      "claim_ids": ["claim-t010-openai-session-automation-risk", "claim-t010-anthropic-session-automation-risk", "claim-t010-session-scraping-operational-risk"],
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    }
+  ],
+  "policy_reliability_latency_security_implications": [
+    {
+      "topic": "legal_or_tos",
+      "summary": "OpenAI and Anthropic terms both restrict categories of automated access, scraping/extraction, credential sharing, reverse engineering, and bypassing limits/protective measures. A browser-session autocomplete bridge would likely be outside official support and should not be recommended without explicit permission.",
+      "source_ids": ["src-openai-terms-of-use", "src-anthropic-consumer-terms", "src-anthropic-commercial-terms"],
+      "confidence": "high"
+    },
+    {
+      "topic": "reliability",
+      "summary": "Unofficial web-session automation depends on volatile web UI flows, cookies, CSRF/auth changes, bot mitigations, and undocumented response formats; it can break without notice.",
+      "source_ids": ["src-openai-terms-of-use", "src-anthropic-consumer-terms"],
+      "confidence": "medium"
+    },
+    {
+      "topic": "latency",
+      "summary": "Live tab autocomplete is latency-sensitive; driving a browser/session workflow through a web UI or reverse-engineered endpoint is unlikely to provide the stable low-latency, cancellable request contract expected by editor completion engines.",
+      "source_ids": ["src-openai-terms-of-use", "src-anthropic-consumer-terms"],
+      "confidence": "medium",
+      "evidence_type": "engineering_inference_from_unsupported_non_api_access"
+    },
+    {
+      "topic": "security",
+      "summary": "Session scraping puts high-value account cookies/tokens or credentials into editor extensions, local proxies, or logs. Compromise could expose chat history, account settings, billing, organization data, or API/usage controls.",
+      "source_ids": ["src-openai-terms-of-use", "src-anthropic-consumer-terms"],
+      "confidence": "medium"
+    }
+  ],
+  "blockers": [
+    {
+      "blocker": "OpenAI Help Center direct fetches returned Cloudflare 403 for articles that appear to discuss ChatGPT subscription versus API billing separation.",
+      "impact": "The OpenAI subscription-not-API claim is based on accessible OpenAI API docs, API pricing, Codex docs, and Codex pricing rather than a direct OpenAI Help Center quote.",
+      "suggested_recovery": "A later verifier with browser access should check OpenAI Help Center articles such as 'How can I move my ChatGPT subscription to the API?' and 'Managing Billing Settings on ChatGPT Web and Platform'."
+    },
+    {
+      "blocker": "This task did not comprehensively evaluate every third-party VS Code or Obsidian extension.",
+      "impact": "The no-official-inline-autocomplete conclusion is limited to official OpenAI/Anthropic sources and official marketplace listings checked here.",
+      "suggested_recovery": "T020 and T030 should evaluate actual VS Code and Obsidian extension behavior separately."
+    }
+  ],
+  "confidence": "medium"
+}
