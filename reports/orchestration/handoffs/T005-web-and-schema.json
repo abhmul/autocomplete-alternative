@@ -1,0 +1,200 @@
+{
+  "task_id": "T005",
+  "status": "complete",
+  "title": "Confirm web research capability and source capture schema",
+  "last_checked": "2026-05-28",
+  "web_access": {
+    "result": "confirmed",
+    "method": "Fetched pages with Python urllib from this worker environment; captured HTTP status, final URL, content type, title/meta evidence.",
+    "checks": [
+      {
+        "source_id": "src-anthropic-docs-intro",
+        "requirement": "official_openai_or_anthropic_docs",
+        "requested_url": "https://docs.anthropic.com/en/docs/overview",
+        "final_url": "https://platform.claude.com/docs/en/intro",
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "source_type": "official_docs",
+        "publisher": "Anthropic",
+        "title": "Intro to Claude - Claude API Docs",
+        "evidence": "Fetched HTML contained title/meta description for Claude API Docs.",
+        "last_checked": "2026-05-28"
+      },
+      {
+        "source_id": "src-openai-platform-docs",
+        "requirement": "additional_official_docs_check",
+        "requested_url": "https://platform.openai.com/docs/overview",
+        "final_url": "https://platform.openai.com/",
+        "http_status": 200,
+        "content_type": "text/html",
+        "source_type": "official_docs",
+        "publisher": "OpenAI",
+        "title": "OpenAI Platform",
+        "evidence": "Fetched official OpenAI Platform page; requested docs URL redirected to platform landing page.",
+        "last_checked": "2026-05-28"
+      },
+      {
+        "source_id": "src-continue-vscode-marketplace",
+        "requirement": "extension_plugin_or_project_page",
+        "requested_url": "https://marketplace.visualstudio.com/items?itemName=Continue.continue",
+        "final_url": "https://marketplace.visualstudio.com/items?itemName=Continue.continue",
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "source_type": "marketplace_listing",
+        "publisher": "Visual Studio Marketplace / Continue",
+        "title": "Continue - open-source AI code agent - Visual Studio Marketplace",
+        "evidence": "Fetched marketplace HTML; meta description identified it as a Visual Studio Code extension and open-source AI code agent.",
+        "last_checked": "2026-05-28"
+      },
+      {
+        "source_id": "src-continue-github",
+        "requirement": "project_page_cross_check",
+        "requested_url": "https://github.com/continuedev/continue",
+        "final_url": "https://github.com/continuedev/continue",
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "source_type": "source_repository",
+        "publisher": "GitHub / continuedev",
+        "title": "GitHub - continuedev/continue: ⏩ Source-controlled AI checks, enforceable in CI. Powered by the open-source Continue CLI · GitHub",
+        "evidence": "Fetched repository page HTML and title metadata.",
+        "last_checked": "2026-05-28"
+      }
+    ],
+    "blockers": [],
+    "suggested_recovery_if_web_fails_later": [
+      "Record the failing URL, command/method, HTTP/network error, and date in the worker handoff.",
+      "Retry with a primary-source alternate URL such as official docs, marketplace, GitHub, or package registry.",
+      "If network remains blocked, stop substantive product-status claims and request source excerpts from the orchestrator/user."
+    ]
+  },
+  "common_handoff_schema": {
+    "schema_version": "autocomplete-research-handoff-v1",
+    "required_top_level_fields": [
+      "task_id",
+      "status",
+      "last_checked",
+      "summary",
+      "sources",
+      "claims",
+      "options",
+      "blockers",
+      "confidence"
+    ],
+    "status_enum": [
+      "complete",
+      "partial",
+      "blocked"
+    ],
+    "top_level_fields": {
+      "task_id": "Task id, e.g. T010.",
+      "status": "One of status_enum.",
+      "last_checked": "ISO date YYYY-MM-DD for the most recent source check in this handoff.",
+      "summary": "Concise task-level result and caveats.",
+      "sources": "Array of source objects using source_fields.",
+      "claims": "Array of claim objects using claim_fields; every nontrivial factual claim should cite source_ids or be marked inference/unsupported.",
+      "options": "Array of option objects using option_fields when evaluating products, plugins, APIs, or architectures.",
+      "blockers": "Array of blocker objects with blocker, impact, and suggested_recovery.",
+      "confidence": "Overall confidence enum value for the handoff."
+    },
+    "source_fields": {
+      "source_id": "Stable local id such as src-openai-pricing-api.",
+      "title": "Page or artifact title.",
+      "url": "Canonical URL cited.",
+      "final_url": "Final URL after redirects, if checked.",
+      "publisher": "Organization or project publishing the source.",
+      "source_type": "official_docs | pricing_page | marketplace_listing | source_repository | package_registry | release_notes | issue_or_discussion | vendor_blog | third_party_analysis | direct_test | other",
+      "http_status": "HTTP status when web-fetched, or null if not fetched directly.",
+      "retrieved_via": "web_fetch | local_file | package_manager | direct_test | other",
+      "last_checked": "ISO date YYYY-MM-DD.",
+      "quoted_evidence": "Short quote or metadata snippet supporting cited claims."
+    },
+    "claim_fields": {
+      "claim_id": "Stable local id such as claim-t010-openai-api-billing.",
+      "text": "Atomic factual claim, inference, risk, or recommendation.",
+      "claim_type": "subscription_constraint | api_access | billing | ux_mode | integration | project_status | privacy_or_policy_risk | performance_or_latency | recommendation | other",
+      "evidence_type": "One of evidence_type_enum.",
+      "source_ids": "Array of source_id values; empty only when evidence_type is inference or unsupported.",
+      "confidence": "One of confidence_enum.",
+      "last_checked": "ISO date YYYY-MM-DD.",
+      "notes": "Caveats, conflict notes, or reasoning."
+    },
+    "option_fields": {
+      "option_id": "Stable id for a product, plugin, extension, API path, or architecture.",
+      "name": "Human-readable option name.",
+      "category": "vscode_extension | obsidian_plugin | editor_or_fork | api_provider | local_model_stack | proxy_or_gateway | custom_architecture | other",
+      "platforms": "Array such as [\"vscode\"], [\"obsidian\"], or [\"vscode\", \"obsidian\"].",
+      "autocomplete_mode": "One of mode_taxonomy_enum.",
+      "access_model": "Object using access_model_fields.",
+      "strengths": "Array of concise positives.",
+      "limitations": "Array of concise negatives/caveats.",
+      "source_ids": "Array of source_id values supporting option metadata.",
+      "claim_ids": "Array of claim_id values supporting evaluation.",
+      "recommendation_fit": "good | mixed | poor | unknown | not_assessed",
+      "confidence": "One of confidence_enum.",
+      "last_checked": "ISO date YYYY-MM-DD."
+    },
+    "access_model_fields": {
+      "subscription_ui_access": "supported | not_supported | unknown | not_applicable; whether an existing ChatGPT/Claude-style UI subscription can be used directly in this option.",
+      "official_api_access": "supported | not_supported | unknown | not_applicable; whether the option uses an official API path/key.",
+      "requires_separate_api_billing": "yes | no | unknown | not_applicable; whether API usage is billed separately from the UI subscription.",
+      "unofficial_session_automation": "none_required | optional | required | reported | unknown | not_applicable; whether cookies/browser/session scraping or reverse-engineered access is involved.",
+      "subscription_names": "Array naming relevant subscriptions, e.g. ChatGPT Plus, Claude Pro, Claude Max, Team, Enterprise.",
+      "api_names": "Array naming relevant APIs/providers.",
+      "risk_level": "none | low | medium | high | unknown; especially for unofficial automation, ToS, brittleness, account, or privacy risks.",
+      "access_notes": "Short caveat text with source_ids or claim_ids where possible."
+    },
+    "confidence_enum": [
+      "high",
+      "medium",
+      "low",
+      "unknown"
+    ],
+    "confidence_guidance": {
+      "high": "Current primary source directly supports the claim and no material conflict was found.",
+      "medium": "Source support is credible but indirect, partial, single-source, or likely to drift.",
+      "low": "Weak, stale, secondary, conflicting, or mostly inferential support.",
+      "unknown": "No usable evidence yet."
+    },
+    "evidence_type_enum": [
+      "official_docs",
+      "official_pricing_or_billing_page",
+      "official_marketplace_listing",
+      "source_repository",
+      "package_registry",
+      "release_notes",
+      "direct_http_check",
+      "direct_install_or_runtime_test",
+      "source_code_inspection",
+      "independent_secondary_source",
+      "inference_from_sources",
+      "unsupported"
+    ],
+    "mode_taxonomy_enum": [
+      "true_inline_tab",
+      "inline_not_tab",
+      "completion_popup",
+      "command_or_selection_generation",
+      "chat_or_sidebar",
+      "custom_only",
+      "not_applicable"
+    ],
+    "mode_taxonomy_definitions": {
+      "true_inline_tab": "Copilot-like ghost text appears inline while typing and can be accepted with Tab or a direct equivalent in the editor.",
+      "inline_not_tab": "Inline/ghost text exists but Tab acceptance is absent, disabled, or not evidenced.",
+      "completion_popup": "Suggestions appear primarily in an editor completion menu/popup rather than ghost text.",
+      "command_or_selection_generation": "User invokes a command/prompt/action to generate or transform selected text; not continuous live autocomplete.",
+      "chat_or_sidebar": "Assistant works mainly through chat/sidebar/panel UI.",
+      "custom_only": "Feasible only by building custom glue, extension, plugin, or proxy; no ready packaged UX found.",
+      "not_applicable": "The item is not an editor UX surface or autocomplete mode does not apply."
+    }
+  },
+  "handoff_instructions_for_T010_T040_T050": [
+    "Use autocomplete-research-handoff-v1 fields where applicable.",
+    "Cite primary sources for pricing, API/subscription boundaries, marketplace capabilities, and project status.",
+    "Classify every evaluated option with exactly one autocomplete_mode from the taxonomy.",
+    "Populate access_model for every option so synthesis can distinguish UI subscription reuse, official API use, separate API billing, and unofficial session automation.",
+    "Mark unsupported or speculative claims explicitly with evidence_type=inference_from_sources or unsupported and confidence=low/unknown."
+  ],
+  "blockers": [],
+  "confidence": "high"
+}
