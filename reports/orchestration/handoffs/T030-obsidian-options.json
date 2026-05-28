@@ -1,0 +1,3840 @@
+{
+  "schema_version": "autocomplete-research-handoff-v1",
+  "task_id": "T030",
+  "status": "complete",
+  "last_checked": "2026-05-28",
+  "title": "Research Obsidian.md live autocomplete options",
+  "summary": {
+    "bottom_line": "Yes, true Obsidian live ghost-text autocomplete with Tab accept exists, but the practical GPT/Claude-subscription story is weak: true inline plugins mostly use API keys, OpenAI-compatible endpoints, or local Ollama/LM Studio; subscription/account integrations found are chat/agent/transform tools, not live tab autocomplete.",
+    "best_true_inline_candidates": [
+      "AI Autocomplete",
+      "Inscribe",
+      "Copilot auto completion",
+      "Companion",
+      "Markpilot"
+    ],
+    "best_subscription_account_tools_but_not_inline": [
+      "Smart Composer",
+      "ExcaVelo",
+      "Blackglass",
+      "Claude Panel",
+      "Chatting with AI"
+    ],
+    "notable_absence": "No ready Obsidian plugin was found that provides true live inline Tab autocomplete using an existing Claude Pro/Max or ChatGPT Plus/Pro subscription in a clearly official/supported way.",
+    "scope_note": "No runtime installation tests were performed; mode classification is based on official listings, READMEs/manifests, GitHub status, and selected source-code inspection for keymaps/CodeMirror extension use."
+  },
+  "mode_taxonomy": {
+    "true_inline_tab": "Ghost/transparent text appears inline while typing and can be accepted with Tab or configured accept key.",
+    "inline_not_tab": "Inline/ghost UI exists but Tab/insertion behavior is absent or not evidenced.",
+    "completion_popup": "Suggestions are primarily in a popup/list menu.",
+    "command_or_selection_generation": "User invokes command, slash command, prompt, tag trigger, or selection action to generate/transform text.",
+    "chat_or_sidebar": "Main UX is chat/sidebar/terminal panel.",
+    "custom_only": "Feasible only through custom development or as a bridge/context layer.",
+    "not_applicable": "Not an editor UX surface."
+  },
+  "sources": [
+    {
+      "source_id": "src-obsidian-community-plugin-registry",
+      "title": "Obsidian community plugin registry",
+      "url": "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json",
+      "final_url": "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json",
+      "publisher": "Obsidian / GitHub obsidianmd/obsidian-releases",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Fetched official community-plugins.json; entries include plugin id, name, author, description, and repo for 4234 community plugins."
+    },
+    {
+      "source_id": "src-obsidian-community-plugin-stats",
+      "title": "Obsidian community plugin stats",
+      "url": "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json",
+      "final_url": "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json",
+      "publisher": "Obsidian / GitHub obsidianmd/obsidian-releases",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Fetched official community-plugin-stats.json; entries include downloads and updated timestamps by plugin id."
+    },
+    {
+      "source_id": "src-obsidian-editor-extensions-docs",
+      "title": "Editor extensions - Obsidian Developer Documentation",
+      "url": "https://docs.obsidian.md/Plugins/Editor/Editor+extensions",
+      "final_url": "https://docs.obsidian.md/Plugins/Editor/Editor+extensions",
+      "publisher": "Obsidian",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Obsidian uses CodeMirror 6 to power the Markdown editor, and that an Obsidian editor extension is the same thing as a CodeMirror extension; examples use registerEditorExtension in plugin onload."
+    },
+    {
+      "source_id": "src-obsidian-register-editor-extension-api",
+      "title": "Plugin.registerEditorExtension() - Obsidian Developer Documentation",
+      "url": "https://docs.obsidian.md/Reference/TypeScript+API/Plugin/registerEditorExtension",
+      "final_url": "https://docs.obsidian.md/Reference/TypeScript+API/Plugin/registerEditorExtension",
+      "publisher": "Obsidian",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "API docs: registerEditorExtension registers a CodeMirror 6 extension; the extension parameter must be a CodeMirror 6 Extension or array of Extensions."
+    },
+    {
+      "source_id": "src-obsidian-decorations-docs",
+      "title": "Decorations - Obsidian Developer Documentation",
+      "url": "https://docs.obsidian.md/Plugins/Editor/Decorations",
+      "final_url": "https://docs.obsidian.md/Plugins/Editor/Decorations",
+      "publisher": "Obsidian",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs: decorations let plugins change the editor appearance; widget decorations insert elements in the document."
+    },
+    {
+      "source_id": "src-obsidian-editor-suggest-api",
+      "title": "EditorSuggest - Obsidian Developer Documentation",
+      "url": "https://docs.obsidian.md/Reference/TypeScript+API/EditorSuggest",
+      "final_url": "https://docs.obsidian.md/Reference/TypeScript+API/EditorSuggest",
+      "publisher": "Obsidian",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "API docs define EditorSuggest as extending PopoverSuggest and include getSuggestions, onTrigger, renderSuggestion, and selectSuggestion methods."
+    },
+    {
+      "source_id": "src-official-ai-autocomplete",
+      "title": "AI Autocomplete - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/ai-autocomplete",
+      "final_url": "https://community.obsidian.md/plugins/ai-autocomplete",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Inline AI writing completion with ghost text. Powered by Groq. Tab to accept.; downloads=125; registry_updated=2026-04-30; repo=leoyishou/obsidian-ai-autocomplete."
+    },
+    {
+      "source_id": "src-repo-ai-autocomplete",
+      "title": "GitHub repository: leoyishou/obsidian-ai-autocomplete",
+      "url": "https://github.com/leoyishou/obsidian-ai-autocomplete",
+      "final_url": "https://github.com/leoyishou/obsidian-ai-autocomplete",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: AI inline writing completion for Obsidian, powered by OpenAI-compatible APIs; ghost text suggestions appear inline and Tab accepts, Esc dismisses; defaults route through OpenRouter to Groq for fast inference. Repo status snapshot: pushed_at=2026-04-30T17:45:56Z; updated_at=2026-04-30T17:45:53Z; stars=2; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-inscribe",
+      "title": "Inscribe - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/inscribe",
+      "final_url": "https://community.obsidian.md/plugins/inscribe",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Inline autocompletion powered by AI.; downloads=1992; registry_updated=2026-04-11; repo=ahmetildirim/obsidian-inscribe."
+    },
+    {
+      "source_id": "src-repo-inscribe",
+      "title": "GitHub repository: ahmetildirim/obsidian-inscribe",
+      "url": "https://github.com/ahmetildirim/obsidian-inscribe",
+      "final_url": "https://github.com/ahmetildirim/obsidian-inscribe",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: AI-powered inline autocompletion for Obsidian; generates autocompletions as you type and accept/reject with TAB; supports Ollama, OpenAI, OpenAI compatible providers; recommends Ollama due high API-call frequency. Repo status snapshot: pushed_at=2026-04-11T19:57:30Z; updated_at=2026-04-20T06:06:31Z; stars=21; open_issues=2; archived=False."
+    },
+    {
+      "source_id": "src-official-copilot-auto-completion",
+      "title": "Copilot auto completion - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/copilot-auto-completion",
+      "final_url": "https://community.obsidian.md/plugins/copilot-auto-completion",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: A highly configurable copilot-like auto-completion using the ChatGPT API.; downloads=11729; registry_updated=2024-03-10; repo=j0rd1smit/obsidian-copilot-auto-completion."
+    },
+    {
+      "source_id": "src-repo-copilot-auto-completion",
+      "title": "GitHub repository: j0rd1smit/obsidian-copilot-auto-completion",
+      "url": "https://github.com/j0rd1smit/obsidian-copilot-auto-completion",
+      "final_url": "https://github.com/j0rd1smit/obsidian-copilot-auto-completion",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: adds Copilot-like auto-completion; shows suggested completion in transparent text next to cursor; press Tab to insert entire suggestion or right arrow to insert part; supports OpenAI, Azure OpenAI, Ollama, and configurable OpenAI API-compatible endpoint. Repo status snapshot: pushed_at=2024-09-25T10:55:26Z; updated_at=2026-05-11T07:23:27Z; stars=214; open_issues=16; archived=False."
+    },
+    {
+      "source_id": "src-official-companion",
+      "title": "Companion - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/companion",
+      "final_url": "https://community.obsidian.md/plugins/companion",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Autocomplete with AI, including ChatGPT, through a copilot-like interface.; downloads=33428; registry_updated=2024-05-28; repo=rizerphe/obsidian-companion."
+    },
+    {
+      "source_id": "src-repo-companion",
+      "title": "GitHub repository: rizerphe/obsidian-companion",
+      "url": "https://github.com/rizerphe/obsidian-companion",
+      "final_url": "https://github.com/rizerphe/obsidian-companion",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: AI-powered autocomplete; ghost text can be accepted or ignored, similar to GitHub Copilot; setup steps require OpenAI API key; command toggles completion; Tab accepts next word; mobile toolbar command can accept completion; manifest says ChatGPT and Ollama. Repo status snapshot: pushed_at=2024-05-28T18:15:23Z; updated_at=2026-05-21T23:32:45Z; stars=354; open_issues=25; archived=False."
+    },
+    {
+      "source_id": "src-official-markpilot",
+      "title": "Markpilot - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/markpilot",
+      "final_url": "https://community.obsidian.md/plugins/markpilot",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Inline completions and chat view powered by OpenAI.; downloads=1384; registry_updated=2024-06-29; repo=taichimaeda/markpilot."
+    },
+    {
+      "source_id": "src-repo-markpilot",
+      "title": "GitHub repository: taichimaeda/markpilot",
+      "url": "https://github.com/taichimaeda/markpilot",
+      "final_url": "https://github.com/taichimaeda/markpilot",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: AI-powered inline completions and chat view for Obsidian; similar experience to GitHub Copilot; supports OpenAI API, OpenRouter API, and local Ollama; FAQ discusses accepting completions by hitting Tab and conflicts with other extensions. Repo status snapshot: pushed_at=2024-06-29T15:40:34Z; updated_at=2026-02-24T06:15:10Z; stars=20; open_issues=4; archived=False."
+    },
+    {
+      "source_id": "src-official-rosypilot",
+      "title": "RosyPilot - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/rosypilot",
+      "final_url": "https://community.obsidian.md/plugins/rosypilot",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. AI-powered inline completions for legal writing.; downloads=125; registry_updated=2026-05-21; repo=zh-xx/rosypilot."
+    },
+    {
+      "source_id": "src-repo-rosypilot",
+      "title": "GitHub repository: zh-xx/rosypilot",
+      "url": "https://github.com/zh-xx/rosypilot",
+      "final_url": "https://github.com/zh-xx/rosypilot",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: AI-powered inline completions and legal workflow commands; inline completions are ghost text tailored to Markdown context and Tab accepts; setup examples use DeepSeek API and model deepseek-v4-flash. Repo status snapshot: pushed_at=2026-05-21T09:33:41Z; updated_at=2026-05-22T04:26:24Z; stars=5; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-github-copilot",
+      "title": "GitHub Copilot - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/github-copilot",
+      "final_url": "https://community.obsidian.md/plugins/github-copilot",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Implement suggestions from Github Copilot directly in your editor.; downloads=40240; registry_updated=2026-05-03; repo=pierrad/obsidian-github-copilot."
+    },
+    {
+      "source_id": "src-repo-github-copilot",
+      "title": "GitHub repository: pierrad/obsidian-github-copilot",
+      "url": "https://github.com/pierrad/obsidian-github-copilot",
+      "final_url": "https://github.com/pierrad/obsidian-github-copilot",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: get inline suggestion as you type using GitHub Copilot service; after a pause Copilot suggests completions; press Tab to accept or Esc to dismiss; includes GitHub Copilot Chat service in the sidebar. Repo status snapshot: pushed_at=2026-05-28T23:18:12Z; updated_at=2026-05-28T19:50:26Z; stars=None; open_issues=None; archived=False."
+    },
+    {
+      "source_id": "src-official-thought-completion",
+      "title": "Thought Completion - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/thought-completion",
+      "final_url": "https://community.obsidian.md/plugins/thought-completion",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. A thinking companion that suggests what to think or write about next. Like IDE tab completion, but for thoughts.; downloads=105; registry_updated=2026-02-01; repo=talhabw/obsidian-thought-completion."
+    },
+    {
+      "source_id": "src-repo-thought-completion",
+      "title": "GitHub repository: talhabw/obsidian-thought-completion",
+      "url": "https://github.com/talhabw/obsidian-thought-completion",
+      "final_url": "https://github.com/talhabw/obsidian-thought-completion",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: faded ghost text nudges at cursor help decide what to write/think; requires OpenAI-compatible API; compatible providers include OpenAI, OpenRouter, Ollama/LM Studio. Source check found Escape dismiss keymap but no insertion/Tab accept path. Repo status snapshot: pushed_at=2026-02-01T10:01:55Z; updated_at=2026-02-01T10:00:21Z; stars=1; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-echo-ai",
+      "title": "Echo - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/echo-ai",
+      "final_url": "https://community.obsidian.md/plugins/echo-ai",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. AI-powered writing assistant with inline write, selection actions, and streaming output. Supports OpenAI and Gemini.; downloads=12; registry_updated=2026-05-26; repo=9b9387/obsidian-echo."
+    },
+    {
+      "source_id": "src-repo-echo-ai",
+      "title": "GitHub repository: 9b9387/obsidian-echo",
+      "url": "https://github.com/9b9387/obsidian-echo",
+      "final_url": "https://github.com/9b9387/obsidian-echo",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: Inline AI Writing is triggered via /echo or command palette; a minimalist input box appears at cursor; pressing Enter with empty input naturally continues writing; supports OpenAI-compatible APIs and Gemini. Repo status snapshot: pushed_at=2026-05-26T15:28:05Z; updated_at=2026-05-28T19:59:49Z; stars=1; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-obsidian-copilot",
+      "title": "Copilot - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/copilot",
+      "final_url": "https://community.obsidian.md/plugins/copilot",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Your AI Copilot: Chat with Your Second Brain, Learn Faster, Work Smarter.; downloads=1404522; registry_updated=2026-05-21; repo=logancyang/obsidian-copilot."
+    },
+    {
+      "source_id": "src-repo-obsidian-copilot",
+      "title": "GitHub repository: logancyang/obsidian-copilot",
+      "url": "https://github.com/logancyang/obsidian-copilot",
+      "final_url": "https://github.com/logancyang/obsidian-copilot",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: in-vault AI assistant with chat-based vault search, web/YouTube support, context processing, agentic capabilities, composer and quick commands; bring your own OpenAI-compatible or local model. Repo status snapshot: pushed_at=2026-05-28T23:18:12Z; updated_at=2026-05-28T19:50:26Z; stars=7097; open_issues=207; archived=False."
+    },
+    {
+      "source_id": "src-official-smart-composer",
+      "title": "Smart Composer - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/smart-composer",
+      "final_url": "https://community.obsidian.md/plugins/smart-composer",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: AI chat with note context, smart writing assistance, and one-click edits for your vault.; downloads=155582; registry_updated=2026-01-26; repo=glowingjade/obsidian-smart-composer."
+    },
+    {
+      "source_id": "src-repo-smart-composer",
+      "title": "GitHub repository: glowingjade/obsidian-smart-composer",
+      "url": "https://github.com/glowingjade/obsidian-smart-composer",
+      "final_url": "https://github.com/glowingjade/obsidian-smart-composer",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: AI chat with note context, writing assistance, one-click edits; v1.2.7 connects Claude or OpenAI account directly with no API key; warning says Claude subscription OAuth via third-party clients has ban/restriction reports and is use-at-own-risk; maintenance notice says not under active development. Repo status snapshot: pushed_at=2026-02-16T07:43:02Z; updated_at=2026-05-28T22:43:22Z; stars=2278; open_issues=108; archived=False."
+    },
+    {
+      "source_id": "src-official-text-generator",
+      "title": "Text Generator - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/obsidian-textgenerator-plugin",
+      "final_url": "https://community.obsidian.md/plugins/obsidian-textgenerator-plugin",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Generate text content using GPT-3 (OpenAI).; downloads=561597; registry_updated=2026-05-16; repo=nhaouari/obsidian-textgenerator-plugin."
+    },
+    {
+      "source_id": "src-repo-text-generator",
+      "title": "GitHub repository: nhaouari/obsidian-textgenerator-plugin",
+      "url": "https://github.com/nhaouari/obsidian-textgenerator-plugin",
+      "final_url": "https://github.com/nhaouari/obsidian-textgenerator-plugin",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: generate ideas, titles, summaries, outlines, and whole paragraphs; flexible frontmatter configuration for providers such as Google Generative AI, OpenAI, HuggingFace; repo description includes OpenAI, Anthropic, Google, and local models. Repo status snapshot: pushed_at=2026-05-16T07:42:09Z; updated_at=2026-05-26T03:06:19Z; stars=1939; open_issues=25; archived=False."
+    },
+    {
+      "source_id": "src-official-local-gpt",
+      "title": "Local GPT - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/local-gpt",
+      "final_url": "https://community.obsidian.md/plugins/local-gpt",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Local Ollama and OpenAI-like GPT's assistance for maximum privacy and offline access.; downloads=87167; registry_updated=2026-05-02; repo=pfrankov/obsidian-local-gpt."
+    },
+    {
+      "source_id": "src-repo-local-gpt",
+      "title": "GitHub repository: pfrankov/obsidian-local-gpt",
+      "url": "https://github.com/pfrankov/obsidian-local-gpt",
+      "final_url": "https://github.com/pfrankov/obsidian-local-gpt",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing: Local Ollama and OpenAI-like GPT assistance for maximum privacy and offline access. README setup emphasizes Ollama/local embedding models and OpenAI-like GPT assistance. Repo status snapshot: pushed_at=2026-05-02T18:27:16Z; updated_at=2026-05-27T04:58:03Z; stars=646; open_issues=2; archived=False."
+    },
+    {
+      "source_id": "src-official-chatgpt-md",
+      "title": "ChatGPT MD - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/chatgpt-md",
+      "final_url": "https://community.obsidian.md/plugins/chatgpt-md",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: A seamless integration of ChatGPT, OpenRouter.ai and local LLMs via Ollama into your notes.; downloads=121289; registry_updated=2026-02-11; repo=bramses/chatgpt-md."
+    },
+    {
+      "source_id": "src-repo-chatgpt-md",
+      "title": "GitHub repository: bramses/chatgpt-md",
+      "url": "https://github.com/bramses/chatgpt-md",
+      "final_url": "https://github.com/bramses/chatgpt-md",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: seamless integration of ChatGPT, OpenRouter.ai, and local LLMs via Ollama/LM Studio into Obsidian; install, add OpenAI API key and/or Ollama/local LLMs, then use ChatGPT MD: Chat command. Repo status snapshot: pushed_at=2026-02-11T19:00:37Z; updated_at=2026-05-28T17:29:56Z; stars=1408; open_issues=26; archived=False."
+    },
+    {
+      "source_id": "src-official-tars",
+      "title": "Tars - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/tars",
+      "final_url": "https://community.obsidian.md/plugins/tars",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Text generation based on tag suggestions, using Claude, OpenAI, Ollama, Kimi, Doubao, Qwen, Zhipu, DeepSeek, QianFan & more.; downloads=41224; registry_updated=2026-03-06; repo=tarslab/obsidian-tars."
+    },
+    {
+      "source_id": "src-repo-tars",
+      "title": "GitHub repository: tarslab/obsidian-tars",
+      "url": "https://github.com/tarslab/obsidian-tars",
+      "final_url": "https://github.com/tarslab/obsidian-tars",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: text generation based on tag suggestions using Claude, OpenAI, Gemini, DeepSeek, OpenRouter, Ollama and more; type #, use Obsidian native tag completion, then space to trigger; tag commands insert tags based on selected section or cursor section. Repo status snapshot: pushed_at=2026-03-06T10:13:16Z; updated_at=2026-05-21T23:06:53Z; stars=299; open_issues=10; archived=False."
+    },
+    {
+      "source_id": "src-official-ai-assistant",
+      "title": "AI Assistant - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/ai-assistant",
+      "final_url": "https://community.obsidian.md/plugins/ai-assistant",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Chat with OpenAI and Anthropic models or run prompt-based edits directly from notes.; downloads=30120; registry_updated=2025-05-29; repo=qgrail/obsidian-ai-assistant."
+    },
+    {
+      "source_id": "src-repo-ai-assistant",
+      "title": "GitHub repository: qgrail/obsidian-ai-assistant",
+      "url": "https://github.com/qgrail/obsidian-ai-assistant",
+      "final_url": "https://github.com/qgrail/obsidian-ai-assistant",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: simple plugin for interactions with OpenAI ChatGPT and Anthropic Claude; features text assistant, chat mode, prompt mode, images, audio transcription, image generation. Repo status snapshot: pushed_at=2025-05-29T11:32:51Z; updated_at=2026-05-15T21:18:16Z; stars=370; open_issues=15; archived=False."
+    },
+    {
+      "source_id": "src-official-bmo-chatbot",
+      "title": "BMO Chatbot - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/bmo-chatbot",
+      "final_url": "https://community.obsidian.md/plugins/bmo-chatbot",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Generate and brainstorm ideas while creating your notes using Large Language Models (LLMs) such as OpenAI's \"gpt-3.5-turbo\" and \"gpt-4\".; downloads=44474; registry_updated=2024-07-25; repo=longy2k/obsidian-bmo-chatbot."
+    },
+    {
+      "source_id": "src-repo-bmo-chatbot",
+      "title": "GitHub repository: longy2k/obsidian-bmo-chatbot",
+      "url": "https://github.com/longy2k/obsidian-bmo-chatbot",
+      "final_url": "https://github.com/longy2k/obsidian-bmo-chatbot",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: generate and brainstorm ideas while creating notes using LLMs from Ollama, LM Studio, Anthropic, Google Gemini, Mistral AI, OpenAI and more; chat with current note and save/load chat history. Repo status snapshot: pushed_at=2024-09-12T04:07:29Z; updated_at=2026-05-21T23:21:15Z; stars=529; open_issues=55; archived=False."
+    },
+    {
+      "source_id": "src-official-ollama",
+      "title": "Ollama - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/ollama",
+      "final_url": "https://community.obsidian.md/plugins/ollama",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Enable the usage of Ollama within your notes.; downloads=26402; registry_updated=2023-09-19; repo=hinterdupfinger/obsidian-ollama."
+    },
+    {
+      "source_id": "src-repo-ollama",
+      "title": "GitHub repository: hinterdupfinger/obsidian-ollama",
+      "url": "https://github.com/hinterdupfinger/obsidian-ollama",
+      "final_url": "https://github.com/hinterdupfinger/obsidian-ollama",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: plugin allows use of Ollama within notes; commands include summarize selection, explain selection, expand selection, rewrite selection in formal/casual/active voice/bullet points, caption selection. Repo status snapshot: pushed_at=2024-06-21T13:51:06Z; updated_at=2026-05-28T19:36:46Z; stars=1016; open_issues=25; archived=False."
+    },
+    {
+      "source_id": "src-official-local-llm-hub",
+      "title": "Local LLM Hub - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/local-llm-hub",
+      "final_url": "https://community.obsidian.md/plugins/local-llm-hub",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Chat with local LLMs (Ollama, LM Studio) with local embeddings RAG, file encryption, edit history, slash commands, and workflow automation.; downloads=4532; registry_updated=2026-05-27; repo=takeshy/obsidian-local-llm-hub."
+    },
+    {
+      "source_id": "src-repo-local-llm-hub",
+      "title": "GitHub repository: takeshy/obsidian-local-llm-hub",
+      "url": "https://github.com/takeshy/obsidian-local-llm-hub",
+      "final_url": "https://github.com/takeshy/obsidian-local-llm-hub",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing: chat with local LLMs (Ollama, LM Studio) with local embeddings RAG, file encryption, edit history, slash commands, and workflow automation. Repo status snapshot: pushed_at=None; updated_at=None; stars=None; open_issues=None; archived=False."
+    },
+    {
+      "source_id": "src-official-excavelo",
+      "title": "ExcaVelo - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/excavelo",
+      "final_url": "https://community.obsidian.md/plugins/excavelo",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Transform raw memos into structured notes (meeting minutes, 1:1s, daily) using Claude. Works with Claude Code subscription or Anthropic API key.; downloads=23; registry_updated=2026-05-23; repo=biblecode21/excavelo."
+    },
+    {
+      "source_id": "src-repo-excavelo",
+      "title": "GitHub repository: bibleCode21/excavelo",
+      "url": "https://github.com/bibleCode21/excavelo",
+      "final_url": "https://github.com/bibleCode21/excavelo",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: transform raw memos into structured notes using Claude; works with existing Claude Code login (Pro/Max) or Anthropic API key; also OpenAI-compatible endpoint; selection wins over full note body. Repo status snapshot: pushed_at=2026-05-23T09:14:34Z; updated_at=2026-05-23T09:14:36Z; stars=0; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-chatting-with-ai",
+      "title": "Chatting with AI - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/chatting-with-ai",
+      "final_url": "https://community.obsidian.md/plugins/chatting-with-ai",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Agentic AI chat assistant that reads, edits, and creates notes through natural conversation. Supports Anthropic, OpenAI, and ChatGPT account sign-in.; downloads=158; registry_updated=2026-05-13; repo=o1xhack/obsidian-chatting."
+    },
+    {
+      "source_id": "src-repo-chatting-with-ai",
+      "title": "GitHub repository: o1xhack/obsidian-chatting",
+      "url": "https://github.com/o1xhack/obsidian-chatting",
+      "final_url": "https://github.com/o1xhack/obsidian-chatting",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: agentic AI assistant in Obsidian vault; providers are Anthropic API, OpenAI API, or sign in with ChatGPT account; 14 vault-native tools; selection scope sends highlighted text to chat. Repo status snapshot: pushed_at=2026-05-18T22:54:04Z; updated_at=2026-05-25T18:33:43Z; stars=5; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-blackglass",
+      "title": "Blackglass - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/blackglass",
+      "final_url": "https://community.obsidian.md/plugins/blackglass",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Run Claude Code inside Obsidian with an interactive terminal, quick-ask modal, and a built-in MCP server for structured vault access.; downloads=189; registry_updated=2026-05-27; repo=humantorch/blackglass."
+    },
+    {
+      "source_id": "src-repo-blackglass",
+      "title": "GitHub repository: humantorch/blackglass",
+      "url": "https://github.com/humantorch/blackglass",
+      "final_url": "https://github.com/humantorch/blackglass",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: puts Claude Code inside Obsidian as actual CLI in terminal; built-in vault MCP server gives structured read/write access; quick ask modal; requires Claude Code CLI on PATH; note mentions non-interactive usage and Agent SDK credits. Repo status snapshot: pushed_at=2026-05-27T23:58:37Z; updated_at=2026-05-28T16:38:20Z; stars=2; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-claude-panel",
+      "title": "Claude Panel - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/claude-panel-ryukyuhub",
+      "final_url": "https://community.obsidian.md/plugins/claude-panel-ryukyuhub",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Right-sidebar chat panel powered by Claude Code. Runs the `claude` CLI as a subprocess with the active vault as the working directory.; downloads=186; registry_updated=2026-05-27; repo=ryukyuhub/obsidian-claude-panel-ryukyuhub."
+    },
+    {
+      "source_id": "src-repo-claude-panel",
+      "title": "GitHub repository: ryukyuhub/obsidian-claude-panel-ryukyuhub",
+      "url": "https://github.com/ryukyuhub/obsidian-claude-panel-ryukyuhub",
+      "final_url": "https://github.com/ryukyuhub/obsidian-claude-panel-ryukyuhub",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: right-sidebar chat panel powered by Claude Code; spawns claude CLI as subprocess with active vault; requires claude CLI installed and signed in with Claude Pro/Max subscription or Anthropic API key; captures editor/preview selection automatically. Repo status snapshot: pushed_at=2026-05-28T11:39:32Z; updated_at=2026-05-28T11:39:53Z; stars=0; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-claude-code-ide",
+      "title": "Claude Code IDE - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/claude-code-ide",
+      "final_url": "https://community.obsidian.md/plugins/claude-code-ide",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Connect your vault to Claude Code and share editor context with the CLI.; downloads=4629; registry_updated=2026-05-25; repo=petersolopov/obsidian-claude-ide."
+    },
+    {
+      "source_id": "src-repo-claude-code-ide",
+      "title": "GitHub repository: petersolopov/obsidian-claude-ide",
+      "url": "https://github.com/petersolopov/obsidian-claude-ide",
+      "final_url": "https://github.com/petersolopov/obsidian-claude-ide",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: minimal bridge between Obsidian and Claude Code; shares real-time editor context with CLI; Claude Code can see open files/current selection; Send to Claude command explicitly passes selected text. Repo status snapshot: pushed_at=2026-05-26T07:31:40Z; updated_at=2026-05-28T13:58:48Z; stars=75; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-claude-vault-assistant",
+      "title": "Claude Vault Assistant - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/claude-vault-assistant",
+      "final_url": "https://community.obsidian.md/plugins/claude-vault-assistant",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Define reusable prompt files and run them against your vault or active note using Claude Code CLI.; downloads=204; registry_updated=2026-05-12; repo=copperbox/obsidian-claude-vault-assistant."
+    },
+    {
+      "source_id": "src-repo-claude-vault-assistant",
+      "title": "GitHub repository: copperbox/obsidian-claude-vault-assistant",
+      "url": "https://github.com/copperbox/obsidian-claude-vault-assistant",
+      "final_url": "https://github.com/copperbox/obsidian-claude-vault-assistant",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: define reusable prompt files and run them against vault/current active note using Claude Code CLI headless; warns subprocess, allowed tools, prompt injection, CLI path, CLAUDE.md system prompt. Repo status snapshot: pushed_at=2026-05-12T23:04:40Z; updated_at=2026-05-12T23:04:44Z; stars=0; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-github-copilot-integration",
+      "title": "GitHub Copilot Integration - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/github-copilot-integration",
+      "final_url": "https://community.obsidian.md/plugins/github-copilot-integration",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: This plugin has not been manually reviewed by Obsidian staff. Integrate GitHub Copilot for AI-powered text generation and assistance.; downloads=276; registry_updated=2026-05-19; repo=go2engle/obsidian-github-copilot-integration."
+    },
+    {
+      "source_id": "src-repo-github-copilot-integration",
+      "title": "GitHub repository: go2engle/obsidian-github-copilot-integration",
+      "url": "https://github.com/go2engle/obsidian-github-copilot-integration",
+      "final_url": "https://github.com/go2engle/obsidian-github-copilot-integration",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: chat with documents, generate notes, rewrite text; inline edit command opens floating input popup for selected text and Copilot appends/replaces content; package depends on @github/copilot-sdk. Repo status snapshot: pushed_at=2026-05-19T15:13:26Z; updated_at=2026-05-21T11:27:23Z; stars=0; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-various-complements",
+      "title": "Various Complements - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/various-complements",
+      "final_url": "https://community.obsidian.md/plugins/various-complements",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Complete words similar to auto-completion in an IDE.; downloads=503867; registry_updated=2026-05-10; repo=tadashi-aikawa/obsidian-various-complements-plugin."
+    },
+    {
+      "source_id": "src-repo-various-complements",
+      "title": "GitHub repository: tadashi-aikawa/obsidian-various-complements-plugin",
+      "url": "https://github.com/tadashi-aikawa/obsidian-various-complements-plugin",
+      "final_url": "https://github.com/tadashi-aikawa/obsidian-various-complements-plugin",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README/official listing: completes words like IDE auto-completion. It is not an AI/GPT plugin. Repo status snapshot: pushed_at=2026-05-10T05:44:37Z; updated_at=2026-05-24T19:23:16Z; stars=898; open_issues=60; archived=False."
+    },
+    {
+      "source_id": "src-official-text-autocomplete",
+      "title": "Text Autocomplete - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/text-autocomplete",
+      "final_url": "https://community.obsidian.md/plugins/text-autocomplete",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Autocomplete text to type more efficiently.; downloads=1499; registry_updated=2026-03-14; repo=c-degni/text-autocomplete."
+    },
+    {
+      "source_id": "src-repo-text-autocomplete",
+      "title": "GitHub repository: c-degni/text-autocomplete",
+      "url": "https://github.com/c-degni/text-autocomplete",
+      "final_url": "https://github.com/c-degni/text-autocomplete",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: utilize text autocomplete; selecting a highlighted suggestion with enter/tab; official listing says autocomplete text to type more efficiently. Repo status snapshot: pushed_at=2026-03-14T23:45:12Z; updated_at=2026-05-17T12:24:02Z; stars=6; open_issues=0; archived=False."
+    },
+    {
+      "source_id": "src-official-completr",
+      "title": "Completr - Obsidian Plugin",
+      "url": "https://community.obsidian.md/plugins/obsidian-completr",
+      "final_url": "https://community.obsidian.md/plugins/obsidian-completr",
+      "publisher": "Obsidian Community Plugins",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Official listing/registry: Advanced auto-completion for LaTeX, frontmatter, and standard writing.; downloads=82038; registry_updated=2023-05-30; repo=tth05/obsidian-completr."
+    },
+    {
+      "source_id": "src-repo-completr",
+      "title": "GitHub repository: tth05/obsidian-completr",
+      "url": "https://github.com/tth05/obsidian-completr",
+      "final_url": "https://github.com/tth05/obsidian-completr",
+      "publisher": "GitHub / project maintainers",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "README: advanced auto-completion for Obsidian; LaTeX/frontmatter/standard writing; legacy editor not supported; not an AI/GPT provider. Repo status snapshot: pushed_at=2024-06-03T01:11:13Z; updated_at=2026-05-13T08:27:52Z; stars=388; open_issues=42; archived=False."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim-true-inline-tab-exists",
+      "text": "True Copilot-like live inline/tab autocomplete exists in Obsidian community plugins, but it is mostly implemented by small or aging third-party plugins rather than a single official/standard Obsidian AI autocomplete surface.",
+      "claim_type": "ux_mode",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-official-ai-autocomplete",
+        "src-repo-ai-autocomplete",
+        "src-repo-inscribe",
+        "src-repo-copilot-auto-completion",
+        "src-repo-companion",
+        "src-repo-markpilot",
+        "src-repo-rosypilot"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Each cited README/source inspection evidences ghost/transparent inline suggestions and Tab acceptance or configurable accept key."
+    },
+    {
+      "claim_id": "claim-best-practical-inline-options",
+      "text": "For a GPT/OpenAI-compatible/local-model Copilot replacement in Obsidian, the best ready-made candidates are AI Autocomplete for low-friction OpenAI-compatible/Groq setup, Inscribe for a current local/API option, and Copilot Auto Completion/Companion/Markpilot if older mature plugins are acceptable.",
+      "claim_type": "recommendation",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-repo-ai-autocomplete",
+        "src-repo-inscribe",
+        "src-repo-copilot-auto-completion",
+        "src-repo-companion",
+        "src-repo-markpilot",
+        "src-obsidian-community-plugin-stats"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Recommendation balances mode fit, maintenance, provider coverage, adoption, and setup complexity; not independently runtime-tested inside Obsidian."
+    },
+    {
+      "claim_id": "claim-github-copilot-not-replacement",
+      "text": "GitHub Copilot for Obsidian is a strong true-inline baseline but is not a replacement for GitHub Copilot because it depends on the GitHub Copilot service/subscription.",
+      "claim_type": "recommendation",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-official-github-copilot",
+        "src-repo-github-copilot"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Useful to understand achievable UX, poor fit for replacing Copilot with GPT/Claude subscriptions."
+    },
+    {
+      "claim_id": "claim-subscription-reuse-not-inline",
+      "text": "Options that claim direct ChatGPT/Claude/Claude Code subscription/account access in Obsidian are chat, agent, transform, or context-bridge tools, not true live inline/tab autocomplete; Smart Composer also warns that Claude subscription OAuth via third-party clients has account restriction risk.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-repo-smart-composer",
+        "src-repo-excavelo",
+        "src-repo-chatting-with-ai",
+        "src-repo-blackglass",
+        "src-repo-claude-panel",
+        "src-repo-claude-code-ide",
+        "src-repo-claude-vault-assistant"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This does not decide provider terms globally; it records what these plugin sources claim and the lack of inline autocomplete evidence."
+    },
+    {
+      "claim_id": "claim-ob-plugin-api-enables-custom-ghost-text",
+      "text": "Obsidian plugin APIs make custom inline/ghost text technically feasible through CodeMirror 6 editor extensions and decorations, but there is no simple official AI-autocomplete API that removes the need to handle UI, keybindings, latency, cancellation, and provider integration.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-obsidian-editor-extensions-docs",
+        "src-obsidian-register-editor-extension-api",
+        "src-obsidian-decorations-docs",
+        "src-repo-ai-autocomplete",
+        "src-repo-copilot-auto-completion"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Official docs prove editor extension/decorations capabilities; complexity inference comes from plugin implementations and keymap/source checks."
+    },
+    {
+      "claim_id": "claim-non-ai-completion-popup-not-llm",
+      "text": "Mature non-AI Obsidian completion plugins such as Various Complements, Completr, and Text Autocomplete are useful closest equivalents but are completion-popup/deterministic tools, not GPT/Claude/local LLM autocomplete.",
+      "claim_type": "ux_mode",
+      "evidence_type": "official_marketplace_listing",
+      "source_ids": [
+        "src-official-various-complements",
+        "src-official-completr",
+        "src-official-text-autocomplete",
+        "src-repo-various-complements",
+        "src-repo-completr",
+        "src-repo-text-autocomplete"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "They may satisfy typing-speed goals but not semantic AI autocomplete."
+    },
+    {
+      "claim_id": "claim-privacy-cost-provider-dependent",
+      "text": "Privacy and cost for Obsidian AI autocomplete are provider-dependent: remote API modes send cursor/selection/note context and bill per provider usage; local Ollama/LM Studio modes improve privacy but require local setup and may trade off latency/quality.",
+      "claim_type": "privacy_or_policy_risk",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-repo-inscribe",
+        "src-repo-copilot-auto-completion",
+        "src-repo-local-gpt",
+        "src-repo-ollama",
+        "src-repo-chatgpt-md",
+        "src-repo-bmo-chatbot"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Several plugin docs directly distinguish local Ollama from remote API providers."
+    }
+  ],
+  "options": [
+    {
+      "option_id": "ai-autocomplete",
+      "plugin_id": "ai-autocomplete",
+      "repo": "leoyishou/obsidian-ai-autocomplete",
+      "name": "AI Autocomplete",
+      "rank": 1,
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "readme_quote": "README: AI inline writing completion for Obsidian, powered by OpenAI-compatible APIs; ghost text suggestions appear inline and Tab accepts, Esc dismisses; defaults route through OpenRouter to Groq for fast inference.",
+      "evidence": [
+        "Official listing says inline AI writing completion with ghost text, powered by Groq, Tab to accept.",
+        "README says it uses OpenAI-compatible APIs, default OpenRouter/Groq, 800ms trigger delay, and Tab/Esc controls.",
+        "Source code check found a CodeMirror keymap binding Tab to insert the inline suggestion and Escape to clear it."
+      ],
+      "strengths": [
+        "Closest ready-made GPT/OpenAI-compatible Copilot-like UX found: live ghost text plus Tab accept.",
+        "Simple setup for OpenRouter/Groq or any OpenAI-compatible chat-completions endpoint.",
+        "Works on desktop and mobile per manifest/listing."
+      ],
+      "limitations": [
+        "Very new and low adoption; official stats show only low hundreds of downloads.",
+        "Default model/provider is OpenRouter/Groq, not Claude or a ChatGPT/Claude UI subscription.",
+        "Quality depends on chat-completion prompting rather than a specialized code/text FIM model unless user supplies one."
+      ],
+      "setup_complexity": "low_to_medium",
+      "privacy_posture": "Remote API by default; vault context around the cursor is sent to the configured OpenAI-compatible endpoint. Privacy improves only with a local compatible endpoint.",
+      "cost_model": "Bring an OpenRouter/Groq/OpenAI-compatible API key; usage is API-billed or provider-metered, not covered by ChatGPT/Claude UI subscriptions.",
+      "ux_gaps": [
+        "No evidence of VS Code-grade multiline/FIM tuning, telemetry, model selection, or mature conflict handling.",
+        "Small project maturity increases breakage risk."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI-compatible chat completions",
+          "OpenRouter",
+          "Groq"
+        ],
+        "risk_level": "low",
+        "access_notes": "Uses API-key style OpenAI-compatible endpoints; no consumer subscription reuse evidenced."
+      },
+      "source_ids": [
+        "src-official-ai-autocomplete",
+        "src-repo-ai-autocomplete"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "125 official downloads; Obsidian registry updated 2026-04-30; GitHub pushed 2026-04-30; 2 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "ai-autocomplete",
+        "name": "AI Autocomplete",
+        "author": "leoyishou",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Inline AI writing completion with ghost text. Powered by Groq. Tab to accept.",
+        "repo": "leoyishou/obsidian-ai-autocomplete",
+        "downloads": 125,
+        "registry_updated": "2026-04-30"
+      },
+      "github_status": {
+        "pushed_at": "2026-04-30T17:45:56Z",
+        "updated_at": "2026-04-30T17:45:53Z",
+        "stars": 2,
+        "forks": 1,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-true-inline-tab-exists",
+        "claim-best-practical-inline-options"
+      ]
+    },
+    {
+      "option_id": "inscribe",
+      "plugin_id": "inscribe",
+      "repo": "ahmetildirim/obsidian-inscribe",
+      "name": "Inscribe",
+      "rank": 2,
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "readme_quote": "README: AI-powered inline autocompletion for Obsidian; generates autocompletions as you type and accept/reject with TAB; supports Ollama, OpenAI, OpenAI compatible providers; recommends Ollama due high API-call frequency.",
+      "evidence": [
+        "Official listing says inline autocompletion powered by AI.",
+        "README explicitly says generated autocompletions appear as you type and can be accepted or rejected with TAB.",
+        "Source code registers an inlineSuggestions editor extension with configurable acceptance hotkey and trigger hotkey."
+      ],
+      "strengths": [
+        "True inline/tab UX with provider choice including local Ollama, OpenAI, and OpenAI-compatible endpoints.",
+        "Actively maintained in 2026 with more adoption than the smallest new plugins.",
+        "Local model path can reduce privacy and cost concerns for frequent completions."
+      ],
+      "limitations": [
+        "Desktop-only per manifest; mobile users need another option.",
+        "README warns high frequency of API calls, so remote providers can become costly/noisy.",
+        "Claude is not listed as a direct provider unless exposed through OpenAI-compatible proxy."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Best with Ollama/local; remote providers receive cursor context and generated prompts.",
+      "cost_model": "Local Ollama can be free except hardware/electricity; OpenAI/OpenAI-compatible APIs are usage-billed separately.",
+      "ux_gaps": [
+        "No evidence of consumer ChatGPT/Claude subscription reuse.",
+        "Latency/quality depends heavily on chosen model; local models may need tuning and hardware."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "Ollama",
+          "OpenAI",
+          "OpenAI-compatible APIs"
+        ],
+        "risk_level": "low",
+        "access_notes": "Recommended path is local Ollama or official/API-compatible key."
+      },
+      "source_ids": [
+        "src-official-inscribe",
+        "src-repo-inscribe"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "1992 official downloads; Obsidian registry updated 2026-04-11; GitHub pushed 2026-04-11; 21 stars; 2 open issues",
+      "official_listing": {
+        "plugin_id": "inscribe",
+        "name": "Inscribe",
+        "author": "ahmetildirim",
+        "description": "Inline autocompletion powered by AI.",
+        "repo": "ahmetildirim/obsidian-inscribe",
+        "downloads": 1992,
+        "registry_updated": "2026-04-11"
+      },
+      "github_status": {
+        "pushed_at": "2026-04-11T19:57:30Z",
+        "updated_at": "2026-04-20T06:06:31Z",
+        "stars": 21,
+        "forks": 3,
+        "open_issues": 2,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-true-inline-tab-exists",
+        "claim-best-practical-inline-options",
+        "claim-privacy-cost-provider-dependent"
+      ]
+    },
+    {
+      "option_id": "copilot-auto-completion",
+      "plugin_id": "copilot-auto-completion",
+      "repo": "j0rd1smit/obsidian-copilot-auto-completion",
+      "name": "Copilot auto completion",
+      "rank": 3,
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "readme_quote": "README: adds Copilot-like auto-completion; shows suggested completion in transparent text next to cursor; press Tab to insert entire suggestion or right arrow to insert part; supports OpenAI, Azure OpenAI, Ollama, and configurable OpenAI API-compatible endpoint.",
+      "evidence": [
+        "Official listing says highly configurable copilot-like auto-completion using ChatGPT API.",
+        "README and source code show transparent overlay, Tab accept, ArrowRight partial accept, Escape cancel.",
+        "README describes fill-in-the-middle style using characters before and after cursor, caching, ignore patterns, and provider configurability."
+      ],
+      "strengths": [
+        "Mature and purpose-built for Copilot-like Obsidian autocomplete.",
+        "Has FIM-oriented prompting, cache/trigger controls, partial accept, ignore-file patterns, and OpenAI-compatible/Ollama support.",
+        "Higher adoption than newer inline alternatives."
+      ],
+      "limitations": [
+        "Repository last pushed in 2024; official stats last update from 2024, so maintenance is weaker than active 2026 projects.",
+        "Desktop-only.",
+        "Uses API/local providers, not existing ChatGPT or Claude web subscriptions."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Depends on provider; supports local Ollama and ignore patterns to avoid sensitive files, but remote API mode sends prefix/suffix context.",
+      "cost_model": "OpenAI/Azure/OpenAI-compatible API billing or local Ollama; no UI subscription reuse evidenced.",
+      "ux_gaps": [
+        "Potential maintenance drift with Obsidian editor changes.",
+        "Prompt-based FIM may not match VS Code Copilot latency/quality."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI",
+          "Azure OpenAI",
+          "Ollama",
+          "OpenAI-compatible APIs"
+        ],
+        "risk_level": "low",
+        "access_notes": "Official/API-compatible providers only."
+      },
+      "source_ids": [
+        "src-official-copilot-auto-completion",
+        "src-repo-copilot-auto-completion"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "11729 official downloads; Obsidian registry updated 2024-03-10; GitHub pushed 2024-09-25; 214 stars; 16 open issues",
+      "official_listing": {
+        "plugin_id": "copilot-auto-completion",
+        "name": "Copilot auto completion",
+        "author": "j0rd1smit",
+        "description": "A highly configurable copilot-like auto-completion using the ChatGPT API.",
+        "repo": "j0rd1smit/obsidian-copilot-auto-completion",
+        "downloads": 11729,
+        "registry_updated": "2024-03-10"
+      },
+      "github_status": {
+        "pushed_at": "2024-09-25T10:55:26Z",
+        "updated_at": "2026-05-11T07:23:27Z",
+        "stars": 214,
+        "forks": 23,
+        "open_issues": 16,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-true-inline-tab-exists",
+        "claim-best-practical-inline-options",
+        "claim-privacy-cost-provider-dependent"
+      ]
+    },
+    {
+      "option_id": "companion",
+      "plugin_id": "companion",
+      "repo": "rizerphe/obsidian-companion",
+      "name": "Companion",
+      "rank": 4,
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: AI-powered autocomplete; ghost text can be accepted or ignored, similar to GitHub Copilot; setup steps require OpenAI API key; command toggles completion; Tab accepts next word; mobile toolbar command can accept completion; manifest says ChatGPT and Ollama.",
+      "evidence": [
+        "Official listing says autocomplete with AI through a copilot-like interface.",
+        "README says suggestions use ghost text, similar to GitHub Copilot, and Tab accepts the next word.",
+        "Manifest description mentions ChatGPT and Ollama; README also documents Groq."
+      ],
+      "strengths": [
+        "True ghost-text UX and mobile support, with relatively high adoption.",
+        "Supports multiple backends including OpenAI/ChatGPT-style API, Ollama/local, and Groq.",
+        "Partial/word accept can feel less intrusive for prose."
+      ],
+      "limitations": [
+        "Repository last pushed in 2024; maintenance risk.",
+        "README evidence says Tab accepts next word, not necessarily entire suggestion by default.",
+        "Still API/local provider based; no Claude provider evidenced except via compatible proxy."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Provider-dependent; remote API modes send note context; local Ollama can keep completions local.",
+      "cost_model": "OpenAI/Groq/API or local Ollama. Existing ChatGPT/Claude UI subscription is not evidenced.",
+      "ux_gaps": [
+        "May be less full-suggestion-oriented than VS Code Copilot.",
+        "Potential plugin/keybinding conflicts or stale dependencies."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI API",
+          "Groq",
+          "Ollama"
+        ],
+        "risk_level": "low",
+        "access_notes": "API key or local backend; not consumer subscription reuse."
+      },
+      "source_ids": [
+        "src-official-companion",
+        "src-repo-companion"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "33428 official downloads; Obsidian registry updated 2024-05-28; GitHub pushed 2024-05-28; 354 stars; 25 open issues",
+      "official_listing": {
+        "plugin_id": "companion",
+        "name": "Companion",
+        "author": "rizerphe",
+        "description": "Autocomplete with AI, including ChatGPT, through a copilot-like interface.",
+        "repo": "rizerphe/obsidian-companion",
+        "downloads": 33428,
+        "registry_updated": "2024-05-28"
+      },
+      "github_status": {
+        "pushed_at": "2024-05-28T18:15:23Z",
+        "updated_at": "2026-05-21T23:32:45Z",
+        "stars": 354,
+        "forks": 42,
+        "open_issues": 25,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-true-inline-tab-exists",
+        "claim-best-practical-inline-options"
+      ]
+    },
+    {
+      "option_id": "markpilot",
+      "plugin_id": "markpilot",
+      "repo": "taichimaeda/markpilot",
+      "name": "Markpilot",
+      "rank": 5,
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: AI-powered inline completions and chat view for Obsidian; similar experience to GitHub Copilot; supports OpenAI API, OpenRouter API, and local Ollama; FAQ discusses accepting completions by hitting Tab and conflicts with other extensions.",
+      "evidence": [
+        "Official listing says inline completions and chat view powered by OpenAI.",
+        "README documents inline completions plus chat view; supports OpenAI, OpenRouter, and Ollama.",
+        "Source code has configurable accept key and completion keymap; README FAQ confirms Tab accept."
+      ],
+      "strengths": [
+        "Combines inline autocomplete and chat in one plugin.",
+        "Supports remote API and local Ollama; has usage-limit/cost graph and filtering by filename/tags.",
+        "Good UX concept for users who want both completion and sidebar chat."
+      ],
+      "limitations": [
+        "Repository last pushed in 2024 and lower adoption than Companion/Copilot Auto Completion.",
+        "Desktop-only.",
+        "No direct Claude or subscription reuse evidenced."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Remote API by default if OpenAI/OpenRouter; Ollama local possible; filename/tag filtering can limit exposure.",
+      "cost_model": "API usage for OpenAI/OpenRouter or local Ollama; separate from UI subscriptions.",
+      "ux_gaps": [
+        "Keybinding conflicts with other Obsidian extensions are explicitly noted.",
+        "Less active maintenance raises risk."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI API",
+          "OpenRouter",
+          "Ollama"
+        ],
+        "risk_level": "low",
+        "access_notes": "Provider settings are API/local."
+      },
+      "source_ids": [
+        "src-official-markpilot",
+        "src-repo-markpilot"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "1384 official downloads; Obsidian registry updated 2024-06-29; GitHub pushed 2024-06-29; 20 stars; 4 open issues",
+      "official_listing": {
+        "plugin_id": "markpilot",
+        "name": "Markpilot",
+        "author": "taichimaeda",
+        "description": "Inline completions and chat view powered by OpenAI.",
+        "repo": "taichimaeda/markpilot",
+        "downloads": 1384,
+        "registry_updated": "2024-06-29"
+      },
+      "github_status": {
+        "pushed_at": "2024-06-29T15:40:34Z",
+        "updated_at": "2026-02-24T06:15:10Z",
+        "stars": 20,
+        "forks": 3,
+        "open_issues": 4,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-true-inline-tab-exists",
+        "claim-best-practical-inline-options"
+      ]
+    },
+    {
+      "option_id": "rosypilot",
+      "plugin_id": "rosypilot",
+      "repo": "zh-xx/rosypilot",
+      "name": "RosyPilot",
+      "rank": 6,
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: AI-powered inline completions and legal workflow commands; inline completions are ghost text tailored to Markdown context and Tab accepts; setup examples use DeepSeek API and model deepseek-v4-flash.",
+      "evidence": [
+        "Official listing says AI-powered inline completions for legal writing.",
+        "README explicitly says ghost text appears after a short pause and Tab accepts, Esc dismisses.",
+        "Source code shows configurable accept key in CodeMirror keymap."
+      ],
+      "strengths": [
+        "True inline/tab UX and active 2026 repository.",
+        "May be strong for Chinese/legal-writing workflows and legal references.",
+        "Low setup friction if DeepSeek API is acceptable."
+      ],
+      "limitations": [
+        "Domain-specific legal-writing orientation; not a general GPT/Claude autocomplete recommendation.",
+        "Very low adoption and new project.",
+        "Default/source docs focus on DeepSeek rather than GPT/Claude subscriptions."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Remote API mode sends Markdown legal-writing context to provider; no local privacy path evidenced in README snippet.",
+      "cost_model": "DeepSeek/API-key billing; no UI subscription reuse evidenced.",
+      "ux_gaps": [
+        "Specialized commands and prompts may be irrelevant outside legal writing.",
+        "Small ecosystem maturity."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "DeepSeek API",
+          "OpenAI-compatible-style provider path likely via OpenAI dependency"
+        ],
+        "risk_level": "low",
+        "access_notes": "API-key path; not a GPT/Claude subscription path."
+      },
+      "source_ids": [
+        "src-official-rosypilot",
+        "src-repo-rosypilot"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "125 official downloads; Obsidian registry updated 2026-05-21; GitHub pushed 2026-05-21; 5 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "rosypilot",
+        "name": "RosyPilot",
+        "author": "zh-xx",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. AI-powered inline completions for legal writing.",
+        "repo": "zh-xx/rosypilot",
+        "downloads": 125,
+        "registry_updated": "2026-05-21"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-21T09:33:41Z",
+        "updated_at": "2026-05-22T04:26:24Z",
+        "stars": 5,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-true-inline-tab-exists"
+      ]
+    },
+    {
+      "option_id": "github-copilot",
+      "plugin_id": "github-copilot",
+      "repo": "pierrad/obsidian-github-copilot",
+      "name": "GitHub Copilot for Obsidian",
+      "rank": 7,
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: get inline suggestion as you type using GitHub Copilot service; after a pause Copilot suggests completions; press Tab to accept or Esc to dismiss; includes GitHub Copilot Chat service in the sidebar.",
+      "evidence": [
+        "Official listing says implement suggestions from GitHub Copilot directly in your editor.",
+        "README documents true inline suggestions with Tab accept and Copilot Chat.",
+        "Manifest is desktop-only and says it implements GitHub Copilot services."
+      ],
+      "strengths": [
+        "Most direct VS Code Copilot-like behavior in Obsidian, including GitHub Copilot service and chat.",
+        "Actively updated in 2026 with large adoption.",
+        "Useful as a baseline for what true inline/tab can feel like in Obsidian."
+      ],
+      "limitations": [
+        "Not a replacement for GitHub Copilot; it depends on the GitHub Copilot service/subscription being available.",
+        "Out of scope for using GPT/Claude subscriptions as a replacement.",
+        "Desktop-only."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Uses GitHub Copilot service; note context may be sent to GitHub/Microsoft service according to that product path, not local.",
+      "cost_model": "Requires GitHub Copilot access/subscription, not ChatGPT/Claude subscription.",
+      "ux_gaps": [
+        "README notes Tab completion can be buggy in some cases due plugin keybinding priority."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "GitHub Copilot"
+        ],
+        "api_names": [
+          "GitHub Copilot service"
+        ],
+        "risk_level": "low",
+        "access_notes": "Relevant as exact Copilot integration, not as a Copilot alternative."
+      },
+      "source_ids": [
+        "src-official-github-copilot",
+        "src-repo-github-copilot"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "40240 official downloads; Obsidian registry updated 2026-05-03; GitHub pushed 2026-05-28",
+      "official_listing": {
+        "plugin_id": "github-copilot",
+        "name": "GitHub Copilot",
+        "author": "pierrad",
+        "description": "Implement suggestions from Github Copilot directly in your editor.",
+        "repo": "pierrad/obsidian-github-copilot",
+        "downloads": 40240,
+        "registry_updated": "2026-05-03"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-28T23:18:12Z",
+        "updated_at": "2026-05-28T19:50:26Z",
+        "stars": null,
+        "forks": null,
+        "open_issues": null,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-true-inline-tab-exists",
+        "claim-github-copilot-not-replacement"
+      ]
+    },
+    {
+      "option_id": "thought-completion",
+      "plugin_id": "thought-completion",
+      "repo": "talhabw/obsidian-thought-completion",
+      "name": "Thought Completion",
+      "rank": 8,
+      "autocomplete_mode": "inline_not_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "medium",
+      "readme_quote": "README: faded ghost text nudges at cursor help decide what to write/think; requires OpenAI-compatible API; compatible providers include OpenAI, OpenRouter, Ollama/LM Studio. Source check found Escape dismiss keymap but no insertion/Tab accept path.",
+      "evidence": [
+        "Official listing compares it to IDE tab completion for thoughts.",
+        "README says suggestions appear as faded ghost text but are thinking prompts, not writing content.",
+        "Source inspection found keymap for Escape dismissal but no code path inserting suggestion text."
+      ],
+      "strengths": [
+        "Interesting low-friction inline nudge UI for thinking prompts.",
+        "Supports OpenAI-compatible endpoints, including local/Ollama/LM Studio."
+      ],
+      "limitations": [
+        "Not true autocomplete: ghost text is a prompt/nudge and no Tab acceptance was evidenced.",
+        "Very new and low adoption.",
+        "Does not write the content for you by design."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Remote/local provider dependent; cursor context sent to configured endpoint.",
+      "cost_model": "OpenAI/OpenRouter/API or local endpoint; separate from UI subscription.",
+      "ux_gaps": [
+        "Not Copilot-like insertion; at best adjacent to inline suggestions."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI-compatible APIs",
+          "OpenRouter",
+          "Ollama",
+          "LM Studio"
+        ],
+        "risk_level": "low",
+        "access_notes": "No subscription UI path evidenced."
+      },
+      "source_ids": [
+        "src-official-thought-completion",
+        "src-repo-thought-completion"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "105 official downloads; Obsidian registry updated 2026-02-01; GitHub pushed 2026-02-01; 1 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "thought-completion",
+        "name": "Thought Completion",
+        "author": "talhabw",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. A thinking companion that suggests what to think or write about next. Like IDE tab completion, but for thoughts.",
+        "repo": "talhabw/obsidian-thought-completion",
+        "downloads": 105,
+        "registry_updated": "2026-02-01"
+      },
+      "github_status": {
+        "pushed_at": "2026-02-01T10:01:55Z",
+        "updated_at": "2026-02-01T10:00:21Z",
+        "stars": 1,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": []
+    },
+    {
+      "option_id": "echo-ai",
+      "plugin_id": "echo-ai",
+      "repo": "9b9387/obsidian-echo",
+      "name": "Echo",
+      "rank": 9,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: Inline AI Writing is triggered via /echo or command palette; a minimalist input box appears at cursor; pressing Enter with empty input naturally continues writing; supports OpenAI-compatible APIs and Gemini.",
+      "evidence": [
+        "Official listing says inline write, selection actions, and streaming output, not live autocomplete.",
+        "README says /echo or command palette triggers a cursor-position input; empty Enter continues writing."
+      ],
+      "strengths": [
+        "Good flow-preserving command/continuation UX with streaming.",
+        "Supports OpenAI-compatible APIs and Gemini.",
+        "New and actively updated."
+      ],
+      "limitations": [
+        "Not live ghost-text autocomplete and not Tab accept.",
+        "Very low adoption at current check.",
+        "No Claude or subscription reuse evidenced."
+      ],
+      "setup_complexity": "low_to_medium",
+      "privacy_posture": "Remote API/OpenAI-compatible provider by default; sends selected/current context.",
+      "cost_model": "API-key/provider billing; no ChatGPT/Claude UI subscription reuse evidenced.",
+      "ux_gaps": [
+        "Requires slash/command invocation; less automatic than Copilot."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI-compatible APIs",
+          "Google Gemini"
+        ],
+        "risk_level": "low",
+        "access_notes": "Command-based API option."
+      },
+      "source_ids": [
+        "src-official-echo-ai",
+        "src-repo-echo-ai"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "12 official downloads; Obsidian registry updated 2026-05-26; GitHub pushed 2026-05-26; 1 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "echo-ai",
+        "name": "Echo",
+        "author": "9b9387",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. AI-powered writing assistant with inline write, selection actions, and streaming output. Supports OpenAI and Gemini.",
+        "repo": "9b9387/obsidian-echo",
+        "downloads": 12,
+        "registry_updated": "2026-05-26"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-26T15:28:05Z",
+        "updated_at": "2026-05-28T19:59:49Z",
+        "stars": 1,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": []
+    },
+    {
+      "option_id": "obsidian-copilot",
+      "plugin_id": "copilot",
+      "repo": "logancyang/obsidian-copilot",
+      "name": "Obsidian Copilot",
+      "rank": 10,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: in-vault AI assistant with chat-based vault search, web/YouTube support, context processing, agentic capabilities, composer and quick commands; bring your own OpenAI-compatible or local model.",
+      "evidence": [
+        "Official listing says chat with your second brain, learn faster, work smarter.",
+        "README focuses on chat, vault QA, composer/quick commands, relevant notes, and model/provider portability.",
+        "No README evidence found for live inline/tab autocomplete."
+      ],
+      "strengths": [
+        "Most mature general-purpose AI assistant in Obsidian by downloads and repository activity.",
+        "Strong vault context/search and broad OpenAI-compatible/local provider posture.",
+        "Good for chat, commands, and writing workflows."
+      ],
+      "limitations": [
+        "Not a live inline/tab autocomplete plugin.",
+        "API/local model setup still required for model calls.",
+        "Large feature surface can be more complex than a small autocomplete plugin."
+      ],
+      "setup_complexity": "medium_to_high",
+      "privacy_posture": "Local search/storage and self-hosted model options exist; remote model use sends selected/vault context to providers.",
+      "cost_model": "BYO model/API/local; plugin docs do not evidence using ChatGPT/Claude UI subscription for autocomplete.",
+      "ux_gaps": [
+        "Sidebar/chat/quick command workflow, not continuous ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI-compatible APIs",
+          "local models"
+        ],
+        "risk_level": "low",
+        "access_notes": "BYO model/API/local; not a UI subscription bridge."
+      },
+      "source_ids": [
+        "src-official-obsidian-copilot",
+        "src-repo-obsidian-copilot"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "1404522 official downloads; Obsidian registry updated 2026-05-21; GitHub pushed 2026-05-28; 7097 stars; 207 open issues",
+      "official_listing": {
+        "plugin_id": "copilot",
+        "name": "Copilot",
+        "author": "Logan Yang",
+        "description": "Your AI Copilot: Chat with Your Second Brain, Learn Faster, Work Smarter.",
+        "repo": "logancyang/obsidian-copilot",
+        "downloads": 1404522,
+        "registry_updated": "2026-05-21"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-28T23:18:12Z",
+        "updated_at": "2026-05-28T19:50:26Z",
+        "stars": 7097,
+        "forks": 660,
+        "open_issues": 207,
+        "archived": false
+      },
+      "claim_ids": []
+    },
+    {
+      "option_id": "smart-composer",
+      "plugin_id": "smart-composer",
+      "repo": "glowingjade/obsidian-smart-composer",
+      "name": "Smart Composer",
+      "rank": 11,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: AI chat with note context, writing assistance, one-click edits; v1.2.7 connects Claude or OpenAI account directly with no API key; warning says Claude subscription OAuth via third-party clients has ban/restriction reports and is use-at-own-risk; maintenance notice says not under active development.",
+      "evidence": [
+        "Official listing says AI chat with note context, smart writing assistance, one-click edits.",
+        "README explicitly supports direct Claude/OpenAI account connection without API key but warns about third-party subscription OAuth risk, especially Claude.",
+        "README maintenance notice says currently maintained by a single developer and not under active development."
+      ],
+      "strengths": [
+        "One of the few Obsidian options that claims direct Claude/OpenAI account connection without an API key.",
+        "Good contextual chat and one-click edit UX, Cursor/ChatGPT Canvas-inspired.",
+        "Supports many API providers and local models too."
+      ],
+      "limitations": [
+        "Not live autocomplete; interaction is chat/contextual edit.",
+        "Subscription connection is explicitly risky/unofficial for Claude and not official API access.",
+        "Maintenance notice reduces confidence for long-term use."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Direct account/API/local modes vary; OAuth/subscription bridge may expose account/session risk; API/local mode is more standard.",
+      "cost_model": "Can use API keys/local; README claims account connection for Claude/OpenAI/Gemini but warns about enforcement risk, so should not be treated as safe supported subscription reuse.",
+      "ux_gaps": [
+        "No ghost text or Tab accept evidence."
+      ],
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "reported",
+        "subscription_names": [
+          "Claude subscription",
+          "OpenAI/ChatGPT account",
+          "Gemini account"
+        ],
+        "api_names": [
+          "Anthropic API",
+          "OpenAI API",
+          "OpenAI-compatible APIs",
+          "Ollama",
+          "LM Studio"
+        ],
+        "risk_level": "high",
+        "access_notes": "Subscription connect is not the same as official API access; README warns Claude restrictions/bans have been reported."
+      },
+      "source_ids": [
+        "src-official-smart-composer",
+        "src-repo-smart-composer"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "155582 official downloads; Obsidian registry updated 2026-01-26; GitHub pushed 2026-02-16; 2278 stars; 108 open issues",
+      "official_listing": {
+        "plugin_id": "smart-composer",
+        "name": "Smart Composer",
+        "author": "glowingjade",
+        "description": "AI chat with note context, smart writing assistance, and one-click edits for your vault.",
+        "repo": "glowingjade/obsidian-smart-composer",
+        "downloads": 155582,
+        "registry_updated": "2026-01-26"
+      },
+      "github_status": {
+        "pushed_at": "2026-02-16T07:43:02Z",
+        "updated_at": "2026-05-28T22:43:22Z",
+        "stars": 2278,
+        "forks": 184,
+        "open_issues": 108,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-subscription-reuse-not-inline"
+      ]
+    },
+    {
+      "option_id": "text-generator",
+      "plugin_id": "obsidian-textgenerator-plugin",
+      "repo": "nhaouari/obsidian-textgenerator-plugin",
+      "name": "Text Generator",
+      "rank": 12,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: generate ideas, titles, summaries, outlines, and whole paragraphs; flexible frontmatter configuration for providers such as Google Generative AI, OpenAI, HuggingFace; repo description includes OpenAI, Anthropic, Google, and local models.",
+      "evidence": [
+        "Official listing says generate text content using GPT-3/OpenAI; repo now describes various AI providers including Anthropic, Google, and local models.",
+        "README describes generation workflows, not live inline/tab autocomplete."
+      ],
+      "strengths": [
+        "Very mature/high-adoption AI text generation plugin.",
+        "Broad provider ecosystem including OpenAI/Anthropic/local via current package dependencies/repo description.",
+        "Useful for command-based drafting and templates."
+      ],
+      "limitations": [
+        "Not live autocomplete.",
+        "Large/complex plugin; setup varies by provider.",
+        "API keys or local model setup required."
+      ],
+      "setup_complexity": "medium_to_high",
+      "privacy_posture": "Provider-dependent; remote APIs receive note/selection context; local provider paths can improve privacy.",
+      "cost_model": "API/local model; separate from consumer UI subscription.",
+      "ux_gaps": [
+        "Command/template generation, not ghost text or Tab accept."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI",
+          "Anthropic",
+          "Google Gemini",
+          "HuggingFace",
+          "local models"
+        ],
+        "risk_level": "low",
+        "access_notes": "Provider/API plugin; no UI subscription bridge evidenced."
+      },
+      "source_ids": [
+        "src-official-text-generator",
+        "src-repo-text-generator"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "561597 official downloads; Obsidian registry updated 2026-05-16; GitHub pushed 2026-05-16; 1939 stars; 25 open issues",
+      "official_listing": {
+        "plugin_id": "obsidian-textgenerator-plugin",
+        "name": "Text Generator",
+        "author": "nhaouari",
+        "description": "Generate text content using GPT-3 (OpenAI).",
+        "repo": "nhaouari/obsidian-textgenerator-plugin",
+        "downloads": 561597,
+        "registry_updated": "2026-05-16"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-16T07:42:09Z",
+        "updated_at": "2026-05-26T03:06:19Z",
+        "stars": 1939,
+        "forks": 168,
+        "open_issues": 25,
+        "archived": false
+      },
+      "claim_ids": []
+    },
+    {
+      "option_id": "local-gpt",
+      "plugin_id": "local-gpt",
+      "repo": "pfrankov/obsidian-local-gpt",
+      "name": "Local GPT",
+      "rank": 13,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "Official listing: Local Ollama and OpenAI-like GPT assistance for maximum privacy and offline access. README setup emphasizes Ollama/local embedding models and OpenAI-like GPT assistance.",
+      "evidence": [
+        "Official listing explicitly positions Local GPT as local Ollama/OpenAI-like assistance.",
+        "README describes Ollama setup and local/offline privacy emphasis.",
+        "No evidence found of continuous ghost-text Tab autocomplete."
+      ],
+      "strengths": [
+        "Best privacy posture among mature non-inline options.",
+        "Supports local Ollama and OpenAI-like endpoints; integrates with AI Providers ecosystem.",
+        "Actively maintained in 2026."
+      ],
+      "limitations": [
+        "Not a live inline/tab autocomplete plugin.",
+        "Local model setup and performance tuning required.",
+        "Quality/latency depends on local hardware and model."
+      ],
+      "setup_complexity": "medium_to_high",
+      "privacy_posture": "Local/offline when using Ollama; remote OpenAI-like endpoints possible if configured.",
+      "cost_model": "Local compute or provider/API billing; no consumer subscription reuse.",
+      "ux_gaps": [
+        "Command/actions assistance rather than automatic inline completion."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "not_applicable",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "Ollama",
+          "OpenAI-compatible endpoints"
+        ],
+        "risk_level": "low",
+        "access_notes": "Privacy-oriented local/API path."
+      },
+      "source_ids": [
+        "src-official-local-gpt",
+        "src-repo-local-gpt"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "87167 official downloads; Obsidian registry updated 2026-05-02; GitHub pushed 2026-05-02; 646 stars; 2 open issues",
+      "official_listing": {
+        "plugin_id": "local-gpt",
+        "name": "Local GPT",
+        "author": "pfrankov",
+        "description": "Local Ollama and OpenAI-like GPT's assistance for maximum privacy and offline access.",
+        "repo": "pfrankov/obsidian-local-gpt",
+        "downloads": 87167,
+        "registry_updated": "2026-05-02"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-02T18:27:16Z",
+        "updated_at": "2026-05-27T04:58:03Z",
+        "stars": 646,
+        "forks": 53,
+        "open_issues": 2,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-privacy-cost-provider-dependent"
+      ]
+    },
+    {
+      "option_id": "chatgpt-md",
+      "plugin_id": "chatgpt-md",
+      "repo": "bramses/chatgpt-md",
+      "name": "ChatGPT MD",
+      "rank": 14,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: seamless integration of ChatGPT, OpenRouter.ai, and local LLMs via Ollama/LM Studio into Obsidian; install, add OpenAI API key and/or Ollama/local LLMs, then use ChatGPT MD: Chat command.",
+      "evidence": [
+        "Official listing says ChatGPT/OpenRouter/Ollama integration into notes.",
+        "README describes chat command, AI personas, tool calling, and API/local setup.",
+        "No live inline/tab autocomplete evidence found."
+      ],
+      "strengths": [
+        "Mature chat-in-notes workflow with OpenAI/OpenRouter/local providers.",
+        "Privacy-first tool-calling controls are documented.",
+        "Good for conversational drafting inside markdown."
+      ],
+      "limitations": [
+        "Chat/command flow, not live autocomplete.",
+        "Requires API/local provider setup.",
+        "No Claude UI subscription reuse."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Tool calling is off by default and permissioned per README; model calls still send approved context to provider unless local.",
+      "cost_model": "OpenAI/OpenRouter API or local model; separate from UI subscription.",
+      "ux_gaps": [
+        "Command/chat rather than ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI API",
+          "OpenRouter",
+          "Ollama",
+          "LM Studio"
+        ],
+        "risk_level": "low",
+        "access_notes": "Chat-oriented API/local provider."
+      },
+      "source_ids": [
+        "src-official-chatgpt-md",
+        "src-repo-chatgpt-md"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "121289 official downloads; Obsidian registry updated 2026-02-11; GitHub pushed 2026-02-11; 1408 stars; 26 open issues",
+      "official_listing": {
+        "plugin_id": "chatgpt-md",
+        "name": "ChatGPT MD",
+        "author": "bramses",
+        "description": "A seamless integration of ChatGPT, OpenRouter.ai and local LLMs via Ollama into your notes.",
+        "repo": "bramses/chatgpt-md",
+        "downloads": 121289,
+        "registry_updated": "2026-02-11"
+      },
+      "github_status": {
+        "pushed_at": "2026-02-11T19:00:37Z",
+        "updated_at": "2026-05-28T17:29:56Z",
+        "stars": 1408,
+        "forks": 101,
+        "open_issues": 26,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-privacy-cost-provider-dependent"
+      ]
+    },
+    {
+      "option_id": "tars",
+      "plugin_id": "tars",
+      "repo": "tarslab/obsidian-tars",
+      "name": "Tars",
+      "rank": 15,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: text generation based on tag suggestions using Claude, OpenAI, Gemini, DeepSeek, OpenRouter, Ollama and more; type #, use Obsidian native tag completion, then space to trigger; tag commands insert tags based on selected section or cursor section.",
+      "evidence": [
+        "Official listing says text generation based on tag suggestions across Claude/OpenAI/Ollama and others.",
+        "README explains tag-triggered quick response and tag commands, not live ghost text."
+      ],
+      "strengths": [
+        "Broad provider support including Claude, OpenAI, Gemini, OpenRouter, Ollama.",
+        "Obsidian-native tag trigger may suit note workflows.",
+        "Actively maintained in 2026."
+      ],
+      "limitations": [
+        "Tag/command generation, not continuous live autocomplete.",
+        "May require learning tag-based interaction.",
+        "API/key/local setup still required."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Provider-dependent; remote providers receive selected/section context.",
+      "cost_model": "API/local provider billing; not consumer UI subscription.",
+      "ux_gaps": [
+        "Completion is triggered by tags/commands, not Tab-accepted ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "Claude API",
+          "OpenAI API",
+          "OpenRouter",
+          "Ollama",
+          "Gemini",
+          "DeepSeek"
+        ],
+        "risk_level": "low",
+        "access_notes": "Provider/API based."
+      },
+      "source_ids": [
+        "src-official-tars",
+        "src-repo-tars"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "41224 official downloads; Obsidian registry updated 2026-03-06; GitHub pushed 2026-03-06; 299 stars; 10 open issues",
+      "official_listing": {
+        "plugin_id": "tars",
+        "name": "Tars",
+        "author": "tarslab",
+        "description": "Text generation based on tag suggestions, using Claude, OpenAI, Ollama, Kimi, Doubao, Qwen, Zhipu, DeepSeek, QianFan & more.",
+        "repo": "tarslab/obsidian-tars",
+        "downloads": 41224,
+        "registry_updated": "2026-03-06"
+      },
+      "github_status": {
+        "pushed_at": "2026-03-06T10:13:16Z",
+        "updated_at": "2026-05-21T23:06:53Z",
+        "stars": 299,
+        "forks": 30,
+        "open_issues": 10,
+        "archived": false
+      },
+      "claim_ids": []
+    },
+    {
+      "option_id": "ai-assistant",
+      "plugin_id": "ai-assistant",
+      "repo": "qgrail/obsidian-ai-assistant",
+      "name": "AI Assistant",
+      "rank": 16,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: simple plugin for interactions with OpenAI ChatGPT and Anthropic Claude; features text assistant, chat mode, prompt mode, images, audio transcription, image generation.",
+      "evidence": [
+        "Official listing says chat with OpenAI and Anthropic models or run prompt-based edits directly from notes.",
+        "README documents chat/prompt modes, not live inline/tab autocomplete."
+      ],
+      "strengths": [
+        "Straightforward OpenAI + Anthropic command/chat plugin.",
+        "Can do prompt-based edits directly from notes.",
+        "Moderate adoption."
+      ],
+      "limitations": [
+        "No live inline autocomplete.",
+        "OpenAI package dependency only in package snippet despite README model claims; provider details may drift.",
+        "Requires API keys."
+      ],
+      "setup_complexity": "low_to_medium",
+      "privacy_posture": "Remote API; sends prompts/selected context.",
+      "cost_model": "OpenAI/Anthropic API usage, separate from UI subscriptions.",
+      "ux_gaps": [
+        "Chat/prompt modes rather than ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "OpenAI API",
+          "Anthropic API"
+        ],
+        "risk_level": "low",
+        "access_notes": "API-key based."
+      },
+      "source_ids": [
+        "src-official-ai-assistant",
+        "src-repo-ai-assistant"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "30120 official downloads; Obsidian registry updated 2025-05-29; GitHub pushed 2025-05-29; 370 stars; 15 open issues",
+      "official_listing": {
+        "plugin_id": "ai-assistant",
+        "name": "AI Assistant",
+        "author": "qgrail",
+        "description": "Chat with OpenAI and Anthropic models or run prompt-based edits directly from notes.",
+        "repo": "qgrail/obsidian-ai-assistant",
+        "downloads": 30120,
+        "registry_updated": "2025-05-29"
+      },
+      "github_status": {
+        "pushed_at": "2025-05-29T11:32:51Z",
+        "updated_at": "2026-05-15T21:18:16Z",
+        "stars": 370,
+        "forks": 40,
+        "open_issues": 15,
+        "archived": false
+      },
+      "claim_ids": []
+    },
+    {
+      "option_id": "bmo-chatbot",
+      "plugin_id": "bmo-chatbot",
+      "repo": "longy2k/obsidian-bmo-chatbot",
+      "name": "BMO Chatbot",
+      "rank": 17,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: generate and brainstorm ideas while creating notes using LLMs from Ollama, LM Studio, Anthropic, Google Gemini, Mistral AI, OpenAI and more; chat with current note and save/load chat history.",
+      "evidence": [
+        "Official listing says generate and brainstorm ideas using LLMs.",
+        "README focuses on chatbot UI, current-note chat, and chat history.",
+        "No live inline autocomplete evidence found."
+      ],
+      "strengths": [
+        "Mature chat plugin with many model providers and local options.",
+        "Good for brainstorming while writing."
+      ],
+      "limitations": [
+        "Chatbot, not inline autocomplete.",
+        "Repository pushed timestamp is 2024 despite ongoing adoption.",
+        "Provider setup required."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Provider-dependent; local Ollama/LM Studio possible.",
+      "cost_model": "API/local provider billing; no UI subscription reuse evidenced.",
+      "ux_gaps": [
+        "Sidebar/chat flow, no Tab accept."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "Ollama",
+          "LM Studio",
+          "Anthropic",
+          "Gemini",
+          "Mistral",
+          "OpenAI"
+        ],
+        "risk_level": "low",
+        "access_notes": "Chatbot provider setup."
+      },
+      "source_ids": [
+        "src-official-bmo-chatbot",
+        "src-repo-bmo-chatbot"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "44474 official downloads; Obsidian registry updated 2024-07-25; GitHub pushed 2024-09-12; 529 stars; 55 open issues",
+      "official_listing": {
+        "plugin_id": "bmo-chatbot",
+        "name": "BMO Chatbot",
+        "author": "longy2k",
+        "description": "Generate and brainstorm ideas while creating your notes using Large Language Models (LLMs) such as OpenAI's \"gpt-3.5-turbo\" and \"gpt-4\".",
+        "repo": "longy2k/obsidian-bmo-chatbot",
+        "downloads": 44474,
+        "registry_updated": "2024-07-25"
+      },
+      "github_status": {
+        "pushed_at": "2024-09-12T04:07:29Z",
+        "updated_at": "2026-05-21T23:21:15Z",
+        "stars": 529,
+        "forks": 66,
+        "open_issues": 55,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-privacy-cost-provider-dependent"
+      ]
+    },
+    {
+      "option_id": "ollama",
+      "plugin_id": "ollama",
+      "repo": "hinterdupfinger/obsidian-ollama",
+      "name": "Ollama",
+      "rank": 18,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: plugin allows use of Ollama within notes; commands include summarize selection, explain selection, expand selection, rewrite selection in formal/casual/active voice/bullet points, caption selection.",
+      "evidence": [
+        "Official listing says enable usage of Ollama within notes.",
+        "README lists selection transform commands.",
+        "No live autocomplete evidence found."
+      ],
+      "strengths": [
+        "Simple local-LLM note commands and strong privacy if Ollama local.",
+        "No cloud API needed."
+      ],
+      "limitations": [
+        "Not live autocomplete.",
+        "Very old plugin version in registry; repository pushed in 2024.",
+        "Requires Ollama model install and local performance."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Local-first with Ollama.",
+      "cost_model": "No API billing if local; hardware cost only.",
+      "ux_gaps": [
+        "Selection commands only."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "no",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "Ollama local API"
+        ],
+        "risk_level": "low",
+        "access_notes": "Local Ollama path."
+      },
+      "source_ids": [
+        "src-official-ollama",
+        "src-repo-ollama"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "26402 official downloads; Obsidian registry updated 2023-09-19; GitHub pushed 2024-06-21; 1016 stars; 25 open issues",
+      "official_listing": {
+        "plugin_id": "ollama",
+        "name": "Ollama",
+        "author": "hinterdupfinger",
+        "description": "Enable the usage of Ollama within your notes.",
+        "repo": "hinterdupfinger/obsidian-ollama",
+        "downloads": 26402,
+        "registry_updated": "2023-09-19"
+      },
+      "github_status": {
+        "pushed_at": "2024-06-21T13:51:06Z",
+        "updated_at": "2026-05-28T19:36:46Z",
+        "stars": 1016,
+        "forks": 86,
+        "open_issues": 25,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-privacy-cost-provider-dependent"
+      ]
+    },
+    {
+      "option_id": "local-llm-hub",
+      "plugin_id": "local-llm-hub",
+      "repo": "takeshy/obsidian-local-llm-hub",
+      "name": "Local LLM Hub",
+      "rank": 19,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "medium",
+      "readme_quote": "Official listing: chat with local LLMs (Ollama, LM Studio) with local embeddings RAG, file encryption, edit history, slash commands, and workflow automation.",
+      "evidence": [
+        "Official listing describes local LLM chat/RAG/workflow, not inline autocomplete.",
+        "Included to cover Ollama/LM Studio local-model Obsidian options."
+      ],
+      "strengths": [
+        "Local LLM/RAG focus with workflow automation.",
+        "Actively updated in official stats."
+      ],
+      "limitations": [
+        "No true inline/tab evidence.",
+        "Lower adoption than older chat plugins."
+      ],
+      "setup_complexity": "medium_to_high",
+      "privacy_posture": "Local-first if using local LLMs/embeddings; encryption is listed.",
+      "cost_model": "Local compute/hardware; no API billing unless external endpoints used.",
+      "ux_gaps": [
+        "Sidebar/chat/slash commands, not ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "no",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "Ollama",
+          "LM Studio"
+        ],
+        "risk_level": "low",
+        "access_notes": "Local LLM chat/RAG, not autocomplete."
+      },
+      "source_ids": [
+        "src-official-local-llm-hub",
+        "src-repo-local-llm-hub"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "4532 official downloads; Obsidian registry updated 2026-05-27",
+      "official_listing": {
+        "plugin_id": "local-llm-hub",
+        "name": "Local LLM Hub",
+        "author": "takeshy",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Chat with local LLMs (Ollama, LM Studio) with local embeddings RAG, file encryption, edit history, slash commands, and workflow automation.",
+        "repo": "takeshy/obsidian-local-llm-hub",
+        "downloads": 4532,
+        "registry_updated": "2026-05-27"
+      },
+      "github_status": {
+        "pushed_at": null,
+        "updated_at": null,
+        "stars": null,
+        "forks": null,
+        "open_issues": null,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-privacy-cost-provider-dependent"
+      ]
+    },
+    {
+      "option_id": "excavelo",
+      "plugin_id": "excavelo",
+      "repo": "bibleCode21/excavelo",
+      "name": "ExcaVelo",
+      "rank": 20,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: transform raw memos into structured notes using Claude; works with existing Claude Code login (Pro/Max) or Anthropic API key; also OpenAI-compatible endpoint; selection wins over full note body.",
+      "evidence": [
+        "Official listing says transform raw memos into structured notes with Claude and works with Claude Code subscription or API key.",
+        "README documents Claude Code CLI subscription/API paths.",
+        "No live autocomplete evidence found."
+      ],
+      "strengths": [
+        "Relevant if the main constraint is reusing Claude Code subscription inside Obsidian.",
+        "No API key needed for Claude Code CLI path.",
+        "Selection/full-note transforms may be useful for memo cleanup."
+      ],
+      "limitations": [
+        "Not autocomplete; it transforms memos/selected text.",
+        "Tiny adoption and very new.",
+        "Desktop Claude Code CLI path may not work on mobile."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Claude Code/API/OpenAI-compatible provider sees memo or selection; plugin says key not seen in CLI path but Claude still processes content.",
+      "cost_model": "Claude Code subscription path or Anthropic/API/OpenAI-compatible billing.",
+      "ux_gaps": [
+        "Batch transform, not live suggestion."
+      ],
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "no",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "Claude Code Pro/Max login"
+        ],
+        "api_names": [
+          "Claude Code CLI",
+          "Anthropic API",
+          "OpenAI-compatible endpoint"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Uses installed claude CLI login or API; subscription path is command/transform, not autocomplete."
+      },
+      "source_ids": [
+        "src-official-excavelo",
+        "src-repo-excavelo"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "23 official downloads; Obsidian registry updated 2026-05-23; GitHub pushed 2026-05-23; 0 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "excavelo",
+        "name": "ExcaVelo",
+        "author": "bibleCode21",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Transform raw memos into structured notes (meeting minutes, 1:1s, daily) using Claude. Works with Claude Code subscription or Anthropic API key.",
+        "repo": "biblecode21/excavelo",
+        "downloads": 23,
+        "registry_updated": "2026-05-23"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-23T09:14:34Z",
+        "updated_at": "2026-05-23T09:14:36Z",
+        "stars": 0,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-subscription-reuse-not-inline"
+      ]
+    },
+    {
+      "option_id": "chatting-with-ai",
+      "plugin_id": "chatting-with-ai",
+      "repo": "o1xhack/obsidian-chatting",
+      "name": "Chatting with AI",
+      "rank": 21,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: agentic AI assistant in Obsidian vault; providers are Anthropic API, OpenAI API, or sign in with ChatGPT account; 14 vault-native tools; selection scope sends highlighted text to chat.",
+      "evidence": [
+        "Official listing says agentic AI chat assistant supports Anthropic, OpenAI, and ChatGPT account sign-in.",
+        "README documents chat/agent tools and account sign-in, not inline autocomplete."
+      ],
+      "strengths": [
+        "One of few plugins claiming ChatGPT account sign-in.",
+        "Vault-native agent/chat tools and selection scope."
+      ],
+      "limitations": [
+        "Not autocomplete.",
+        "Experimental ChatGPT OAuth/account sign-in is a policy/brittleness risk compared with official API.",
+        "Very low adoption and new."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Agent reads/edits vault through tools; account-sign-in path may expose account/session; remote provider processes selected/vault context.",
+      "cost_model": "OpenAI/Anthropic API or ChatGPT account sign-in; account sign-in should not be assumed officially supported for automation.",
+      "ux_gaps": [
+        "Chat/agent only; no ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "reported",
+        "subscription_names": [
+          "ChatGPT account"
+        ],
+        "api_names": [
+          "Anthropic API",
+          "OpenAI API"
+        ],
+        "risk_level": "medium",
+        "access_notes": "README calls ChatGPT account sign-in experimental; not a live autocomplete path."
+      },
+      "source_ids": [
+        "src-official-chatting-with-ai",
+        "src-repo-chatting-with-ai"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "158 official downloads; Obsidian registry updated 2026-05-13; GitHub pushed 2026-05-18; 5 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "chatting-with-ai",
+        "name": "Chatting with AI",
+        "author": "o1xhack",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Agentic AI chat assistant that reads, edits, and creates notes through natural conversation. Supports Anthropic, OpenAI, and ChatGPT account sign-in.",
+        "repo": "o1xhack/obsidian-chatting",
+        "downloads": 158,
+        "registry_updated": "2026-05-13"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-18T22:54:04Z",
+        "updated_at": "2026-05-25T18:33:43Z",
+        "stars": 5,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-subscription-reuse-not-inline"
+      ]
+    },
+    {
+      "option_id": "blackglass",
+      "plugin_id": "blackglass",
+      "repo": "humantorch/blackglass",
+      "name": "Blackglass",
+      "rank": 22,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: puts Claude Code inside Obsidian as actual CLI in terminal; built-in vault MCP server gives structured read/write access; quick ask modal; requires Claude Code CLI on PATH; note mentions non-interactive usage and Agent SDK credits.",
+      "evidence": [
+        "Official listing says run Claude Code inside Obsidian with terminal, quick-ask, MCP server.",
+        "README documents real Claude Code terminal/sidebar and quick ask, not live autocomplete."
+      ],
+      "strengths": [
+        "Deep Claude Code integration for users with Claude Code subscription/API.",
+        "Built-in vault MCP server and read-only mode."
+      ],
+      "limitations": [
+        "Not autocomplete; it is terminal/quick-ask/agent flow.",
+        "Desktop-only and requires CLI installation.",
+        "Agent tool access carries prompt-injection/read-write risk."
+      ],
+      "setup_complexity": "medium_to_high",
+      "privacy_posture": "Claude Code processes vault context and may get structured read/write tools; read-only mode can reduce risk.",
+      "cost_model": "Claude Code subscription/API/Agent SDK credit model depending on Anthropic plan and usage.",
+      "ux_gaps": [
+        "Sidebar terminal or modal, no inline Tab suggestions."
+      ],
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "Claude Code subscription"
+        ],
+        "api_names": [
+          "Claude Code CLI",
+          "Claude Agent SDK"
+        ],
+        "risk_level": "medium",
+        "access_notes": "CLI-based Claude Code workflow, not live autocomplete."
+      },
+      "source_ids": [
+        "src-official-blackglass",
+        "src-repo-blackglass"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "189 official downloads; Obsidian registry updated 2026-05-27; GitHub pushed 2026-05-27; 2 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "blackglass",
+        "name": "Blackglass",
+        "author": "Scott Kosman",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Run Claude Code inside Obsidian with an interactive terminal, quick-ask modal, and a built-in MCP server for structured vault access.",
+        "repo": "humantorch/blackglass",
+        "downloads": 189,
+        "registry_updated": "2026-05-27"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-27T23:58:37Z",
+        "updated_at": "2026-05-28T16:38:20Z",
+        "stars": 2,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-subscription-reuse-not-inline"
+      ]
+    },
+    {
+      "option_id": "claude-panel",
+      "plugin_id": "claude-panel-ryukyuhub",
+      "repo": "ryukyuhub/obsidian-claude-panel-ryukyuhub",
+      "name": "Claude Panel",
+      "rank": 23,
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: right-sidebar chat panel powered by Claude Code; spawns claude CLI as subprocess with active vault; requires claude CLI installed and signed in with Claude Pro/Max subscription or Anthropic API key; captures editor/preview selection automatically.",
+      "evidence": [
+        "Official listing says right-sidebar chat panel powered by Claude Code.",
+        "README says it captures selection for chat and shows usage, but no inline autocomplete."
+      ],
+      "strengths": [
+        "Clear Claude Code subscription/API path for sidebar chat.",
+        "Current/active as of 2026-05."
+      ],
+      "limitations": [
+        "Not autocomplete.",
+        "Desktop-only CLI subprocess.",
+        "Low adoption/new project."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Claude Code can read/write/search active vault via CLI; selection captured automatically for questions.",
+      "cost_model": "Claude Pro/Max/Claude Code or Anthropic API key.",
+      "ux_gaps": [
+        "Right-sidebar chat, no ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "Claude Pro",
+          "Claude Max",
+          "Claude Code login"
+        ],
+        "api_names": [
+          "Claude Code CLI",
+          "Anthropic API"
+        ],
+        "risk_level": "medium",
+        "access_notes": "CLI chat panel, not live autocomplete."
+      },
+      "source_ids": [
+        "src-official-claude-panel",
+        "src-repo-claude-panel"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "186 official downloads; Obsidian registry updated 2026-05-27; GitHub pushed 2026-05-28; 0 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "claude-panel-ryukyuhub",
+        "name": "Claude Panel",
+        "author": "Ryukyu HUB Inc.",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Right-sidebar chat panel powered by Claude Code. Runs the `claude` CLI as a subprocess with the active vault as the working directory.",
+        "repo": "ryukyuhub/obsidian-claude-panel-ryukyuhub",
+        "downloads": 186,
+        "registry_updated": "2026-05-27"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-28T11:39:32Z",
+        "updated_at": "2026-05-28T11:39:53Z",
+        "stars": 0,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-subscription-reuse-not-inline"
+      ]
+    },
+    {
+      "option_id": "claude-code-ide",
+      "plugin_id": "claude-code-ide",
+      "repo": "petersolopov/obsidian-claude-ide",
+      "name": "Claude Code IDE",
+      "rank": 24,
+      "autocomplete_mode": "custom_only",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: minimal bridge between Obsidian and Claude Code; shares real-time editor context with CLI; Claude Code can see open files/current selection; Send to Claude command explicitly passes selected text.",
+      "evidence": [
+        "Official listing says connect your vault to Claude Code and share editor context with the CLI.",
+        "README is a context bridge to Claude Code, not a generation/autocomplete UI."
+      ],
+      "strengths": [
+        "May help a Claude Code workflow understand Obsidian context.",
+        "Low-friction context sharing with /ide."
+      ],
+      "limitations": [
+        "No generation UI, no live autocomplete; useful only with external Claude Code.",
+        "Desktop-only."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Shares open files and selection with Claude Code CLI when connected.",
+      "cost_model": "Requires Claude Code access/subscription/API depending on Claude Code setup.",
+      "ux_gaps": [
+        "No acceptance UX; external agent only."
+      ],
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "unknown",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "Claude Code login"
+        ],
+        "api_names": [
+          "Claude Code CLI"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Context bridge, not autocomplete."
+      },
+      "source_ids": [
+        "src-official-claude-code-ide",
+        "src-repo-claude-code-ide"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "4629 official downloads; Obsidian registry updated 2026-05-25; GitHub pushed 2026-05-26; 75 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "claude-code-ide",
+        "name": "Claude Code IDE",
+        "author": "petersolopov",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Connect your vault to Claude Code and share editor context with the CLI.",
+        "repo": "petersolopov/obsidian-claude-ide",
+        "downloads": 4629,
+        "registry_updated": "2026-05-25"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-26T07:31:40Z",
+        "updated_at": "2026-05-28T13:58:48Z",
+        "stars": 75,
+        "forks": 5,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-subscription-reuse-not-inline"
+      ]
+    },
+    {
+      "option_id": "claude-vault-assistant",
+      "plugin_id": "claude-vault-assistant",
+      "repo": "copperbox/obsidian-claude-vault-assistant",
+      "name": "Claude Vault Assistant",
+      "rank": 25,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: define reusable prompt files and run them against vault/current active note using Claude Code CLI headless; warns subprocess, allowed tools, prompt injection, CLI path, CLAUDE.md system prompt.",
+      "evidence": [
+        "Official listing says reusable prompt files run against vault/active note using Claude Code CLI.",
+        "README emphasizes security/trust model and headless prompts, not live autocomplete."
+      ],
+      "strengths": [
+        "Good for repeatable Claude Code prompt workflows.",
+        "Security warning is unusually explicit."
+      ],
+      "limitations": [
+        "Not autocomplete.",
+        "Can execute file I/O or tools depending allowlist; prompt injection risk.",
+        "Desktop-only CLI dependency."
+      ],
+      "setup_complexity": "medium_to_high",
+      "privacy_posture": "High caution: Claude reads specified notes and can operate tools allowed by user; read carefully.",
+      "cost_model": "Claude Code CLI subscription/API path.",
+      "ux_gaps": [
+        "Prompt execution workflow, no ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "supported",
+        "official_api_access": "unknown",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "Claude Code login"
+        ],
+        "api_names": [
+          "Claude Code CLI"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Headless prompt runner, not autocomplete."
+      },
+      "source_ids": [
+        "src-official-claude-vault-assistant",
+        "src-repo-claude-vault-assistant"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "204 official downloads; Obsidian registry updated 2026-05-12; GitHub pushed 2026-05-12; 0 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "claude-vault-assistant",
+        "name": "Claude Vault Assistant",
+        "author": "copperbox",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Define reusable prompt files and run them against your vault or active note using Claude Code CLI.",
+        "repo": "copperbox/obsidian-claude-vault-assistant",
+        "downloads": 204,
+        "registry_updated": "2026-05-12"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-12T23:04:40Z",
+        "updated_at": "2026-05-12T23:04:44Z",
+        "stars": 0,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-subscription-reuse-not-inline"
+      ]
+    },
+    {
+      "option_id": "github-copilot-integration",
+      "plugin_id": "github-copilot-integration",
+      "repo": "go2engle/obsidian-github-copilot-integration",
+      "name": "GitHub Copilot Integration",
+      "rank": 26,
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "readme_quote": "README: chat with documents, generate notes, rewrite text; inline edit command opens floating input popup for selected text and Copilot appends/replaces content; package depends on @github/copilot-sdk.",
+      "evidence": [
+        "Official listing says integrate GitHub Copilot for AI-powered text generation and assistance.",
+        "README focuses on sidebar chat, rewrite/generate, and inline edit popup; no live ghost text."
+      ],
+      "strengths": [
+        "Could be useful for GitHub Copilot users who want chat/inline edit commands.",
+        "Actively updated but tiny project."
+      ],
+      "limitations": [
+        "Not a Copilot replacement and not live inline/tab autocomplete.",
+        "Requires GitHub Copilot path."
+      ],
+      "setup_complexity": "medium",
+      "privacy_posture": "Uses GitHub Copilot SDK/service; sends relevant note/selection context.",
+      "cost_model": "GitHub Copilot service/subscription, not GPT/Claude subscription.",
+      "ux_gaps": [
+        "Inline edit popup is command/selection generation, not automatic ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "GitHub Copilot"
+        ],
+        "api_names": [
+          "GitHub Copilot SDK/service"
+        ],
+        "risk_level": "low",
+        "access_notes": "GitHub Copilot integration, not replacement."
+      },
+      "source_ids": [
+        "src-official-github-copilot-integration",
+        "src-repo-github-copilot-integration"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "276 official downloads; Obsidian registry updated 2026-05-19; GitHub pushed 2026-05-19; 0 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "github-copilot-integration",
+        "name": "GitHub Copilot Integration",
+        "author": "go2engle",
+        "description": "This plugin has not been manually reviewed by Obsidian staff. Integrate GitHub Copilot for AI-powered text generation and assistance.",
+        "repo": "go2engle/obsidian-github-copilot-integration",
+        "downloads": 276,
+        "registry_updated": "2026-05-19"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-19T15:13:26Z",
+        "updated_at": "2026-05-21T11:27:23Z",
+        "stars": 0,
+        "forks": 0,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": []
+    },
+    {
+      "option_id": "various-complements",
+      "plugin_id": "various-complements",
+      "repo": "tadashi-aikawa/obsidian-various-complements-plugin",
+      "name": "Various Complements",
+      "rank": 27,
+      "autocomplete_mode": "completion_popup",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README/official listing: completes words like IDE auto-completion. It is not an AI/GPT plugin.",
+      "evidence": [
+        "Official listing says complete words similar to IDE autocomplete.",
+        "README has no AI provider/API evidence."
+      ],
+      "strengths": [
+        "Very mature non-AI completion plugin with high adoption.",
+        "Useful closest equivalent for deterministic word/path/custom dictionary completion."
+      ],
+      "limitations": [
+        "No GPT/Claude/local LLM generation.",
+        "Completion popup/list behavior, not ghost-text Copilot."
+      ],
+      "setup_complexity": "low",
+      "privacy_posture": "Local deterministic completion; no LLM context sent.",
+      "cost_model": "Free/open-source plugin.",
+      "ux_gaps": [
+        "Not semantic/generative; no live ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "not_applicable",
+        "unofficial_session_automation": "not_applicable",
+        "subscription_names": [],
+        "api_names": [],
+        "risk_level": "none",
+        "access_notes": "Non-AI local completion."
+      },
+      "source_ids": [
+        "src-official-various-complements",
+        "src-repo-various-complements"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "503867 official downloads; Obsidian registry updated 2026-05-10; GitHub pushed 2026-05-10; 898 stars; 60 open issues",
+      "official_listing": {
+        "plugin_id": "various-complements",
+        "name": "Various Complements",
+        "author": "tadashi-aikawa",
+        "description": "Complete words similar to auto-completion in an IDE.",
+        "repo": "tadashi-aikawa/obsidian-various-complements-plugin",
+        "downloads": 503867,
+        "registry_updated": "2026-05-10"
+      },
+      "github_status": {
+        "pushed_at": "2026-05-10T05:44:37Z",
+        "updated_at": "2026-05-24T19:23:16Z",
+        "stars": 898,
+        "forks": 37,
+        "open_issues": 60,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-non-ai-completion-popup-not-llm"
+      ]
+    },
+    {
+      "option_id": "text-autocomplete",
+      "plugin_id": "text-autocomplete",
+      "repo": "c-degni/text-autocomplete",
+      "name": "Text Autocomplete",
+      "rank": 28,
+      "autocomplete_mode": "completion_popup",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: utilize text autocomplete; selecting a highlighted suggestion with enter/tab; official listing says autocomplete text to type more efficiently.",
+      "evidence": [
+        "Official listing says text autocomplete.",
+        "README says suggestions are selected with cursor or Enter/Tab.",
+        "No AI provider evidence."
+      ],
+      "strengths": [
+        "Simple local text autocomplete, active 2026.",
+        "Tab can select popup suggestion."
+      ],
+      "limitations": [
+        "Not GPT/Claude/local LLM generation.",
+        "Desktop-only.",
+        "Completion popup rather than ghost text."
+      ],
+      "setup_complexity": "low",
+      "privacy_posture": "Local/non-AI.",
+      "cost_model": "Free/open-source plugin.",
+      "ux_gaps": [
+        "No semantic generation; no API/subscription."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "not_applicable",
+        "unofficial_session_automation": "not_applicable",
+        "subscription_names": [],
+        "api_names": [],
+        "risk_level": "none",
+        "access_notes": "Non-AI local autocomplete."
+      },
+      "source_ids": [
+        "src-official-text-autocomplete",
+        "src-repo-text-autocomplete"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "1499 official downloads; Obsidian registry updated 2026-03-14; GitHub pushed 2026-03-14; 6 stars; 0 open issues",
+      "official_listing": {
+        "plugin_id": "text-autocomplete",
+        "name": "Text Autocomplete",
+        "author": "c-degni",
+        "description": "Autocomplete text to type more efficiently.",
+        "repo": "c-degni/text-autocomplete",
+        "downloads": 1499,
+        "registry_updated": "2026-03-14"
+      },
+      "github_status": {
+        "pushed_at": "2026-03-14T23:45:12Z",
+        "updated_at": "2026-05-17T12:24:02Z",
+        "stars": 6,
+        "forks": 2,
+        "open_issues": 0,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-non-ai-completion-popup-not-llm"
+      ]
+    },
+    {
+      "option_id": "completr",
+      "plugin_id": "obsidian-completr",
+      "repo": "tth05/obsidian-completr",
+      "name": "Completr",
+      "rank": 29,
+      "autocomplete_mode": "completion_popup",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "README: advanced auto-completion for Obsidian; LaTeX/frontmatter/standard writing; legacy editor not supported; not an AI/GPT provider.",
+      "evidence": [
+        "Official listing says advanced auto-completion for LaTeX, frontmatter, standard writing.",
+        "README describes completion snippets and placeholders, not LLM generation."
+      ],
+      "strengths": [
+        "Good deterministic completion for LaTeX/frontmatter/writing.",
+        "Large adoption."
+      ],
+      "limitations": [
+        "Not GPT/Claude/local LLM.",
+        "Repository pushed timestamp is 2024.",
+        "Desktop-only."
+      ],
+      "setup_complexity": "low",
+      "privacy_posture": "Local deterministic completion.",
+      "cost_model": "Free/open-source plugin.",
+      "ux_gaps": [
+        "Completion popup/snippets, not Copilot-like AI ghost text."
+      ],
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "not_applicable",
+        "unofficial_session_automation": "not_applicable",
+        "subscription_names": [],
+        "api_names": [],
+        "risk_level": "none",
+        "access_notes": "Non-AI local completion."
+      },
+      "source_ids": [
+        "src-official-completr",
+        "src-repo-completr"
+      ],
+      "category": "obsidian_plugin",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "82038 official downloads; Obsidian registry updated 2023-05-30; GitHub pushed 2024-06-03; 388 stars; 42 open issues",
+      "official_listing": {
+        "plugin_id": "obsidian-completr",
+        "name": "Completr",
+        "author": "tth05",
+        "description": "Advanced auto-completion for LaTeX, frontmatter, and standard writing.",
+        "repo": "tth05/obsidian-completr",
+        "downloads": 82038,
+        "registry_updated": "2023-05-30"
+      },
+      "github_status": {
+        "pushed_at": "2024-06-03T01:11:13Z",
+        "updated_at": "2026-05-13T08:27:52Z",
+        "stars": 388,
+        "forks": 28,
+        "open_issues": 42,
+        "archived": false
+      },
+      "claim_ids": [
+        "claim-non-ai-completion-popup-not-llm"
+      ]
+    },
+    {
+      "option_id": "custom-codemirror-inline-plugin",
+      "plugin_id": null,
+      "repo": null,
+      "name": "Custom Obsidian CodeMirror inline-suggestion plugin",
+      "rank": 30,
+      "autocomplete_mode": "custom_only",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "readme_quote": "Obsidian developer docs: Obsidian uses CodeMirror 6 for the Markdown editor; plugins can register CodeMirror extensions; decorations/widgets can insert editor UI elements.",
+      "evidence": [
+        "Obsidian officially supports CodeMirror 6 editor extensions via registerEditorExtension.",
+        "Docs describe widget decorations that can insert elements into editor display; existing plugins implement ghost text via this route.",
+        "This is not a packaged user-ready solution; it requires custom plugin development."
+      ],
+      "strengths": [
+        "Technically feasible path to use any official API, OpenAI-compatible proxy, local model, or custom subscription gateway if policy permits.",
+        "Can be optimized for exact UX, privacy, debouncing, FIM prompts, and keybindings."
+      ],
+      "limitations": [
+        "Requires building and maintaining an Obsidian plugin.",
+        "No consumer subscription API magic; GPT/Claude UI subscription reuse would remain unsupported/risky unless provider exposes an official path.",
+        "Need to handle latency, cancellation, IME, mobile, keybinding conflicts, context filtering, and prompt-injection privacy."
+      ],
+      "setup_complexity": "high",
+      "privacy_posture": "Fully dependent on implementation and provider; can be local-only if using local endpoint.",
+      "cost_model": "Developer time plus chosen API/local model costs.",
+      "ux_gaps": [
+        "No ready product; quality depends on implementation."
+      ],
+      "access_model": {
+        "subscription_ui_access": "unknown",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "optional",
+        "subscription_names": [
+          "ChatGPT/Claude subscription only if an official/allowed bridge exists"
+        ],
+        "api_names": [
+          "OpenAI API",
+          "Anthropic API",
+          "OpenAI-compatible local/proxy APIs",
+          "Ollama"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Custom path can be safe with official APIs/local; risky if it automates consumer web sessions."
+      },
+      "source_ids": [
+        "src-obsidian-editor-extensions-docs",
+        "src-obsidian-register-editor-extension-api",
+        "src-obsidian-decorations-docs"
+      ],
+      "category": "custom_architecture",
+      "platforms": [
+        "obsidian"
+      ],
+      "last_checked": "2026-05-28",
+      "maintenance_status": "custom implementation; no repository maintenance applicable",
+      "official_listing": null,
+      "github_status": null,
+      "claim_ids": [
+        "claim-ob-plugin-api-enables-custom-ghost-text"
+      ]
+    }
+  ],
+  "ranked_option_list": [
+    {
+      "rank": 1,
+      "option_id": "ai-autocomplete",
+      "name": "AI Autocomplete",
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says inline AI writing completion with ghost text, powered by Groq, Tab to accept.",
+      "primary_pro": "Closest ready-made GPT/OpenAI-compatible Copilot-like UX found: live ghost text plus Tab accept.",
+      "primary_con": "Very new and low adoption; official stats show only low hundreds of downloads."
+    },
+    {
+      "rank": 2,
+      "option_id": "inscribe",
+      "name": "Inscribe",
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says inline autocompletion powered by AI.",
+      "primary_pro": "True inline/tab UX with provider choice including local Ollama, OpenAI, and OpenAI-compatible endpoints.",
+      "primary_con": "Desktop-only per manifest; mobile users need another option."
+    },
+    {
+      "rank": 3,
+      "option_id": "copilot-auto-completion",
+      "name": "Copilot auto completion",
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says highly configurable copilot-like auto-completion using ChatGPT API.",
+      "primary_pro": "Mature and purpose-built for Copilot-like Obsidian autocomplete.",
+      "primary_con": "Repository last pushed in 2024; official stats last update from 2024, so maintenance is weaker than active 2026 projects."
+    },
+    {
+      "rank": 4,
+      "option_id": "companion",
+      "name": "Companion",
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says autocomplete with AI through a copilot-like interface.",
+      "primary_pro": "True ghost-text UX and mobile support, with relatively high adoption.",
+      "primary_con": "Repository last pushed in 2024; maintenance risk."
+    },
+    {
+      "rank": 5,
+      "option_id": "markpilot",
+      "name": "Markpilot",
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says inline completions and chat view powered by OpenAI.",
+      "primary_pro": "Combines inline autocomplete and chat in one plugin.",
+      "primary_con": "Repository last pushed in 2024 and lower adoption than Companion/Copilot Auto Completion."
+    },
+    {
+      "rank": 6,
+      "option_id": "rosypilot",
+      "name": "RosyPilot",
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says AI-powered inline completions for legal writing.",
+      "primary_pro": "True inline/tab UX and active 2026 repository.",
+      "primary_con": "Domain-specific legal-writing orientation; not a general GPT/Claude autocomplete recommendation."
+    },
+    {
+      "rank": 7,
+      "option_id": "github-copilot",
+      "name": "GitHub Copilot for Obsidian",
+      "autocomplete_mode": "true_inline_tab",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says implement suggestions from GitHub Copilot directly in your editor.",
+      "primary_pro": "Most direct VS Code Copilot-like behavior in Obsidian, including GitHub Copilot service and chat.",
+      "primary_con": "Not a replacement for GitHub Copilot; it depends on the GitHub Copilot service/subscription being available."
+    },
+    {
+      "rank": 8,
+      "option_id": "thought-completion",
+      "name": "Thought Completion",
+      "autocomplete_mode": "inline_not_tab",
+      "recommendation_fit": "mixed",
+      "confidence": "medium",
+      "one_line_evidence": "Official listing compares it to IDE tab completion for thoughts.",
+      "primary_pro": "Interesting low-friction inline nudge UI for thinking prompts.",
+      "primary_con": "Not true autocomplete: ghost text is a prompt/nudge and no Tab acceptance was evidenced."
+    },
+    {
+      "rank": 9,
+      "option_id": "echo-ai",
+      "name": "Echo",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says inline write, selection actions, and streaming output, not live autocomplete.",
+      "primary_pro": "Good flow-preserving command/continuation UX with streaming.",
+      "primary_con": "Not live ghost-text autocomplete and not Tab accept."
+    },
+    {
+      "rank": 10,
+      "option_id": "obsidian-copilot",
+      "name": "Obsidian Copilot",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says chat with your second brain, learn faster, work smarter.",
+      "primary_pro": "Most mature general-purpose AI assistant in Obsidian by downloads and repository activity.",
+      "primary_con": "Not a live inline/tab autocomplete plugin."
+    },
+    {
+      "rank": 11,
+      "option_id": "smart-composer",
+      "name": "Smart Composer",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says AI chat with note context, smart writing assistance, one-click edits.",
+      "primary_pro": "One of the few Obsidian options that claims direct Claude/OpenAI account connection without an API key.",
+      "primary_con": "Not live autocomplete; interaction is chat/contextual edit."
+    },
+    {
+      "rank": 12,
+      "option_id": "text-generator",
+      "name": "Text Generator",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says generate text content using GPT-3/OpenAI; repo now describes various AI providers including Anthropic, Google, and local models.",
+      "primary_pro": "Very mature/high-adoption AI text generation plugin.",
+      "primary_con": "Not live autocomplete."
+    },
+    {
+      "rank": 13,
+      "option_id": "local-gpt",
+      "name": "Local GPT",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing explicitly positions Local GPT as local Ollama/OpenAI-like assistance.",
+      "primary_pro": "Best privacy posture among mature non-inline options.",
+      "primary_con": "Not a live inline/tab autocomplete plugin."
+    },
+    {
+      "rank": 14,
+      "option_id": "chatgpt-md",
+      "name": "ChatGPT MD",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says ChatGPT/OpenRouter/Ollama integration into notes.",
+      "primary_pro": "Mature chat-in-notes workflow with OpenAI/OpenRouter/local providers.",
+      "primary_con": "Chat/command flow, not live autocomplete."
+    },
+    {
+      "rank": 15,
+      "option_id": "tars",
+      "name": "Tars",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says text generation based on tag suggestions across Claude/OpenAI/Ollama and others.",
+      "primary_pro": "Broad provider support including Claude, OpenAI, Gemini, OpenRouter, Ollama.",
+      "primary_con": "Tag/command generation, not continuous live autocomplete."
+    },
+    {
+      "rank": 16,
+      "option_id": "ai-assistant",
+      "name": "AI Assistant",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says chat with OpenAI and Anthropic models or run prompt-based edits directly from notes.",
+      "primary_pro": "Straightforward OpenAI + Anthropic command/chat plugin.",
+      "primary_con": "No live inline autocomplete."
+    },
+    {
+      "rank": 17,
+      "option_id": "bmo-chatbot",
+      "name": "BMO Chatbot",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says generate and brainstorm ideas using LLMs.",
+      "primary_pro": "Mature chat plugin with many model providers and local options.",
+      "primary_con": "Chatbot, not inline autocomplete."
+    },
+    {
+      "rank": 18,
+      "option_id": "ollama",
+      "name": "Ollama",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says enable usage of Ollama within notes.",
+      "primary_pro": "Simple local-LLM note commands and strong privacy if Ollama local.",
+      "primary_con": "Not live autocomplete."
+    },
+    {
+      "rank": 19,
+      "option_id": "local-llm-hub",
+      "name": "Local LLM Hub",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "mixed",
+      "confidence": "medium",
+      "one_line_evidence": "Official listing describes local LLM chat/RAG/workflow, not inline autocomplete.",
+      "primary_pro": "Local LLM/RAG focus with workflow automation.",
+      "primary_con": "No true inline/tab evidence."
+    },
+    {
+      "rank": 20,
+      "option_id": "excavelo",
+      "name": "ExcaVelo",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says transform raw memos into structured notes with Claude and works with Claude Code subscription or API key.",
+      "primary_pro": "Relevant if the main constraint is reusing Claude Code subscription inside Obsidian.",
+      "primary_con": "Not autocomplete; it transforms memos/selected text."
+    },
+    {
+      "rank": 21,
+      "option_id": "chatting-with-ai",
+      "name": "Chatting with AI",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says agentic AI chat assistant supports Anthropic, OpenAI, and ChatGPT account sign-in.",
+      "primary_pro": "One of few plugins claiming ChatGPT account sign-in.",
+      "primary_con": "Not autocomplete."
+    },
+    {
+      "rank": 22,
+      "option_id": "blackglass",
+      "name": "Blackglass",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says run Claude Code inside Obsidian with terminal, quick-ask, MCP server.",
+      "primary_pro": "Deep Claude Code integration for users with Claude Code subscription/API.",
+      "primary_con": "Not autocomplete; it is terminal/quick-ask/agent flow."
+    },
+    {
+      "rank": 23,
+      "option_id": "claude-panel",
+      "name": "Claude Panel",
+      "autocomplete_mode": "chat_or_sidebar",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says right-sidebar chat panel powered by Claude Code.",
+      "primary_pro": "Clear Claude Code subscription/API path for sidebar chat.",
+      "primary_con": "Not autocomplete."
+    },
+    {
+      "rank": 24,
+      "option_id": "claude-code-ide",
+      "name": "Claude Code IDE",
+      "autocomplete_mode": "custom_only",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says connect your vault to Claude Code and share editor context with the CLI.",
+      "primary_pro": "May help a Claude Code workflow understand Obsidian context.",
+      "primary_con": "No generation UI, no live autocomplete; useful only with external Claude Code."
+    },
+    {
+      "rank": 25,
+      "option_id": "claude-vault-assistant",
+      "name": "Claude Vault Assistant",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says reusable prompt files run against vault/active note using Claude Code CLI.",
+      "primary_pro": "Good for repeatable Claude Code prompt workflows.",
+      "primary_con": "Not autocomplete."
+    },
+    {
+      "rank": 26,
+      "option_id": "github-copilot-integration",
+      "name": "GitHub Copilot Integration",
+      "autocomplete_mode": "command_or_selection_generation",
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says integrate GitHub Copilot for AI-powered text generation and assistance.",
+      "primary_pro": "Could be useful for GitHub Copilot users who want chat/inline edit commands.",
+      "primary_con": "Not a Copilot replacement and not live inline/tab autocomplete."
+    },
+    {
+      "rank": 27,
+      "option_id": "various-complements",
+      "name": "Various Complements",
+      "autocomplete_mode": "completion_popup",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says complete words similar to IDE autocomplete.",
+      "primary_pro": "Very mature non-AI completion plugin with high adoption.",
+      "primary_con": "No GPT/Claude/local LLM generation."
+    },
+    {
+      "rank": 28,
+      "option_id": "text-autocomplete",
+      "name": "Text Autocomplete",
+      "autocomplete_mode": "completion_popup",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says text autocomplete.",
+      "primary_pro": "Simple local text autocomplete, active 2026.",
+      "primary_con": "Not GPT/Claude/local LLM generation."
+    },
+    {
+      "rank": 29,
+      "option_id": "completr",
+      "name": "Completr",
+      "autocomplete_mode": "completion_popup",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Official listing says advanced auto-completion for LaTeX, frontmatter, standard writing.",
+      "primary_pro": "Good deterministic completion for LaTeX/frontmatter/writing.",
+      "primary_con": "Not GPT/Claude/local LLM."
+    },
+    {
+      "rank": 30,
+      "option_id": "custom-codemirror-inline-plugin",
+      "name": "Custom Obsidian CodeMirror inline-suggestion plugin",
+      "autocomplete_mode": "custom_only",
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "one_line_evidence": "Obsidian officially supports CodeMirror 6 editor extensions via registerEditorExtension.",
+      "primary_pro": "Technically feasible path to use any official API, OpenAI-compatible proxy, local model, or custom subscription gateway if policy permits.",
+      "primary_con": "Requires building and maintaining an Obsidian plugin."
+    }
+  ],
+  "mode_groups": {
+    "true_inline_tab": [
+      {
+        "rank": 1,
+        "option_id": "ai-autocomplete",
+        "name": "AI Autocomplete"
+      },
+      {
+        "rank": 2,
+        "option_id": "inscribe",
+        "name": "Inscribe"
+      },
+      {
+        "rank": 3,
+        "option_id": "copilot-auto-completion",
+        "name": "Copilot auto completion"
+      },
+      {
+        "rank": 4,
+        "option_id": "companion",
+        "name": "Companion"
+      },
+      {
+        "rank": 5,
+        "option_id": "markpilot",
+        "name": "Markpilot"
+      },
+      {
+        "rank": 6,
+        "option_id": "rosypilot",
+        "name": "RosyPilot"
+      },
+      {
+        "rank": 7,
+        "option_id": "github-copilot",
+        "name": "GitHub Copilot for Obsidian"
+      }
+    ],
+    "inline_not_tab": [
+      {
+        "rank": 8,
+        "option_id": "thought-completion",
+        "name": "Thought Completion"
+      }
+    ],
+    "command_or_selection_generation": [
+      {
+        "rank": 9,
+        "option_id": "echo-ai",
+        "name": "Echo"
+      },
+      {
+        "rank": 12,
+        "option_id": "text-generator",
+        "name": "Text Generator"
+      },
+      {
+        "rank": 13,
+        "option_id": "local-gpt",
+        "name": "Local GPT"
+      },
+      {
+        "rank": 15,
+        "option_id": "tars",
+        "name": "Tars"
+      },
+      {
+        "rank": 16,
+        "option_id": "ai-assistant",
+        "name": "AI Assistant"
+      },
+      {
+        "rank": 18,
+        "option_id": "ollama",
+        "name": "Ollama"
+      },
+      {
+        "rank": 20,
+        "option_id": "excavelo",
+        "name": "ExcaVelo"
+      },
+      {
+        "rank": 25,
+        "option_id": "claude-vault-assistant",
+        "name": "Claude Vault Assistant"
+      },
+      {
+        "rank": 26,
+        "option_id": "github-copilot-integration",
+        "name": "GitHub Copilot Integration"
+      }
+    ],
+    "chat_or_sidebar": [
+      {
+        "rank": 10,
+        "option_id": "obsidian-copilot",
+        "name": "Obsidian Copilot"
+      },
+      {
+        "rank": 11,
+        "option_id": "smart-composer",
+        "name": "Smart Composer"
+      },
+      {
+        "rank": 14,
+        "option_id": "chatgpt-md",
+        "name": "ChatGPT MD"
+      },
+      {
+        "rank": 17,
+        "option_id": "bmo-chatbot",
+        "name": "BMO Chatbot"
+      },
+      {
+        "rank": 19,
+        "option_id": "local-llm-hub",
+        "name": "Local LLM Hub"
+      },
+      {
+        "rank": 21,
+        "option_id": "chatting-with-ai",
+        "name": "Chatting with AI"
+      },
+      {
+        "rank": 22,
+        "option_id": "blackglass",
+        "name": "Blackglass"
+      },
+      {
+        "rank": 23,
+        "option_id": "claude-panel",
+        "name": "Claude Panel"
+      }
+    ],
+    "custom_only": [
+      {
+        "rank": 24,
+        "option_id": "claude-code-ide",
+        "name": "Claude Code IDE"
+      },
+      {
+        "rank": 30,
+        "option_id": "custom-codemirror-inline-plugin",
+        "name": "Custom Obsidian CodeMirror inline-suggestion plugin"
+      }
+    ],
+    "completion_popup": [
+      {
+        "rank": 27,
+        "option_id": "various-complements",
+        "name": "Various Complements"
+      },
+      {
+        "rank": 28,
+        "option_id": "text-autocomplete",
+        "name": "Text Autocomplete"
+      },
+      {
+        "rank": 29,
+        "option_id": "completr",
+        "name": "Completr"
+      }
+    ]
+  },
+  "true_live_tab_autocomplete": [
+    {
+      "rank": 1,
+      "option_id": "ai-autocomplete",
+      "name": "AI Autocomplete"
+    },
+    {
+      "rank": 2,
+      "option_id": "inscribe",
+      "name": "Inscribe"
+    },
+    {
+      "rank": 3,
+      "option_id": "copilot-auto-completion",
+      "name": "Copilot auto completion"
+    },
+    {
+      "rank": 4,
+      "option_id": "companion",
+      "name": "Companion"
+    },
+    {
+      "rank": 5,
+      "option_id": "markpilot",
+      "name": "Markpilot"
+    },
+    {
+      "rank": 6,
+      "option_id": "rosypilot",
+      "name": "RosyPilot"
+    },
+    {
+      "rank": 7,
+      "option_id": "github-copilot",
+      "name": "GitHub Copilot for Obsidian"
+    }
+  ],
+  "command_chat_selection_based_generation": [
+    {
+      "rank": 9,
+      "option_id": "echo-ai",
+      "name": "Echo"
+    },
+    {
+      "rank": 12,
+      "option_id": "text-generator",
+      "name": "Text Generator"
+    },
+    {
+      "rank": 13,
+      "option_id": "local-gpt",
+      "name": "Local GPT"
+    },
+    {
+      "rank": 15,
+      "option_id": "tars",
+      "name": "Tars"
+    },
+    {
+      "rank": 16,
+      "option_id": "ai-assistant",
+      "name": "AI Assistant"
+    },
+    {
+      "rank": 18,
+      "option_id": "ollama",
+      "name": "Ollama"
+    },
+    {
+      "rank": 20,
+      "option_id": "excavelo",
+      "name": "ExcaVelo"
+    },
+    {
+      "rank": 25,
+      "option_id": "claude-vault-assistant",
+      "name": "Claude Vault Assistant"
+    },
+    {
+      "rank": 26,
+      "option_id": "github-copilot-integration",
+      "name": "GitHub Copilot Integration"
+    },
+    {
+      "rank": 10,
+      "option_id": "obsidian-copilot",
+      "name": "Obsidian Copilot"
+    },
+    {
+      "rank": 11,
+      "option_id": "smart-composer",
+      "name": "Smart Composer"
+    },
+    {
+      "rank": 14,
+      "option_id": "chatgpt-md",
+      "name": "ChatGPT MD"
+    },
+    {
+      "rank": 17,
+      "option_id": "bmo-chatbot",
+      "name": "BMO Chatbot"
+    },
+    {
+      "rank": 19,
+      "option_id": "local-llm-hub",
+      "name": "Local LLM Hub"
+    },
+    {
+      "rank": 21,
+      "option_id": "chatting-with-ai",
+      "name": "Chatting with AI"
+    },
+    {
+      "rank": 22,
+      "option_id": "blackglass",
+      "name": "Blackglass"
+    },
+    {
+      "rank": 23,
+      "option_id": "claude-panel",
+      "name": "Claude Panel"
+    }
+  ],
+  "plugin_api_and_editor_mode_constraints": [
+    {
+      "finding": "Obsidian Live Preview is CodeMirror 6; true ghost-text plugins use editor extensions/decorations/keymaps rather than a simple official AI-completion API.",
+      "source_ids": [
+        "src-obsidian-editor-extensions-docs",
+        "src-obsidian-register-editor-extension-api",
+        "src-obsidian-decorations-docs"
+      ],
+      "confidence": "high"
+    },
+    {
+      "finding": "Completion popups are supported through EditorSuggest/PopoverSuggest-style APIs, but that is a different UX from VS Code Copilot ghost text.",
+      "source_ids": [
+        "src-obsidian-editor-suggest-api"
+      ],
+      "confidence": "high"
+    },
+    {
+      "finding": "Tab can conflict with other Obsidian plugins/keybindings; Markpilot and GitHub Copilot plugin READMEs both discuss Tab/keybinding issues.",
+      "source_ids": [
+        "src-repo-markpilot",
+        "src-repo-github-copilot"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "finding": "Mobile support varies: some inline options are desktop-only, while AI Autocomplete, Companion, and Thought Completion list non-desktop-only support.",
+      "source_ids": [
+        "src-official-ai-autocomplete",
+        "src-official-companion",
+        "src-official-inscribe",
+        "src-official-markpilot",
+        "src-official-thought-completion"
+      ],
+      "confidence": "medium"
+    }
+  ],
+  "privacy_and_cost_summary": [
+    "True inline GPT-like plugins mostly need API keys or local endpoints; consumer ChatGPT/Claude subscriptions should not be assumed to cover API calls.",
+    "Local Ollama/LM Studio paths are the strongest privacy/cost-control path but require local model setup and may have latency/quality tradeoffs.",
+    "Subscription/account-connection plugins found for Smart Composer, Claude Code wrappers, and Chatting with AI are not live autocomplete and may carry account/policy or tool-permission risks."
+  ],
+  "blockers": [],
+  "spawned_tasks": [
+    {
+      "suggested_task_id": "T030V",
+      "type": "verify implementation",
+      "priority": 60,
+      "title": "Runtime-smoke top Obsidian inline autocomplete plugins",
+      "reason": "This research did not install plugins in Obsidian; a future verifier could runtime-test AI Autocomplete, Inscribe, Copilot Auto Completion, Companion, and Markpilot for latency, Tab conflicts, mobile behavior, and provider setup."
+    }
+  ],
+  "confidence": "high"
+}
