@@ -1,0 +1,53 @@
+{
+  "id": "T045",
+  "type": "verify claims",
+  "priority": 70,
+  "dependencies": [
+    "T010",
+    "T020",
+    "T030",
+    "T040"
+  ],
+  "title": "Use web-discovery to enrich and verify source coverage",
+  "relevant_files": {
+    "read_first": [
+      ".agents/skills/web-discovery/SKILL.md",
+      "reports/orchestration/autocomplete-research-state.json",
+      "reports/orchestration/handoffs/T005-web-and-schema.json",
+      "reports/orchestration/handoffs/T010-subscription-constraints.json",
+      "reports/orchestration/handoffs/T020-vscode-options.json",
+      "reports/orchestration/handoffs/T030-obsidian-options.json",
+      "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+    ],
+    "read_if_needed": [
+      ".claude/skills/web-discovery/SKILL.md"
+    ]
+  },
+  "scope": "Perform a focused source-discovery and source-retrieval enrichment pass using the web-discovery skill and ketch. Treat T010-T040 as first-pass research because those workers may have launched before web-discovery was installed.",
+  "goals": [
+    "Explicitly use the web-discovery workflow: prefer ketch search/docs/code for discovery and ketch scrape for direct retrieval; use curl only as fallback when appropriate.",
+    "Check whether the first-pass handoffs missed important primary sources, project pages, marketplace listings, docs pages, GitHub repositories, or plugin pages.",
+    "Add or correct source-backed facts that materially affect recommendations for VS Code, Obsidian, subscriptions, or open-source/self-hosted architectures.",
+    "Flag any page that requires browser rendering/session access as needs-review instead of treating it as no evidence.",
+    "Produce a concise enrichment handoff that synthesis must consume."
+  ],
+  "non_goals": [
+    "Do not rewrite the four first-pass handoffs.",
+    "Do not write the final report.",
+    "Do not perform unlimited broad search; focus on material gaps and high-risk claims."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, or prompt-buffer.md.",
+    "Do not edit files tagged human-written.",
+    "Do not use browser automation or sessionful retrieval.",
+    "Keep output as valid JSON using autocomplete-research-handoff-v1 where possible."
+  ],
+  "success_criteria": [
+    "Write reports/orchestration/handoffs/T045-web-discovery-enrichment.json as valid JSON.",
+    "Record whether ketch was available and which web-discovery routes were used.",
+    "List material new sources, corrections, coverage gaps, and recommended synthesis changes.",
+    "Every correction or new nontrivial fact has source URLs, evidence type, last_checked, and confidence."
+  ],
+  "worker_token_budget": 150000,
+  "output_path": "reports/orchestration/handoffs/T045-web-discovery-enrichment.json"
+}

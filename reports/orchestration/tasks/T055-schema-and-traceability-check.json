@@ -11,13 +11,15 @@
       "reports/autocomplete-subscription-options-2026-05-28.json",
       "reports/orchestration/autocomplete-research-state.json",
       "reports/orchestration/handoffs/T000-init-state.json",
-      "reports/orchestration/handoffs/T005-web-and-schema.json"
+      "reports/orchestration/handoffs/T005-web-and-schema.json",
+      "reports/orchestration/handoffs/T045-web-discovery-enrichment.json"
     ],
     "read_if_needed": [
       "reports/orchestration/handoffs/T010-subscription-constraints.json",
       "reports/orchestration/handoffs/T020-vscode-options.json",
       "reports/orchestration/handoffs/T030-obsidian-options.json",
-      "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+      "reports/orchestration/handoffs/T040-open-source-self-hosted.json",
+      ".agents/skills/web-discovery/SKILL.md"
     ]
   },
   "scope": "Validate the final JSON report's structure and traceability before factual verification.",
@@ -29,11 +31,13 @@
   ],
   "non_goals": [
     "Do not perform a broad factual web audit.",
+    "If narrow source checks are needed, use the web-discovery workflow with ketch.",
     "Do not rewrite the whole report."
   ],
   "safety": [
     "Do not read tmp/, archive/, or prompt-buffer.md.",
     "Do not edit files tagged human-written.",
+    "Do not use browser automation or sessionful retrieval.",
     "If a small report patch is needed, keep it minimal and document it."
   ],
   "success_criteria": [

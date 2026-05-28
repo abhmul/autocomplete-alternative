@@ -12,13 +12,15 @@
       "reports/autocomplete-subscription-options-2026-05-28.json",
       "reports/orchestration/autocomplete-research-state.json",
       "reports/orchestration/handoffs/T000-init-state.json",
+      "reports/orchestration/handoffs/T045-web-discovery-enrichment.json",
       "reports/orchestration/handoffs/T055-schema-and-traceability-check.json"
     ],
     "read_if_needed": [
       "reports/orchestration/handoffs/T010-subscription-constraints.json",
       "reports/orchestration/handoffs/T020-vscode-options.json",
       "reports/orchestration/handoffs/T030-obsidian-options.json",
-      "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+      "reports/orchestration/handoffs/T040-open-source-self-hosted.json",
+      ".agents/skills/web-discovery/SKILL.md"
     ]
   },
   "scope": "Audit the final JSON for factual accuracy, source support, internal consistency, completeness against the user request, and JSON validity. Perform narrow web checks for high-risk or surprising claims.",
@@ -26,6 +28,7 @@
     "Validate that the final report answers the requested question for both VS Code and Obsidian.",
     "Check that subscription/API claims are supported by current official sources.",
     "Check that each recommended project actually supports the claimed editor and autocomplete mode.",
+    "Use the web-discovery workflow with ketch for narrow factual/source checks, especially subscription and editor-mode claims.",
     "Write a verification handoff with pass/fail, corrections, and residual uncertainty."
   ],
   "non_goals": [
@@ -35,6 +38,7 @@
   "safety": [
     "Do not read tmp/, archive/, or prompt-buffer.md.",
     "Do not edit files tagged human-written.",
+    "Do not use browser automation or sessionful retrieval.",
     "If editing the final report, keep changes minimal and document them."
   ],
   "success_criteria": [

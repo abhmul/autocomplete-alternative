@@ -42,23 +42,28 @@
     },
     {
       "id": "T010",
-      "status": "pending",
+      "status": "complete",
       "task_file": "reports/orchestration/tasks/T010-subscription-constraints.json"
     },
     {
       "id": "T020",
-      "status": "pending",
+      "status": "complete",
       "task_file": "reports/orchestration/tasks/T020-vscode-options.json"
     },
     {
       "id": "T030",
-      "status": "pending",
+      "status": "complete",
       "task_file": "reports/orchestration/tasks/T030-obsidian-options.json"
     },
     {
       "id": "T040",
-      "status": "pending",
+      "status": "complete",
       "task_file": "reports/orchestration/tasks/T040-open-source-self-hosted.json"
+    },
+    {
+      "id": "T045",
+      "status": "pending",
+      "task_file": "reports/orchestration/tasks/T045-web-discovery-enrichment.json"
     },
     {
       "id": "T050",
@@ -87,6 +92,26 @@
         "task_id": "T005",
         "path": "reports/orchestration/handoffs/T005-web-and-schema.json",
         "trust": "worker_assessment"
+      },
+      {
+        "task_id": "T010",
+        "path": "reports/orchestration/handoffs/T010-subscription-constraints.json",
+        "trust": "first_pass_research"
+      },
+      {
+        "task_id": "T020",
+        "path": "reports/orchestration/handoffs/T020-vscode-options.json",
+        "trust": "first_pass_research"
+      },
+      {
+        "task_id": "T030",
+        "path": "reports/orchestration/handoffs/T030-obsidian-options.json",
+        "trust": "first_pass_research"
+      },
+      {
+        "task_id": "T040",
+        "path": "reports/orchestration/handoffs/T040-open-source-self-hosted.json",
+        "trust": "first_pass_research"
       }
     ],
     "final_report": {

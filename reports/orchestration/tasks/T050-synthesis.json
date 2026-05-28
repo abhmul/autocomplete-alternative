@@ -6,7 +6,8 @@
     "T010",
     "T020",
     "T030",
-    "T040"
+    "T040",
+    "T045"
   ],
   "title": "Synthesize final JSON research report",
   "relevant_files": {
@@ -17,9 +18,12 @@
       "reports/orchestration/handoffs/T010-subscription-constraints.json",
       "reports/orchestration/handoffs/T020-vscode-options.json",
       "reports/orchestration/handoffs/T030-obsidian-options.json",
-      "reports/orchestration/handoffs/T040-open-source-self-hosted.json"
+      "reports/orchestration/handoffs/T040-open-source-self-hosted.json",
+      "reports/orchestration/handoffs/T045-web-discovery-enrichment.json"
     ],
-    "read_if_needed": []
+    "read_if_needed": [
+      ".agents/skills/web-discovery/SKILL.md"
+    ]
   },
   "scope": "Write the final JSON report requested by the user, combining worker findings into a concise but deep decision-oriented breakdown.",
   "goals": [
@@ -27,7 +31,8 @@
     "Include executive summary, bottom-line recommendation, option matrix, detailed options, implementation paths, source list, uncertainties, and rejected/weak options.",
     "Include decision paths for different assumptions: no separate API spend, willing to pay API usage, local-only/privacy-first, and highest autocomplete quality.",
     "Separate facts, recommendations, preferences, speculation, and confidence levels.",
-    "Preserve citations from worker handoffs."
+    "Preserve citations from worker handoffs.",
+    "If any narrow web lookup is needed during synthesis, use the web-discovery workflow with ketch and cite retrieved sources directly."
   ],
   "non_goals": [
     "Do not perform new broad research unless handoffs expose a narrow gap.",
@@ -36,6 +41,7 @@
   "safety": [
     "Do not read tmp/, archive/, or prompt-buffer.md.",
     "Do not edit files tagged human-written.",
+    "Do not use browser automation or sessionful retrieval.",
     "Use valid JSON only for the final report."
   ],
   "success_criteria": [
