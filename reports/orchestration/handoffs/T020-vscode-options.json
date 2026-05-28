@@ -1,0 +1,1331 @@
+{
+  "schema_version": "autocomplete-research-handoff-v1",
+  "task_id": "T020",
+  "status": "complete",
+  "last_checked": "2026-05-28",
+  "title": "Research VS Code live tab-style autocomplete options",
+  "summary": "For VS Code proper, the most practical Copilot-style inline/tab replacements are Continue for configurable open-source API/local FIM workflows, Windsurf/Codeium and Supermaven for low-setup commercial autocomplete, Tabby for self-hosted/on-prem teams, and llama.vscode for lightweight local llama.cpp FIM. Sourcegraph Cody and Tabnine are credible enterprise baselines but less suitable for an individual replacement today because Cody is enterprise-only and Tabnine's public VS Code marketplace path is split between legacy/no-new-users and enterprise. twinny is no longer recommended because its repo and website are archived. No evaluated VS Code option documents direct use of a ChatGPT or Claude UI subscription for autocomplete; options use their own subscription/accounts, local models, or official API keys/credits. Anthropic explicitly documents Claude paid plans and Console/API as separate products; an OpenAI primary-source subscription-boundary page was blocked from this worker, so final synthesis should verify OpenAI separately via T010.",
+  "research_limits": [
+    "No extensions were installed or benchmarked locally; latency and UX ratings are source-based plus cautious inference from architecture.",
+    "OpenAI official help/pricing pages returned HTTP 403 from this worker, so OpenAI API-vs-ChatGPT-subscription boundary is not independently source-confirmed here.",
+    "Marketplace install counts and vendor pricing/features can drift quickly; use last_checked dates when synthesizing."
+  ],
+  "sources": [
+    {
+      "source_id": "src-continue-marketplace",
+      "title": "Continue - open-source AI code agent - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=Continue.continue",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=Continue.continue",
+      "publisher": "Visual Studio Marketplace / Continue",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace title identifies Continue as an open-source AI code agent for Visual Studio Code."
+    },
+    {
+      "source_id": "src-continue-github-api",
+      "title": "GitHub API repository metadata for continuedev/continue",
+      "url": "https://api.github.com/repos/continuedev/continue",
+      "final_url": "https://api.github.com/repos/continuedev/continue",
+      "publisher": "GitHub / continuedev",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Repository metadata: stars 33442, forks 4573, pushed_at 2026-05-28T20:33:23Z, license Apache-2.0, archived false."
+    },
+    {
+      "source_id": "src-continue-autocomplete-setup",
+      "title": "Continue Autocomplete Setup and Configuration Guide",
+      "url": "https://docs.continue.dev/customize/deep-dives/autocomplete",
+      "final_url": "https://docs.continue.dev/customize/deep-dives/autocomplete",
+      "publisher": "Continue Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs recommend Codestral through the Mistral API for the best autocomplete experience, recommend Ollama for a local model path, warn thinking-type models are slower, document multilineCompletions, VS Code inlineSuggest settings, and Tab keybinding for accepting lines."
+    },
+    {
+      "source_id": "src-continue-autocomplete-role",
+      "title": "Autocomplete Role in Continue Models",
+      "url": "https://docs.continue.dev/customize/model-roles/autocomplete",
+      "final_url": "https://docs.continue.dev/customize/model-roles/autocomplete",
+      "publisher": "Continue Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say an autocomplete model is trained on fill-in-the-middle, used to display inline autocomplete suggestions as you type, and that chat models often perform poorly for this task even with prompting."
+    },
+    {
+      "source_id": "src-continue-providers-overview",
+      "title": "Model Providers Overview",
+      "url": "https://docs.continue.dev/customize/model-providers/overview",
+      "final_url": "https://docs.continue.dev/customize/model-providers/overview",
+      "publisher": "Continue Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs list Anthropic and OpenAI capabilities as Chat/Edit/Apply/Embeddings, list Ollama with Autocomplete capability, include local options such as LM Studio and llama.cpp, and state most cloud providers require API keys."
+    },
+    {
+      "source_id": "src-tabby-marketplace",
+      "title": "Tabby - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=TabbyML.vscode-tabby",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=TabbyML.vscode-tabby",
+      "publisher": "Visual Studio Marketplace / TabbyML",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace says Tabby is an open-source, self-hosted AI coding assistant and suggests multi-line code completions and full functions in real time as you write code; installs shown as 78,071."
+    },
+    {
+      "source_id": "src-tabby-github-api",
+      "title": "GitHub API repository metadata for TabbyML/tabby",
+      "url": "https://api.github.com/repos/TabbyML/tabby",
+      "final_url": "https://api.github.com/repos/TabbyML/tabby",
+      "publisher": "GitHub / TabbyML",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Repository metadata: stars 33550, forks 1747, pushed_at 2026-03-02T20:08:28Z, archived false, description self-hosted AI coding assistant."
+    },
+    {
+      "source_id": "src-tabby-license-raw",
+      "title": "Tabby LICENSE raw file",
+      "url": "https://raw.githubusercontent.com/TabbyML/tabby/main/LICENSE",
+      "final_url": "https://raw.githubusercontent.com/TabbyML/tabby/main/LICENSE",
+      "publisher": "GitHub / TabbyML",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "License file says content outside ee/ and other restrictions is available under Apache 2.0; ee/ has its own license if present."
+    },
+    {
+      "source_id": "src-tabby-model-config",
+      "title": "Model Configuration | Tabby",
+      "url": "https://tabby.tabbyml.com/docs/administration/model/",
+      "final_url": "https://tabby.tabbyml.com/docs/administration/model/",
+      "publisher": "Tabby Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs define Completion, Chat, and Embedding models; the Completion model focuses on Fill-in-the-Middle prompting; local connections use llama.cpp; remote connectors can connect to APIs of providers like Claude, OpenAI, Ollama, or custom endpoints."
+    },
+    {
+      "source_id": "src-tabby-code-completion",
+      "title": "Code Completion | Tabby",
+      "url": "https://tabby.tabbyml.com/docs/administration/code-completion/",
+      "final_url": "https://tabby.tabbyml.com/docs/administration/code-completion/",
+      "publisher": "Tabby Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say code completion is a key feature in IDE/extensions, can analyze code repositories or documentation supplied by users, and completion tuning varies by model serving provider such as llama.cpp, vLLM, and TensorRT-LLM."
+    },
+    {
+      "source_id": "src-twinny-marketplace",
+      "title": "twinny - AI Code Completion and Chat - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=rjmacarthy.twinny",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=rjmacarthy.twinny",
+      "publisher": "Visual Studio Marketplace / twinny",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace lists supported providers including localhost, OpenAI/Ollama-compatible API, OpenAI, Anthropic, OpenRouter, DeepSeek, Cohere, Mistral AI, Perplexity, and Groq; main features include Fill in the Middle Code Completion and single/multiline FIM completions; states MIT licensed."
+    },
+    {
+      "source_id": "src-twinny-github-api",
+      "title": "GitHub API repository metadata for twinnydotdev/twinny",
+      "url": "https://api.github.com/repos/twinnydotdev/twinny",
+      "final_url": "https://api.github.com/repos/twinnydotdev/twinny",
+      "publisher": "GitHub / twinnydotdev",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Repository metadata: stars 3628, forks 224, pushed_at 2025-08-07T10:12:07Z, license MIT, archived true, description calls it a locally or API-hosted VS Code completion plugin like GitHub Copilot."
+    },
+    {
+      "source_id": "src-twinny-site-archived",
+      "title": "TWINNY.DEV",
+      "url": "https://twinny.dev/",
+      "final_url": "https://twinny.dev/",
+      "publisher": "twinny.dev",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Homepage says TWINNY.DEV [ARCHIVED] and that twinny has been archived."
+    },
+    {
+      "source_id": "src-llama-vscode-marketplace",
+      "title": "llama-vscode - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=ggml-org.llama-vscode",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=ggml-org.llama-vscode",
+      "publisher": "Visual Studio Marketplace / ggml.ai",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace says llama-vscode is local LLM-assisted text completion using llama.cpp, supports auto-suggest on input, accepts suggestions with Tab, supports smart context reuse, and requires FIM-compatible models; installs shown as 24,598."
+    },
+    {
+      "source_id": "src-llama-vscode-github-api",
+      "title": "GitHub API repository metadata for ggml-org/llama.vscode",
+      "url": "https://api.github.com/repos/ggml-org/llama.vscode",
+      "final_url": "https://api.github.com/repos/ggml-org/llama.vscode",
+      "publisher": "GitHub / ggml-org",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Repository metadata: stars 1355, forks 124, pushed_at 2026-05-26T05:14:50Z, license MIT, archived false, description VS Code extension for LLM-assisted code/text completion."
+    },
+    {
+      "source_id": "src-llama-vscode-license-raw",
+      "title": "llama.vscode LICENSE raw file",
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.vscode/master/LICENSE",
+      "final_url": "https://raw.githubusercontent.com/ggml-org/llama.vscode/master/LICENSE",
+      "publisher": "GitHub / ggml-org",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "License file is MIT License, copyright 2025 The llama.vscode contributors."
+    },
+    {
+      "source_id": "src-tabnine-legacy-marketplace",
+      "title": "(Legacy) Tabnine - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode",
+      "publisher": "Visual Studio Marketplace / TabNine",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace labels the public extension as Legacy and says Tabnine does not onboard new users to this plugin; installs shown as 9,565,549."
+    },
+    {
+      "source_id": "src-tabnine-enterprise-marketplace",
+      "title": "Tabnine for Enterprise - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode-self-hosted-updater",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode-self-hosted-updater",
+      "publisher": "Visual Studio Marketplace / TabNine",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace says Tabnine for Enterprise is exclusively for Tabnine Enterprise customers and connects the Tabnine extension to a dedicated Tabnine server."
+    },
+    {
+      "source_id": "src-tabnine-code-completions",
+      "title": "Code Completions | Tabnine Docs",
+      "url": "https://docs.tabnine.com/main/getting-started/getting-the-most-from-tabnines-code-completion",
+      "final_url": "https://docs.tabnine.com/main/getting-started/getting-the-most-from-tabnines-code-completion",
+      "publisher": "Tabnine Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say code completions are available in VS Code, JetBrains, Visual Studio 2022, and Eclipse; suggestions appear inline in gray; hit Tab to accept; types include whole-line, full-function, and comment-to-code completions."
+    },
+    {
+      "source_id": "src-tabnine-privacy",
+      "title": "Privacy | Tabnine Docs",
+      "url": "https://docs.tabnine.com/main/welcome/readme/privacy",
+      "final_url": "https://docs.tabnine.com/main/welcome/readme/privacy",
+      "publisher": "Tabnine Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Tabnine never retains or shares code with third parties when using Tabnine models, has a no-train-no-retain policy, sends context windows for inference, and discards code after output is generated."
+    },
+    {
+      "source_id": "src-tabnine-ai-models",
+      "title": "AI Models | Tabnine Docs",
+      "url": "https://docs.tabnine.com/main/welcome/readme/ai-models",
+      "final_url": "https://docs.tabnine.com/main/welcome/readme/ai-models",
+      "publisher": "Tabnine Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Tabnine's AI coding assistance is backed by proprietary Tabnine models for code completions and chat, while Tabnine Chat can optionally use third-party models such as Claude and GPT models."
+    },
+    {
+      "source_id": "src-tabnine-deployment",
+      "title": "Deployment Options | Tabnine Docs",
+      "url": "https://docs.tabnine.com/main/welcome/readme/architecture/deployment-options",
+      "final_url": "https://docs.tabnine.com/main/welcome/readme/architecture/deployment-options",
+      "publisher": "Tabnine Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs list Secure SaaS and Enterprise private installation options including VPC, on-premises, and completely air-gapped environments."
+    },
+    {
+      "source_id": "src-windsurf-marketplace",
+      "title": "Windsurf Plugin (formerly Codeium) - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=Codeium.codeium",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=Codeium.codeium",
+      "publisher": "Visual Studio Marketplace / Windsurf",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace says the Windsurf VSCode Plugin provides autocomplete, chat, and search in 70+ languages with lightning fast speeds, unlimited single and multi-line code completions forever, and free installation; installs shown as 3,779,431."
+    },
+    {
+      "source_id": "src-windsurf-autocomplete-docs",
+      "title": "Autocomplete Overview | Windsurf Docs",
+      "url": "https://docs.windsurf.com/autocomplete/overview.md",
+      "final_url": "https://docs.windsurf.com/autocomplete/overview.md",
+      "publisher": "Windsurf Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Windsurf Autocomplete is powered by in-house models optimized for speed and accuracy, makes in-line and multi-line suggestions based on code context, shows gray text as you type, and accepts suggestions with Tab."
+    },
+    {
+      "source_id": "src-windsurf-autocomplete-tips",
+      "title": "Autocomplete Tips | Windsurf Docs",
+      "url": "https://docs.windsurf.com/autocomplete/tips.md",
+      "final_url": "https://docs.windsurf.com/autocomplete/tips.md",
+      "publisher": "Windsurf Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Windsurf Autocomplete can use inline comments and can Fill In The Middle (FIM)."
+    },
+    {
+      "source_id": "src-windsurf-tab-docs",
+      "title": "Windsurf Tab | Windsurf Docs",
+      "url": "https://docs.windsurf.com/tab/overview.md",
+      "final_url": "https://docs.windsurf.com/tab/overview.md",
+      "publisher": "Windsurf Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Windsurf Tab is powered by a custom in-house model, uses code, terminal, Cascade chat history, prior editor actions, and optional clipboard context, accepts suggestions with Tab, and offers Autocomplete and Supercomplete modes."
+    },
+    {
+      "source_id": "src-windsurf-editor-page",
+      "title": "Windsurf Editor | Windsurf",
+      "url": "https://windsurf.com/editor",
+      "final_url": "https://windsurf.com/editor",
+      "publisher": "Windsurf / Cognition AI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Product page says the full power of Windsurf Tab is exclusive to the Windsurf Editor and IDE plugins include only the autocomplete action."
+    },
+    {
+      "source_id": "src-windsurf-context-docs",
+      "title": "Context Awareness Overview | Windsurf Docs",
+      "url": "https://docs.windsurf.com/context-awareness/overview.md",
+      "final_url": "https://docs.windsurf.com/context-awareness/overview.md",
+      "publisher": "Windsurf Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Windsurf's RAG context engine indexes the entire local codebase, uses current/open files and relevant snippets, offers expanded context to Pro users, and remote repository indexing for Teams and Enterprise."
+    },
+    {
+      "source_id": "src-windsurf-pricing",
+      "title": "Plans and Pricing | Windsurf",
+      "url": "https://windsurf.com/pricing",
+      "final_url": "https://windsurf.com/pricing",
+      "publisher": "Windsurf / Cognition AI",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Pricing page lists Free $0/month, Pro $20/month, Max $200/month, Teams $40/user/month, and Enterprise contact sales; page lists Tab, Fast Context, SWE model, and premium models as plan features."
+    },
+    {
+      "source_id": "src-supermaven-marketplace",
+      "title": "Supermaven - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=Supermaven.supermaven",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=Supermaven.supermaven",
+      "publisher": "Visual Studio Marketplace / Supermaven",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace says Supermaven uses a 1 million token context window for code completion and low latency, offers fast high-quality suggestions, supports large codebases and 70+ languages, and chat can use OpenAI/Anthropic API keys; installs shown as 385,099."
+    },
+    {
+      "source_id": "src-supermaven-home",
+      "title": "Supermaven: Free AI Code Completion",
+      "url": "https://supermaven.com/",
+      "final_url": "https://supermaven.com/",
+      "publisher": "Supermaven",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Homepage claims 250ms latency versus 783ms competitor, a 1 million token context window, VS Code compatibility, free tier, Pro $10/month, and a 7-day data retention limit."
+    },
+    {
+      "source_id": "src-cursor-supermaven-acquisition",
+      "title": "Supermaven joins Cursor",
+      "url": "https://cursor.com/blog/supermaven",
+      "final_url": "https://cursor.com/blog/supermaven",
+      "publisher": "Cursor / Anysphere",
+      "source_type": "vendor_blog",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Cursor blog dated Nov 12, 2024 says Supermaven is joining Cursor; the Supermaven plugin will remain maintained, though Cursor will be the core focus."
+    },
+    {
+      "source_id": "src-sourcegraph-cody-marketplace",
+      "title": "Cody: AI Code Assistant - Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=sourcegraph.cody-ai",
+      "final_url": "https://marketplace.visualstudio.com/items?itemName=sourcegraph.cody-ai",
+      "publisher": "Visual Studio Marketplace / Sourcegraph",
+      "source_type": "marketplace_listing",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Marketplace says Cody brings autocomplete, chat, and commands, but prominently states Cody is no longer available for non-enterprise users; installs shown as 844,233."
+    },
+    {
+      "source_id": "src-sourcegraph-cody-docs",
+      "title": "Cody - Sourcegraph docs",
+      "url": "https://sourcegraph.com/docs/cody",
+      "final_url": "https://sourcegraph.com/docs/cody",
+      "publisher": "Sourcegraph Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Cody is supported on Sourcegraph Enterprise, available on VS Code/JetBrains/Visual Studio/Web, uses latest LLMs and development context, pulls context from local and remote codebases, and has chat, completions, code edits, and prompts."
+    },
+    {
+      "source_id": "src-sourcegraph-cody-autocomplete",
+      "title": "Autocomplete - Sourcegraph docs",
+      "url": "https://sourcegraph.com/docs/cody/capabilities/autocomplete",
+      "final_url": "https://sourcegraph.com/docs/cody/capabilities/autocomplete",
+      "publisher": "Sourcegraph Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Cody offers single-line and multi-line suggestions; autocomplete is optimized for server/client performance; enterprise users default to DeepSeek V2; setup requires Sourcegraph Enterprise with Cody enabled; suggestions appear as grayed text and Enter or Tab accepts."
+    },
+    {
+      "source_id": "src-sourcegraph-pricing",
+      "title": "Pricing | Sourcegraph",
+      "url": "https://sourcegraph.com/pricing",
+      "final_url": "https://sourcegraph.com/pricing",
+      "publisher": "Sourcegraph",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Pricing page lists an Enterprise plan starting at $16K, credits for AI features, single-tenant cloud, self-hosted, and enterprise-grade security/admin controls."
+    },
+    {
+      "source_id": "src-cursor-home",
+      "title": "Cursor: The best coding agent",
+      "url": "https://cursor.com/",
+      "final_url": "https://cursor.com/",
+      "publisher": "Cursor / Anysphere",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Homepage says Cursor has a specialized Tab model that predicts the next action with speed and precision, and lets users choose models from OpenAI, Anthropic, Gemini, xAI, and Cursor."
+    },
+    {
+      "source_id": "src-cursor-tab-docs",
+      "title": "Tab completion | Cursor Docs",
+      "url": "https://cursor.com/help/ai-features/tab.md",
+      "final_url": "https://cursor.com/help/ai-features/tab.md",
+      "publisher": "Cursor Docs",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Docs say Tab is Cursor's AI-powered autocomplete, suggests code as you type based on recent edits, surrounding code, and linter errors, appears as grayed text, accepts full suggestion with Tab, can modify multiple lines and suggest cross-file edits."
+    },
+    {
+      "source_id": "src-cursor-pricing",
+      "title": "Cursor Pricing",
+      "url": "https://cursor.com/pricing",
+      "final_url": "https://cursor.com/pricing",
+      "publisher": "Cursor / Anysphere",
+      "source_type": "pricing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Pricing lists Hobby Free with limited Tab completions, Individual Pro $20/month with frontier models, Teams $40/user/month with team-wide privacy mode, and Enterprise custom."
+    },
+    {
+      "source_id": "src-claude-api-access",
+      "title": "How can I access the Claude API? | Claude Help Center",
+      "url": "https://support.claude.com/en/articles/8114521-how-can-i-access-the-claude-api",
+      "final_url": "https://support.claude.com/en/articles/8114521-how-can-i-access-the-claude-api",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Help article says organizations can create a Claude Console account; Console is where users create API keys, add users, set up billing, and experiment with Claude on Workbench."
+    },
+    {
+      "source_id": "src-claude-paid-plans-api-separate",
+      "title": "I have a paid Claude subscription... Why do I have to pay separately to use the Claude API and Console?",
+      "url": "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+      "final_url": "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Help article says Claude paid plans and Claude Console are separate products; a paid Claude subscription enhances chat but does not include access to the Claude API or Console."
+    },
+    {
+      "source_id": "src-claude-api-billing",
+      "title": "How do I pay for my Claude API usage? | Claude Help Center",
+      "url": "https://support.claude.com/en/articles/8977456-how-do-i-pay-for-my-claude-api-usage",
+      "final_url": "https://support.claude.com/en/articles/8977456-how-do-i-pay-for-my-claude-api-usage",
+      "publisher": "Anthropic / Claude Help Center",
+      "source_type": "official_pricing_or_billing_page",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Help article says Claude API and Workbench usage is billed via prepaid usage credits purchased before using the API."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim-t020-no-direct-ui-subscription-path",
+      "text": "No evaluated VS Code autocomplete option documents direct use of ChatGPT or Claude web/desktop UI subscriptions for inline/tab autocomplete; documented paths are vendor accounts/subscriptions, local models, or official API keys/credits.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-claude-paid-plans-api-separate",
+        "src-claude-api-access",
+        "src-continue-providers-overview",
+        "src-supermaven-marketplace",
+        "src-twinny-marketplace"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Anthropic is primary-source-confirmed. OpenAI official help/pricing was blocked by HTTP 403 in this worker, so OpenAI should be rechecked by T010 before final wording."
+    },
+    {
+      "claim_id": "claim-t020-fim-matters",
+      "text": "Autocomplete quality should be evaluated separately from chat quality because FIM-specialized models are designed for prefix/suffix code insertion, while general chat models often perform poorly for autocomplete even when larger.",
+      "claim_type": "performance_or_latency",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-continue-autocomplete-role",
+        "src-tabby-model-config"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This is central to interpreting OpenAI/Anthropic support: Claude/GPT chat support does not imply good tab-completion support."
+    },
+    {
+      "claim_id": "claim-t020-continue-autocomplete-stack",
+      "text": "Continue supports real inline autocomplete with FIM-oriented configuration, recommends Codestral via Mistral API for best closed-model autocomplete, and recommends Ollama/Qwen Coder for a local path.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-continue-autocomplete-setup",
+        "src-continue-autocomplete-role"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Provider overview shows OpenAI/Anthropic are available for non-autocomplete roles, while Ollama includes Autocomplete capability."
+    },
+    {
+      "claim_id": "claim-t020-continue-maintained-open",
+      "text": "Continue has strong open-source maintenance signals: Apache-2.0 license, unarchived GitHub repo, same-day push, and high stars/forks.",
+      "claim_type": "project_status",
+      "evidence_type": "direct_http_check",
+      "source_ids": [
+        "src-continue-github-api",
+        "src-continue-marketplace"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "GitHub API metadata fetched directly."
+    },
+    {
+      "claim_id": "claim-t020-tabby-self-hosted-fim",
+      "text": "Tabby is a self-hosted/on-prem Copilot alternative with VS Code extension support and FIM-oriented completion models; it can use local llama.cpp serving or remote HTTP connectors for providers including Claude, OpenAI, Ollama, or custom endpoints.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-tabby-marketplace",
+        "src-tabby-model-config",
+        "src-tabby-code-completion"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Completion-vs-chat support for each remote provider still depends on provider/model capabilities."
+    },
+    {
+      "claim_id": "claim-t020-tabby-open-core-status",
+      "text": "Tabby is best treated as open-core: most repository content outside ee/ is Apache-2.0, while ee/ may have a separate license.",
+      "claim_type": "project_status",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-tabby-license-raw",
+        "src-tabby-github-api"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "GitHub license API returned NOASSERTION, so the raw LICENSE text is the stronger source."
+    },
+    {
+      "claim_id": "claim-t020-twinny-archived",
+      "text": "twinny still documents a broad local/API provider matrix and FIM completions, but it is archived and should not be recommended as a durable current replacement unless the user explicitly accepts abandonware risk.",
+      "claim_type": "project_status",
+      "evidence_type": "direct_http_check",
+      "source_ids": [
+        "src-twinny-marketplace",
+        "src-twinny-github-api",
+        "src-twinny-site-archived"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Marketplace remains accessible, but repo archived true and homepage says archived."
+    },
+    {
+      "claim_id": "claim-t020-llama-vscode-local-fim",
+      "text": "llama.vscode is a credible lightweight open-source local completion path for VS Code: it uses llama.cpp, accepts suggestions with Tab, requires FIM-compatible models, and documents VRAM-tiered Qwen Coder presets plus smart context reuse.",
+      "claim_type": "integration",
+      "evidence_type": "official_marketplace_listing",
+      "source_ids": [
+        "src-llama-vscode-marketplace",
+        "src-llama-vscode-github-api",
+        "src-llama-vscode-license-raw"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Likely more setup/hardware-sensitive than commercial cloud options, but privacy posture is strong when kept local."
+    },
+    {
+      "claim_id": "claim-t020-tabnine-enterprise-baseline",
+      "text": "Tabnine provides true inline suggestions accepted with Tab and strong privacy claims, but the legacy public VS Code plugin no longer onboards new users and the current enterprise marketplace path is explicitly for Enterprise customers with a dedicated Tabnine server.",
+      "claim_type": "project_status",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-tabnine-legacy-marketplace",
+        "src-tabnine-enterprise-marketplace",
+        "src-tabnine-code-completions",
+        "src-tabnine-privacy"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Good enterprise baseline; less attractive as an individual Copilot replacement from scratch."
+    },
+    {
+      "claim_id": "claim-t020-tabnine-third-party-models-chat-not-completion",
+      "text": "Tabnine's completion path is backed by Tabnine proprietary models; optional third-party Claude/GPT models are documented for Agent/Chat, not as a way to use a user's Claude/ChatGPT subscription for autocomplete.",
+      "claim_type": "api_access",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-tabnine-ai-models",
+        "src-tabnine-code-completions"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Docs distinguish code completions from Agent/Chat model choices."
+    },
+    {
+      "claim_id": "claim-t020-windsurf-plugin-autocomplete-good-but-editor-tab-exclusive",
+      "text": "The Windsurf VS Code plugin offers free single/multi-line autocomplete with in-house models, Tab acceptance, and FIM, but the more advanced Windsurf Tab/Supercomplete experience is documented as exclusive to the Windsurf Editor; VS Code plugins include only the autocomplete action.",
+      "claim_type": "ux_mode",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-windsurf-marketplace",
+        "src-windsurf-autocomplete-docs",
+        "src-windsurf-autocomplete-tips",
+        "src-windsurf-editor-page"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Good practical VS Code option, but do not overclaim editor-only Windsurf Tab features for VS Code."
+    },
+    {
+      "claim_id": "claim-t020-windsurf-context-cloud",
+      "text": "Windsurf's context quality comes from RAG/codebase indexing and vendor in-house models, not user-selected OpenAI/Anthropic API keys for autocomplete; privacy posture is cloud/vendor-account based and should be checked against team policy.",
+      "claim_type": "privacy_or_policy_risk",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-windsurf-context-docs",
+        "src-windsurf-autocomplete-docs",
+        "src-windsurf-pricing"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "Detailed privacy terms were not deeply audited in T020; context indexing is source-confirmed."
+    },
+    {
+      "claim_id": "claim-t020-supermaven-fast-commercial",
+      "text": "Supermaven is a credible commercial VS Code autocomplete baseline with claimed low latency, large-context completion, and a maintained plugin after joining Cursor, but its OpenAI/Anthropic API-key support is documented for chat/edit rather than core autocomplete.",
+      "claim_type": "performance_or_latency",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-supermaven-marketplace",
+        "src-supermaven-home",
+        "src-cursor-supermaven-acquisition"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Vendor latency claims were not independently benchmarked."
+    },
+    {
+      "claim_id": "claim-t020-sourcegraph-cody-enterprise-only",
+      "text": "Sourcegraph Cody provides enterprise VS Code autocomplete accepted with Enter or Tab and codebase context, but marketplace/docs indicate it is supported on Sourcegraph Enterprise and no longer available for non-enterprise users.",
+      "claim_type": "project_status",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-sourcegraph-cody-marketplace",
+        "src-sourcegraph-cody-docs",
+        "src-sourcegraph-cody-autocomplete",
+        "src-sourcegraph-pricing"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Appropriate baseline for enterprise teams already evaluating Sourcegraph; likely overkill/cost-prohibitive for individual replacement."
+    },
+    {
+      "claim_id": "claim-t020-cursor-near-scope",
+      "text": "Cursor Tab is a strong Copilot-style autocomplete experience but it is a VS Code fork/editor rather than a VS Code extension, so it is near-scope rather than an in-VS-Code replacement.",
+      "claim_type": "ux_mode",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-cursor-home",
+        "src-cursor-tab-docs",
+        "src-cursor-pricing"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Good option only if the user accepts switching editors/forks."
+    },
+    {
+      "claim_id": "claim-t020-claude-api-not-included-in-paid-plans",
+      "text": "Claude Pro/Max/Team/Enterprise UI subscriptions do not include Claude API or Console access; API usage requires separate Console access and usage credits.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-claude-paid-plans-api-separate",
+        "src-claude-api-billing",
+        "src-claude-api-access"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Direct primary-source support from Anthropic/Claude Help Center."
+    }
+  ],
+  "ranked_options": [
+    {
+      "rank": 1,
+      "option_id": "opt-continue",
+      "name": "Continue",
+      "ranking_rationale": "Best general VS Code choice when the user wants open-source control plus local/API flexibility and understands that autocomplete should use FIM-capable models rather than ChatGPT/Claude UI subscriptions.",
+      "confidence": "high"
+    },
+    {
+      "rank": 2,
+      "option_id": "opt-windsurf-vscode-plugin",
+      "name": "Windsurf VS Code Plugin (formerly Codeium)",
+      "ranking_rationale": "Best low-setup free commercial autocomplete inside VS Code; strong inline UX, but less control over model/provider and advanced Windsurf Tab features are editor-only.",
+      "confidence": "high"
+    },
+    {
+      "rank": 3,
+      "option_id": "opt-supermaven",
+      "name": "Supermaven",
+      "ranking_rationale": "Strong commercial autocomplete baseline with compelling vendor latency/context claims and VS Code support; no direct subscription reuse and acquisition makes Cursor the core focus, though plugin maintenance is promised.",
+      "confidence": "high"
+    },
+    {
+      "rank": 4,
+      "option_id": "opt-tabby",
+      "name": "Tabby",
+      "ranking_rationale": "Best self-hosted/on-prem team option, especially for privacy/control; setup and model serving are heavier than a single extension plus cloud account.",
+      "confidence": "high"
+    },
+    {
+      "rank": 5,
+      "option_id": "opt-llama-vscode",
+      "name": "llama.vscode",
+      "ranking_rationale": "Best lightweight local llama.cpp/FIM path for a technical user; very good privacy, but UX quality and latency are hardware/model dependent.",
+      "confidence": "high"
+    },
+    {
+      "rank": 6,
+      "option_id": "opt-tabnine",
+      "name": "Tabnine",
+      "ranking_rationale": "Credible enterprise/private-deployment baseline with real Tab completions and strong privacy claims, but current marketplace onboarding makes it less suitable for a new individual VS Code setup.",
+      "confidence": "high"
+    },
+    {
+      "rank": 7,
+      "option_id": "opt-sourcegraph-cody",
+      "name": "Sourcegraph Cody",
+      "ranking_rationale": "Strong enterprise context/autocomplete option if already using Sourcegraph; otherwise enterprise-only status and pricing make it a poor individual replacement.",
+      "confidence": "high"
+    },
+    {
+      "rank": 8,
+      "option_id": "opt-cursor-near-scope",
+      "name": "Cursor Tab (near-scope VS Code fork)",
+      "ranking_rationale": "Excellent tab-style UX if switching to a VS Code fork is acceptable, but it is not a VS Code extension and therefore should not be counted as an in-VS-Code replacement.",
+      "confidence": "high"
+    },
+    {
+      "rank": 9,
+      "option_id": "opt-twinny",
+      "name": "twinny",
+      "ranking_rationale": "Historically relevant open-source FIM/API option, but archived status makes it a last-resort or reference implementation rather than a current recommendation.",
+      "confidence": "high"
+    }
+  ],
+  "options": [
+    {
+      "option_id": "opt-continue",
+      "name": "Continue",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "jetbrains"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "Apache-2.0",
+      "maintenance_signals": {
+        "marketplace": "Official VS Marketplace extension page fetched.",
+        "repository": "GitHub API: unarchived, pushed 2026-05-28, 33442 stars, Apache-2.0."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": ["Mistral Codestral", "Ollama/local", "Anthropic", "OpenAI", "Azure OpenAI", "OpenRouter", "LM Studio", "llama.cpp"],
+        "risk_level": "low",
+        "access_notes": "No documented ChatGPT/Claude UI subscription path. Continue supports many provider/API configurations, but its own docs favor FIM-capable autocomplete models such as Codestral or local Qwen Coder via Ollama."
+      },
+      "inline_fim_support": "Yes; docs explicitly define autocomplete models as FIM and inline suggestions as you type.",
+      "acceptance_ux": "VS Code inline suggestion UX; docs discuss Tab keybinding for accepting inline suggestion lines and Escape cancellation.",
+      "latency_expectations": "Good if using fast FIM model/provider; docs warn thinking models are too slow for autocomplete. Local latency depends on hardware/model size; cloud latency depends on provider.",
+      "context_handling": "Current file prefix/suffix for FIM, configurable prompt/suffix options, multiline controls, and Continue context-provider ecosystem for other roles; autocomplete context should remain constrained for speed.",
+      "setup_complexity": "Medium: install extension, configure YAML/model role/provider/API key or Ollama model; more moving parts than proprietary extensions.",
+      "expected_ux_quality": "Good for technical users; quality depends heavily on selected FIM model. Avoid Claude/GPT chat models for core tab autocomplete unless a model explicitly supports the autocomplete role well.",
+      "privacy_posture": "Depends on provider. Local Ollama/llama.cpp can keep code local; cloud APIs receive autocomplete context under their terms.",
+      "cost_model": "Extension is free/open-source; pay for cloud API usage or local hardware/compute. Codestral/Mistral requires API key; Ollama local can be no API fee.",
+      "strengths": [
+        "Open-source and actively maintained.",
+        "Supports local and API-based setups.",
+        "Autocomplete docs are FIM-aware, which matches Copilot-style completion needs.",
+        "Good bridge for OpenAI-compatible local gateways when paired with compatible providers/models."
+      ],
+      "limitations": [
+        "Does not use ChatGPT or Claude subscriptions directly.",
+        "OpenAI/Anthropic support in provider overview is not advertised for autocomplete capability in the same way as Ollama; Claude/GPT chat models may perform poorly for tab completion.",
+        "Requires configuration and model selection judgment."
+      ],
+      "source_ids": [
+        "src-continue-marketplace",
+        "src-continue-github-api",
+        "src-continue-autocomplete-setup",
+        "src-continue-autocomplete-role",
+        "src-continue-providers-overview"
+      ],
+      "claim_ids": [
+        "claim-t020-fim-matters",
+        "claim-t020-continue-autocomplete-stack",
+        "claim-t020-continue-maintained-open",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-windsurf-vscode-plugin",
+      "name": "Windsurf VS Code Plugin (formerly Codeium)",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "jetbrains"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "proprietary/commercial",
+      "maintenance_signals": {
+        "marketplace": "VS Marketplace fetched; 3,779,431 installs; extension title says Windsurf Plugin formerly Codeium.",
+        "docs": "Current Windsurf markdown docs fetched for Autocomplete, Tab, context, and pricing."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "not_applicable",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Windsurf Free", "Windsurf Pro", "Windsurf Max", "Windsurf Teams", "Windsurf Enterprise"],
+        "api_names": ["Windsurf in-house autocomplete models"],
+        "risk_level": "low",
+        "access_notes": "Autocomplete uses Windsurf/Codeium service and account/plan, not user ChatGPT/Claude subscriptions or arbitrary API keys."
+      },
+      "inline_fim_support": "Yes; official docs say Autocomplete can Fill In The Middle and makes inline/multiline suggestions.",
+      "acceptance_ux": "Gray ghost text as you type; Tab accepts suggestion; Escape cancels; word-by-word and next/previous shortcuts documented.",
+      "latency_expectations": "Likely strong for cloud commercial usage; docs say models are optimized for speed and marketplace claims lightning fast speeds. No direct benchmark run.",
+      "context_handling": "Uses local/open files and indexed codebase through Windsurf context engine; Teams/Enterprise can index remote repositories. VS Code plugin only gets autocomplete action; advanced editor Tab context modes are not fully in plugin.",
+      "setup_complexity": "Low: install extension and sign in. No model serving setup.",
+      "expected_ux_quality": "Good to high for a plug-and-play VS Code autocomplete replacement, but less configurable than open-source/local options.",
+      "privacy_posture": "Cloud/vendor service. Docs confirm codebase indexing for context; teams should review Windsurf privacy/security terms and use ignore settings where needed.",
+      "cost_model": "Marketplace install free; pricing source lists Free, Pro $20/month, Max $200/month, Teams $40/user/month, Enterprise contact sales; fast/premium/context features vary by plan.",
+      "strengths": [
+        "Fast low-friction setup.",
+        "True inline/multiline Tab autocomplete and FIM support.",
+        "Large user signal from marketplace installs.",
+        "Free tier provides a practical baseline."
+      ],
+      "limitations": [
+        "No direct ChatGPT/Claude subscription use.",
+        "No user-selected OpenAI-compatible or Anthropic provider for autocomplete.",
+        "Full Windsurf Tab/Supercomplete power is exclusive to Windsurf Editor, not VS Code plugin."
+      ],
+      "source_ids": [
+        "src-windsurf-marketplace",
+        "src-windsurf-autocomplete-docs",
+        "src-windsurf-autocomplete-tips",
+        "src-windsurf-tab-docs",
+        "src-windsurf-editor-page",
+        "src-windsurf-context-docs",
+        "src-windsurf-pricing"
+      ],
+      "claim_ids": [
+        "claim-t020-windsurf-plugin-autocomplete-good-but-editor-tab-exclusive",
+        "claim-t020-windsurf-context-cloud",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-supermaven",
+      "name": "Supermaven",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "jetbrains", "neovim"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "proprietary/commercial",
+      "maintenance_signals": {
+        "marketplace": "VS Marketplace fetched; 385,099 installs.",
+        "vendor_status": "Cursor blog says plugin remains maintained after Supermaven joined Cursor, but Cursor is core focus."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Supermaven Free", "Supermaven Pro", "Supermaven Team"],
+        "api_names": ["Supermaven autocomplete service", "OpenAI API key for chat", "Anthropic API key for chat"],
+        "risk_level": "low",
+        "access_notes": "OpenAI/Anthropic API-key support is documented for chat/edit, not the core autocomplete model."
+      },
+      "inline_fim_support": "Inline completion is documented; FIM is not explicitly emphasized in the fetched Supermaven sources.",
+      "acceptance_ux": "Copilot-like inline code completion in VS Code; exact keybinding not deeply audited, but positioned as fastest copilot and VS Code completion extension.",
+      "latency_expectations": "High, based on vendor claim of 250ms response versus 783ms competitor and marketplace low-latency claims; not independently benchmarked.",
+      "context_handling": "Vendor claims 1 million token context window for Pro and large-codebase support; free tier lacks the unique 1M context window per marketplace/homepage.",
+      "setup_complexity": "Low: install and sign in; optional API keys for chat. No local model setup.",
+      "expected_ux_quality": "High for commercial completion if proprietary service is acceptable; exact current roadmap tied to Cursor focus.",
+      "privacy_posture": "Cloud/vendor service; homepage mentions a 7-day data retention limit. Review Code Policy for sensitive code.",
+      "cost_model": "Free tier; homepage lists Pro $10/month and Team $10/user/month; marketplace says Pro includes $5/month chat credits and BYO OpenAI/Anthropic API key for chat.",
+      "strengths": [
+        "Very strong vendor latency/context claims.",
+        "Low setup complexity.",
+        "Works with VS Code, JetBrains, and Neovim.",
+        "Plugin maintenance explicitly promised after Cursor acquisition."
+      ],
+      "limitations": [
+        "No direct ChatGPT/Claude subscription use.",
+        "BYO OpenAI/Anthropic keys are for chat, not documented as autocomplete backend.",
+        "Vendor-owned proprietary service; Cursor is now core focus."
+      ],
+      "source_ids": [
+        "src-supermaven-marketplace",
+        "src-supermaven-home",
+        "src-cursor-supermaven-acquisition"
+      ],
+      "claim_ids": [
+        "claim-t020-supermaven-fast-commercial",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-tabby",
+      "name": "Tabby",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "vscodium", "intellij", "vim", "neovim"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "Apache-2.0 outside ee; ee/ separately licensed if present",
+      "maintenance_signals": {
+        "marketplace": "VS Marketplace fetched; 78,071 installs.",
+        "repository": "GitHub API: unarchived, pushed 2026-03-02, 33550 stars; raw LICENSE fetched."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Tabby self-hosted", "Tabby enterprise/private deployment where applicable"],
+        "api_names": ["Tabby server", "llama.cpp", "OpenAI API", "Claude API", "Ollama", "custom HTTP endpoints"],
+        "risk_level": "low",
+        "access_notes": "Tabby can connect to remote APIs, but autocomplete quality requires completion/FIM-capable model support; using Claude/OpenAI APIs is separate from Claude/ChatGPT UI subscriptions."
+      },
+      "inline_fim_support": "Yes; completion model is explicitly FIM-oriented and VS Code extension suggests multiline/full-function completions in real time.",
+      "acceptance_ux": "Marketplace/docs confirm real-time completions in VS Code; acceptance is Copilot-like inline completion behavior, but exact Tab key wording was less explicit than in Tabnine/Windsurf/llama.vscode sources.",
+      "latency_expectations": "Variable. Self-hosted latency depends on chosen model, GPU/server, and connector. Docs note completion tuning varies significantly by serving backend and local GPUs/smaller LLMs influence defaults.",
+      "context_handling": "Can analyze repositories/documentation supplied by users; completion prompt input/output configurable; broader context/answer engine features available in Tabby server.",
+      "setup_complexity": "High relative to cloud extensions: deploy Tabby server, choose completion/chat/embedding models, configure accounts/tokens and VS Code connection.",
+      "expected_ux_quality": "Good for teams willing to operate model serving; individual local UX depends on hardware and model choice.",
+      "privacy_posture": "Strong for self-host/on-prem; remote HTTP connectors send code/context to configured provider. Enterprise/private deployment can satisfy stricter controls.",
+      "cost_model": "Open-source/self-host infrastructure cost; possible enterprise/private features; remote API usage costs if configured.",
+      "strengths": [
+        "Self-hosted/open-source alternative to Copilot.",
+        "FIM-oriented completion model design.",
+        "Can support local and custom endpoint architectures.",
+        "Strong fit for privacy/control and teams."
+      ],
+      "limitations": [
+        "Operationally heavier than a simple marketplace extension.",
+        "Direct ChatGPT/Claude subscription use is not supported; API usage is separate.",
+        "Remote Claude/OpenAI connectors do not automatically imply good FIM autocomplete."
+      ],
+      "source_ids": [
+        "src-tabby-marketplace",
+        "src-tabby-github-api",
+        "src-tabby-license-raw",
+        "src-tabby-model-config",
+        "src-tabby-code-completion"
+      ],
+      "claim_ids": [
+        "claim-t020-tabby-self-hosted-fim",
+        "claim-t020-tabby-open-core-status",
+        "claim-t020-fim-matters",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-llama-vscode",
+      "name": "llama.vscode",
+      "category": "vscode_extension",
+      "platforms": ["vscode"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "MIT",
+      "maintenance_signals": {
+        "marketplace": "VS Marketplace fetched; 24,598 installs.",
+        "repository": "GitHub API: unarchived, pushed 2026-05-26, 1355 stars, MIT."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "no",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": ["llama.cpp local server", "Hugging Face model downloads", "Qwen Coder FIM presets"],
+        "risk_level": "none",
+        "access_notes": "Local llama.cpp path; not designed to use ChatGPT/Claude subscriptions or cloud APIs for autocomplete."
+      },
+      "inline_fim_support": "Yes; marketplace says auto-suggest on input, accept with Tab, and FIM-compatible models required.",
+      "acceptance_ux": "Auto-suggest on input; Tab accepts suggestion; Shift+Tab accepts first line; Ctrl/Cmd+Right accepts next word; manual trigger Ctrl+L.",
+      "latency_expectations": "Highly hardware/model dependent. Small Qwen Coder presets and smart context reuse can be responsive; CPU-only quality/latency may be worse per docs. Best on adequate GPU/VRAM.",
+      "context_handling": "Configurable context around cursor, ring context from open/edited files and yanked text, smart context reuse for large contexts.",
+      "setup_complexity": "Medium: install extension plus llama.cpp and a FIM model; easier than operating a team server, harder than cloud extensions.",
+      "expected_ux_quality": "Mixed to good for local-first users; quality depends on chosen FIM model and hardware. Good privacy/control tradeoff.",
+      "privacy_posture": "Excellent if kept local: code context stays on local llama.cpp process except model download telemetry/traffic outside scope.",
+      "cost_model": "Free MIT extension; local hardware/electricity; no API billing required.",
+      "strengths": [
+        "True local Tab-accepted inline completion.",
+        "FIM-specific model requirements and presets.",
+        "Strong privacy and no cloud account required.",
+        "Actively maintained."
+      ],
+      "limitations": [
+        "Not a ChatGPT/Claude subscription path.",
+        "Requires local model setup and hardware capacity.",
+        "Likely less polished than top proprietary cloud autocomplete on weak hardware."
+      ],
+      "source_ids": [
+        "src-llama-vscode-marketplace",
+        "src-llama-vscode-github-api",
+        "src-llama-vscode-license-raw"
+      ],
+      "claim_ids": [
+        "claim-t020-llama-vscode-local-fim",
+        "claim-t020-fim-matters"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-tabnine",
+      "name": "Tabnine",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "jetbrains", "visual_studio", "eclipse"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "proprietary/commercial",
+      "maintenance_signals": {
+        "marketplace": "Legacy extension page says no new users; enterprise updater page is active for enterprise customers.",
+        "docs": "Current docs fetched for completions, privacy, models, deployment, and IDE support."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "not_applicable",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Tabnine Dev", "Tabnine Enterprise", "Tabnine Enterprise private installation"],
+        "api_names": ["Tabnine proprietary completion models", "optional third-party models for Tabnine Agent/Chat"],
+        "risk_level": "low",
+        "access_notes": "Uses Tabnine accounts/deployments. Third-party Claude/GPT models are documented for chat/agent, not a direct UI-subscription autocomplete path."
+      },
+      "inline_fim_support": "True inline suggestions are source-confirmed; FIM internals not exposed in fetched docs.",
+      "acceptance_ux": "Suggestions appear inline in gray and Tab accepts; whole-line, full-function, and comment-to-code completions documented.",
+      "latency_expectations": "Commercial completion product; no direct latency number found in fetched docs. Expected low-latency SaaS or private deployment, but dependent on deployment.",
+      "context_handling": "Uses local project context window including lines, variables, type declarations, functions, imports, related files, and diagnostics; context discarded after inference per docs.",
+      "setup_complexity": "Low for SaaS users with account; medium/high for Enterprise/private server setup. New individual onboarding via legacy VS Code plugin appears blocked.",
+      "expected_ux_quality": "Good enterprise-grade inline UX; practical fit depends on account eligibility.",
+      "privacy_posture": "Strong vendor claims: no train/no retain for Tabnine models; private deployment, VPC, on-prem, and air-gapped options for Enterprise.",
+      "cost_model": "Commercial subscription/enterprise. Public docs list Dev and Enterprise/private installation but fetched subscription page had minimal detail; enterprise contact/sales likely required for private path.",
+      "strengths": [
+        "Mature commercial completion UX.",
+        "Strong documented privacy posture.",
+        "Private/on-prem/air-gapped enterprise options.",
+        "True Tab acceptance in VS Code."
+      ],
+      "limitations": [
+        "Legacy marketplace extension does not onboard new users.",
+        "Enterprise extension is exclusively for Enterprise customers.",
+        "No direct ChatGPT/Claude subscription use or arbitrary autocomplete API-provider selection."
+      ],
+      "source_ids": [
+        "src-tabnine-legacy-marketplace",
+        "src-tabnine-enterprise-marketplace",
+        "src-tabnine-code-completions",
+        "src-tabnine-privacy",
+        "src-tabnine-ai-models",
+        "src-tabnine-deployment"
+      ],
+      "claim_ids": [
+        "claim-t020-tabnine-enterprise-baseline",
+        "claim-t020-tabnine-third-party-models-chat-not-completion",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-sourcegraph-cody",
+      "name": "Sourcegraph Cody",
+      "category": "vscode_extension",
+      "platforms": ["vscode", "jetbrains", "visual_studio", "web"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "proprietary/commercial",
+      "maintenance_signals": {
+        "marketplace": "VS Marketplace fetched; 844,233 installs; states no longer available for non-enterprise users.",
+        "docs": "Sourcegraph docs fetched and explicitly say supported on Sourcegraph Enterprise."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Sourcegraph Enterprise"],
+        "api_names": ["Sourcegraph Enterprise Cody", "DeepSeek V2 default autocomplete model", "custom autocomplete models on Enterprise", "Claude/GPT/Gemini models for chat where offered"],
+        "risk_level": "low",
+        "access_notes": "Requires Sourcegraph Enterprise account/instance with Cody enabled; not a consumer Claude/ChatGPT subscription path."
+      },
+      "inline_fim_support": "Single-line and multi-line suggestions documented; specific FIM prompting not detailed in fetched docs.",
+      "acceptance_ux": "Autocomplete suggestions appear as grayed text; Enter or Tab accepts.",
+      "latency_expectations": "Docs claim server/client optimization, P75 latency reduced by 350ms, and default DeepSeek V2 for enterprise autocomplete responsiveness; not independently benchmarked.",
+      "context_handling": "Strong enterprise codebase context from local/remote codebases, Sourcegraph Search API, and Code Graph/symbol context.",
+      "setup_complexity": "High unless already using Sourcegraph Enterprise: requires enterprise account/instance and admin configuration for models/settings.",
+      "expected_ux_quality": "Good for enterprise teams with Sourcegraph; poor individual fit because non-enterprise availability is removed.",
+      "privacy_posture": "Enterprise-grade controls and self-host/single-tenant options; prompts/responses are collected to provide service and may be used to enhance experience for individuals, but not to train models per docs.",
+      "cost_model": "Enterprise pricing; source lists enterprise starting at $16K with AI credits and self-hosted/single-tenant options.",
+      "strengths": [
+        "Deep codebase/context orientation.",
+        "Enterprise model configuration and self-host/single-tenant options.",
+        "True Tab/Enter autocomplete UX.",
+        "Clear latency-improvement claims for enterprise autocomplete."
+      ],
+      "limitations": [
+        "No longer available for non-enterprise users.",
+        "High cost and setup complexity.",
+        "No direct ChatGPT/Claude subscription use."
+      ],
+      "source_ids": [
+        "src-sourcegraph-cody-marketplace",
+        "src-sourcegraph-cody-docs",
+        "src-sourcegraph-cody-autocomplete",
+        "src-sourcegraph-pricing"
+      ],
+      "claim_ids": [
+        "claim-t020-sourcegraph-cody-enterprise-only",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-twinny",
+      "name": "twinny",
+      "category": "vscode_extension",
+      "platforms": ["vscode"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "MIT",
+      "maintenance_signals": {
+        "marketplace": "VS Marketplace fetched and still lists FIM/API features.",
+        "repository": "GitHub API: archived true, pushed 2025-08-07, MIT; homepage says archived."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": ["localhost", "OpenAI/Ollama-compatible API", "OpenAI", "Anthropic", "OpenRouter", "DeepSeek", "Cohere", "Mistral AI", "Perplexity", "Groq"],
+        "risk_level": "medium",
+        "access_notes": "Broad API matrix, but project is archived; API keys would be separate from ChatGPT/Claude subscriptions."
+      },
+      "inline_fim_support": "Marketplace says Fill in the Middle code completion, real-time suggestions, and single/multiline FIM completions.",
+      "acceptance_ux": "Marketplace says direct code solution acceptance; exact Tab key behavior was not source-confirmed in T020.",
+      "latency_expectations": "Depends entirely on chosen local/API provider and model; no current benchmark evidence. Archived status increases risk of regressions with VS Code/provider APIs.",
+      "context_handling": "Configurable prompt templates/endpoints per marketplace; deeper current context handling not audited because project is archived.",
+      "setup_complexity": "Medium: configure provider/model/endpoints; potentially harder as docs/repo age.",
+      "expected_ux_quality": "Unknown to mixed. Feature set matched the need historically, but archived status makes current UX unreliable.",
+      "privacy_posture": "Depends on selected provider. Localhost/Ollama can be local; cloud APIs receive code context. Archived extension may miss security fixes.",
+      "cost_model": "Free MIT extension; API or local compute costs. No subscription UI reuse.",
+      "strengths": [
+        "Broad provider list including OpenAI-compatible, Anthropic, and local/Ollama.",
+        "FIM completion feature explicitly documented.",
+        "MIT licensed."
+      ],
+      "limitations": [
+        "Archived; not a durable current recommendation.",
+        "No direct ChatGPT/Claude subscription use.",
+        "Potential compatibility/security maintenance risk."
+      ],
+      "source_ids": [
+        "src-twinny-marketplace",
+        "src-twinny-github-api",
+        "src-twinny-site-archived"
+      ],
+      "claim_ids": [
+        "claim-t020-twinny-archived",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "poor",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "opt-cursor-near-scope",
+      "name": "Cursor Tab",
+      "category": "editor_or_fork",
+      "platforms": ["vscode_fork"],
+      "autocomplete_mode": "true_inline_tab",
+      "license": "proprietary/commercial",
+      "maintenance_signals": {
+        "docs": "Cursor home, Tab docs, and pricing fetched.",
+        "scope_note": "Near-scope only: not a VS Code extension."
+      },
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "not_applicable",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": ["Cursor Hobby", "Cursor Pro", "Cursor Teams", "Cursor Enterprise"],
+        "api_names": ["Cursor Tab model", "OpenAI/Anthropic/Gemini/xAI models for broader Cursor features"],
+        "risk_level": "low",
+        "access_notes": "Uses Cursor account/plans; not ChatGPT/Claude subscription reuse and not inside stock VS Code."
+      },
+      "inline_fim_support": "Tab autocomplete supports multi-line and cross-file edits; FIM terminology not required for UX classification.",
+      "acceptance_ux": "Suggestions appear as grayed text; Tab accepts full suggestion; Escape rejects; supports word-by-word acceptance, jump-in-file, and cross-file edit portals.",
+      "latency_expectations": "Strong vendor positioning for specialized Tab model; no direct benchmark gathered.",
+      "context_handling": "Uses recent edits, surrounding code, linter errors, codebase understanding/indexing, and can suggest cross-file edits.",
+      "setup_complexity": "Medium if migrating from VS Code: install/import VS Code settings and accept fork/editor change.",
+      "expected_ux_quality": "High if switching editors is acceptable; not applicable if user must stay in VS Code.",
+      "privacy_posture": "Cloud/editor vendor service with privacy mode on team plans per pricing; enterprise controls exist. Review data-use terms for sensitive code.",
+      "cost_model": "Hobby free with limited Tab completions; Pro $20/month; Teams $40/user/month; Enterprise custom.",
+      "strengths": [
+        "Very strong Tab-style UX including multi-line and cross-file behavior.",
+        "Purpose-built editor integration.",
+        "Free limited tier plus paid plans."
+      ],
+      "limitations": [
+        "Not a stock VS Code extension.",
+        "No direct ChatGPT/Claude subscription use.",
+        "Requires adopting proprietary editor/account."
+      ],
+      "source_ids": [
+        "src-cursor-home",
+        "src-cursor-tab-docs",
+        "src-cursor-pricing"
+      ],
+      "claim_ids": [
+        "claim-t020-cursor-near-scope",
+        "claim-t020-no-direct-ui-subscription-path"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    }
+  ],
+  "excluded_or_low_fit_notes": [
+    {
+      "name": "Generic VS Code chat/agent extensions such as Cline/Roo/Kilo-style tools",
+      "reason": "Not researched in depth for T020 because the target UX is continuous low-latency inline/tab autocomplete, not chat/sidebar or command-driven code generation. Include only if a later worker finds primary-source evidence for true inline Tab completion."
+    },
+    {
+      "name": "GitHub Copilot",
+      "reason": "Intentionally not ranked because the objective is to replace Copilot; its UX is the baseline rather than an alternative."
+    }
+  ],
+  "cross_option_findings": {
+    "best_if_user_wants_open_source_api_or_local_control": ["opt-continue", "opt-tabby", "opt-llama-vscode"],
+    "best_if_user_wants_minimal_setup_inside_vscode": ["opt-windsurf-vscode-plugin", "opt-supermaven"],
+    "best_if_user_wants_enterprise_privacy_controls": ["opt-tabnine", "opt-tabby", "opt-sourcegraph-cody"],
+    "best_if_user_accepts_vscode_fork": ["opt-cursor-near-scope"],
+    "do_not_recommend_for_current_setup": ["opt-twinny"],
+    "subscription_reuse_bottom_line": "None of the current credible VS Code options found in T020 can use an existing ChatGPT Plus/Pro/Team or Claude Pro/Max/Team UI subscription directly for tab autocomplete. Use product-specific plans, official API billing, or local models instead."
+  },
+  "blockers": [
+    {
+      "blocker": "OpenAI official subscription/API boundary could not be fetched due HTTP 403 from this worker.",
+      "impact": "Claims about ChatGPT subscriptions not including API access should be verified by T010/T060 before final report wording. T020 has product-source evidence that VS Code options use API keys/vendor accounts rather than ChatGPT UI subscriptions, but no direct OpenAI primary-source quote.",
+      "suggested_recovery": "Have T010 fetch OpenAI help/pricing docs from a web-capable browser environment or ask user for a primary-source excerpt."
+    }
+  ],
+  "confidence": "high"
+}
