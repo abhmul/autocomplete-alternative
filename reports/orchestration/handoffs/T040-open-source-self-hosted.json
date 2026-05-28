@@ -1,0 +1,1542 @@
+{
+  "task_id": "T040",
+  "status": "complete",
+  "schema_version": "autocomplete-research-handoff-v1",
+  "last_checked": "2026-05-28",
+  "title": "Research open-source and self-hosted architecture options",
+  "summary": {
+    "bottom_line": "A shared backend is practical, but the editor UX must be native per editor. VS Code has usable open-source/self-hosted clients now; Obsidian likely needs a custom CodeMirror-based plugin for true inline/tab ghost text.",
+    "best_practical_paths": [
+      "Local-only: Qwen2.5-Coder/StarCoder2/DeepSeek-Coder served by llama.cpp /infill, Ollama, vLLM, or Tabby; VS Code via Continue/Twinny/Tabby; Obsidian via custom plugin.",
+      "OpenAI-compatible broker: one /autocomplete service normalizes local and hosted providers, with LiteLLM/OpenRouter/Ollama/vLLM/llama.cpp adapters as needed.",
+      "Official API-key path: Mistral Codestral FIM for code autocomplete, or OpenAI/Anthropic/OpenRouter chat APIs as fallback, with separate API billing."
+    ],
+    "subscription_caveat": "ChatGPT and Claude UI subscriptions are not normal API access. Claude Pro/Max can access Claude Code officially, but Claude Code is not a generic low-latency FIM backend for VS Code plus Obsidian.",
+    "feasibility_snapshot": {
+      "local_only": {
+        "vscode": "high",
+        "obsidian": "medium"
+      },
+      "official_api_key": {
+        "vscode": "high",
+        "obsidian": "medium"
+      },
+      "openai_compatible_proxy": {
+        "vscode": "high",
+        "obsidian": "medium"
+      },
+      "unofficial_subscription_session_proxy": {
+        "vscode": "low",
+        "obsidian": "low"
+      }
+    },
+    "confidence_notes": [
+      "High confidence for VS Code/local/API architecture feasibility due to current docs and existing clients.",
+      "Medium confidence for Obsidian off-the-shelf availability because this task focused on architecture and implementation path; T030 should verify plugin inventory.",
+      "Medium confidence for unofficial proxy assessment because specific proxy repositories were not audited; risk is inferred from official access boundaries."
+    ]
+  },
+  "sources": [
+    {
+      "source_id": "src-continue-autocomplete",
+      "title": "Continue Autocomplete Setup and Configuration Guide",
+      "url": "https://docs.continue.dev/customize/deep-dives/autocomplete",
+      "final_url": "https://docs.continue.dev/customize/deep-dives/autocomplete",
+      "publisher": "Continue",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Continue documents Ollama local autocomplete setup and says after running qwen2.5-coder and adding it to config, 'you should begin to see completions in VS Code'; it also cautions that thinking models are slower and less suitable for speed-sensitive autocomplete."
+    },
+    {
+      "source_id": "src-twinny-readme",
+      "title": "Twinny README",
+      "url": "https://raw.githubusercontent.com/twinnydotdev/twinny/main/README.md",
+      "final_url": "https://raw.githubusercontent.com/twinnydotdev/twinny/main/README.md",
+      "publisher": "twinnydotdev",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Twinny lists supported providers including 'localhost OpenAI/Ollama Compatible API', OpenAI, Anthropic, and OpenRouter, and lists 'Fill in the Middle Code Completion' with 'AI-powered real-time code suggestions'."
+    },
+    {
+      "source_id": "src-tabby-readme",
+      "title": "Tabby README",
+      "url": "https://raw.githubusercontent.com/TabbyML/tabby/main/README.md",
+      "final_url": "https://raw.githubusercontent.com/TabbyML/tabby/main/README.md",
+      "publisher": "TabbyML",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Tabby describes itself as 'a self-hosted AI coding assistant' and an 'open-source and on-premises alternative to GitHub Copilot', with 'OpenAPI interface' and support for consumer-grade GPUs."
+    },
+    {
+      "source_id": "src-tabby-vscode",
+      "title": "Tabby Visual Studio Code Extension Docs",
+      "url": "https://tabby.tabbyml.com/docs/extensions/installation/vscode/",
+      "final_url": "https://tabby.tabbyml.com/docs/extensions/installation/vscode/",
+      "publisher": "TabbyML",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The Tabby VS Code page says Tabby is 'open-source' and 'self-hosted' and that 'Tabby suggests multi-line code completions and full functions in real-time as you write code'."
+    },
+    {
+      "source_id": "src-tabby-model-config",
+      "title": "Tabby Model Configuration",
+      "url": "https://tabby.tabbyml.com/docs/administration/model/",
+      "final_url": "https://tabby.tabbyml.com/docs/administration/model/",
+      "publisher": "TabbyML",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Tabby says its Completion model is for code-completion suggestions and focuses mainly on the Fill-in-the-Middle (FIM) prompting style; its Chat model is broadly compatible with OpenAI standards."
+    },
+    {
+      "source_id": "src-ollama-openai-compat",
+      "title": "Ollama OpenAI compatibility",
+      "url": "https://docs.ollama.com/api/openai-compatibility.md",
+      "final_url": "https://docs.ollama.com/api/openai-compatibility.md",
+      "publisher": "Ollama",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Ollama says it provides compatibility with parts of the OpenAI API and documents /v1/chat/completions with supported features including Chat completions and Streaming."
+    },
+    {
+      "source_id": "src-ollama-generate",
+      "title": "Ollama Generate a response API",
+      "url": "https://docs.ollama.com/api/generate.md",
+      "final_url": "https://docs.ollama.com/api/generate.md",
+      "publisher": "Ollama",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Ollama documents POST /api/generate as generating a response for a provided prompt and shows both default streaming NDJSON behavior and non-streaming with 'stream': false."
+    },
+    {
+      "source_id": "src-llamacpp-server",
+      "title": "llama.cpp HTTP Server README",
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/master/tools/server/README.md",
+      "final_url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/master/tools/server/README.md",
+      "publisher": "ggml-org / llama.cpp",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The server README lists OpenAI-compatible chat completions, responses, and embeddings, and documents POST /infill 'For code infilling' which 'takes a prefix and a suffix and returns the predicted completion as stream'."
+    },
+    {
+      "source_id": "src-vllm-online-serving",
+      "title": "vLLM Online Serving",
+      "url": "https://docs.vllm.ai/en/latest/serving/online_serving/",
+      "final_url": "https://docs.vllm.ai/en/latest/serving/online_serving/",
+      "publisher": "vLLM",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "vLLM documents an OpenAI-compatible server supporting /v1/completions, /v1/responses, and /v1/chat/completions; for /v1/completions it notes the 'suffix parameter is not supported'."
+    },
+    {
+      "source_id": "src-litellm-getting-started",
+      "title": "LiteLLM Getting Started",
+      "url": "https://docs.litellm.ai/docs/",
+      "final_url": "https://docs.litellm.ai/docs/",
+      "publisher": "LiteLLM",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "LiteLLM describes itself as an open-source library with a unified interface to call 100+ LLMs using the OpenAI format, plus a self-hosted LLM gateway/proxy with virtual keys, cost tracking, and admin UI."
+    },
+    {
+      "source_id": "src-openrouter-quickstart",
+      "title": "OpenRouter Quickstart",
+      "url": "https://openrouter.ai/docs/quickstart.md",
+      "final_url": "https://openrouter.ai/docs/quickstart.md",
+      "publisher": "OpenRouter",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "OpenRouter says it provides a unified API to hundreds of AI models via a single endpoint, documents /api/v1/chat/completions, supports streaming, and can use the OpenAI SDK as a drop-in replacement."
+    },
+    {
+      "source_id": "src-qwen25-coder-7b",
+      "title": "Qwen2.5-Coder-7B model card",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B/raw/main/README.md",
+      "final_url": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B/raw/main/README.md",
+      "publisher": "Qwen / Hugging Face",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The model card lists license apache-2.0 and says Qwen2.5-Coder can be used for 'fill in the middle tasks'."
+    },
+    {
+      "source_id": "src-starcoder2-7b",
+      "title": "StarCoder2-7B model card",
+      "url": "https://huggingface.co/bigcode/starcoder2-7b/raw/main/README.md",
+      "final_url": "https://huggingface.co/bigcode/starcoder2-7b/raw/main/README.md",
+      "publisher": "BigCode / Hugging Face",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The model card says StarCoder2-7B was trained using the Fill-in-the-Middle objective on 3.5+ trillion tokens and lists license bigcode-openrail-m."
+    },
+    {
+      "source_id": "src-deepseek-coder-67b",
+      "title": "DeepSeek Coder 6.7B base model card",
+      "url": "https://huggingface.co/deepseek-ai/deepseek-coder-6.7b-base/raw/main/README.md",
+      "final_url": "https://huggingface.co/deepseek-ai/deepseek-coder-6.7b-base/raw/main/README.md",
+      "publisher": "DeepSeek AI / Hugging Face",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The model card says the models use a 16K window and an extra fill-in-the-blank task to support project-level code completion and infilling, and includes an FIM-token example."
+    },
+    {
+      "source_id": "src-codellama-7b",
+      "title": "CodeLlama-7B model card",
+      "url": "https://huggingface.co/codellama/CodeLlama-7b-hf/raw/main/README.md",
+      "final_url": "https://huggingface.co/codellama/CodeLlama-7b-hf/raw/main/README.md",
+      "publisher": "CodeLlama community mirror / Hugging Face",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The model card lists model capabilities as code completion and infilling, but notes the repository is a non-official mirror and the license is llama2."
+    },
+    {
+      "source_id": "src-mistral-coding-fim",
+      "title": "Mistral coding and FIM documentation",
+      "url": "https://docs.mistral.ai/capabilities/code_generation/",
+      "final_url": "https://docs.mistral.ai/vibe/code/overview",
+      "publisher": "Mistral AI",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Mistral documents Codestral as specifically trained for Code Generation and FIM and documents /v1/fim/completions as a Fill-in-the-middle endpoint for code completion and generation supporting codestral-latest."
+    },
+    {
+      "source_id": "src-openai-chatgpt-api-separate",
+      "title": "How can I move my ChatGPT subscription to the API?",
+      "url": "https://help.openai.com/en/articles/8156019-text-generation-chat-completions-and-completions",
+      "final_url": "https://help.openai.com/en/articles/8156019-text-generation-chat-completions-and-completions",
+      "publisher": "OpenAI Help Center",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "OpenAI Help says the API service is billed and managed separately to ChatGPT, can be upgraded to pay-as-you-go by adding a payment method in API billing settings, and API usage is charged by tokens used."
+    },
+    {
+      "source_id": "src-anthropic-claude-api-separate",
+      "title": "Paid Claude subscription versus Claude API and Console",
+      "url": "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+      "final_url": "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+      "publisher": "Claude Help Center / Anthropic",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Claude Help says Claude paid plans and Claude Console are separate products; a paid Claude subscription enhances chat but doesn't include access to the Claude API or Console, and API usage requires separately setting up Console access."
+    },
+    {
+      "source_id": "src-anthropic-api-access-billing",
+      "title": "Claude API access and billing help",
+      "url": "https://support.claude.com/en/articles/8114521-how-can-i-access-the-claude-api",
+      "final_url": "https://support.claude.com/en/articles/8114521-how-can-i-access-the-claude-api",
+      "publisher": "Claude Help Center / Anthropic",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Claude Help says the Claude Console is where users create API keys, add users, set up billing, and experiment with Workbench."
+    },
+    {
+      "source_id": "src-anthropic-claude-code-pro-max",
+      "title": "Use Claude Code with your Pro or Max plan",
+      "url": "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan",
+      "final_url": "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan",
+      "publisher": "Claude Help Center / Anthropic",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "Claude Help says Pro and Max subscriptions can access Claude Code in the terminal with one unified subscription; it also notes an ANTHROPIC_API_KEY environment variable makes Claude Code use API charges instead of subscription usage."
+    },
+    {
+      "source_id": "src-vscode-inline-api",
+      "title": "VS Code vscode.d.ts InlineCompletionItemProvider",
+      "url": "https://raw.githubusercontent.com/microsoft/vscode/main/src/vscode-dts/vscode.d.ts",
+      "final_url": "https://raw.githubusercontent.com/microsoft/vscode/main/src/vscode-dts/vscode.d.ts",
+      "publisher": "Microsoft / VS Code",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "VS Code's API declares InlineCompletionItemProvider for inline completions requested implicitly while typing and declares languages.registerInlineCompletionItemProvider to register such providers."
+    },
+    {
+      "source_id": "src-obsidian-api-dts",
+      "title": "Obsidian API TypeScript definitions",
+      "url": "https://raw.githubusercontent.com/obsidianmd/obsidian-api/master/obsidian.d.ts",
+      "final_url": "https://raw.githubusercontent.com/obsidianmd/obsidian-api/master/obsidian.d.ts",
+      "publisher": "Obsidian",
+      "source_type": "source_repository",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "The Obsidian API exposes registerEditorExtension(extension: Extension) for CodeMirror 6 extensions and defines EditorSuggest<T> extending PopoverSuggest<T> for editor suggestion UIs."
+    },
+    {
+      "source_id": "src-codemirror-decoration",
+      "title": "CodeMirror Reference Manual - Decoration and WidgetType",
+      "url": "https://codemirror.net/docs/ref/#view.Decoration",
+      "final_url": "https://codemirror.net/docs/ref/#view.Decoration",
+      "publisher": "CodeMirror",
+      "source_type": "official_docs",
+      "http_status": 200,
+      "retrieved_via": "web_fetch",
+      "last_checked": "2026-05-28",
+      "quoted_evidence": "CodeMirror documents Decoration.widget as creating a widget decoration that displays a DOM element at a position; positive side draws after the cursor at the same position, and inline widget is the default."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim-fim-is-right-shape",
+      "text": "For low-latency inline autocomplete, FIM-capable base/code models are architecturally preferable to generic chat-only prompting because the editor naturally has both prefix and suffix around the cursor.",
+      "claim_type": "performance_or_latency",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-tabby-model-config",
+        "src-llamacpp-server",
+        "src-qwen25-coder-7b",
+        "src-starcoder2-7b",
+        "src-deepseek-coder-67b",
+        "src-mistral-coding-fim"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The sources directly document FIM model training or FIM endpoints; the preference for editor autocomplete is an inference from cursor prefix/suffix context."
+    },
+    {
+      "claim_id": "claim-vscode-open-source-clients-exist",
+      "text": "VS Code has practical open-source or free clients that already provide inline/live code completion against local or API endpoints, especially Continue, Twinny, and Tabby.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-continue-autocomplete",
+        "src-twinny-readme",
+        "src-tabby-vscode"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "T020 should still compare marketplace quality, but T040 does not need a custom VS Code extension for the common local/API architectures."
+    },
+    {
+      "claim_id": "claim-vscode-custom-inline-api-available",
+      "text": "If existing VS Code clients are insufficient, VS Code exposes a first-class InlineCompletionItemProvider API for ghost-text completions requested while typing.",
+      "claim_type": "integration",
+      "evidence_type": "source_code_inspection",
+      "source_ids": [
+        "src-vscode-inline-api"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This supports a custom VS Code adapter to the same shared backend used by Obsidian."
+    },
+    {
+      "claim_id": "claim-obsidian-custom-plugin-needed-for-true-inline",
+      "text": "A true Obsidian Copilot-like inline/tab autocomplete path is feasible but likely requires a custom plugin: Obsidian allows registering CodeMirror 6 extensions, and CodeMirror widget decorations can draw inline ghost text at the cursor.",
+      "claim_type": "integration",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-obsidian-api-dts",
+        "src-codemirror-decoration"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "This is an implementation feasibility claim, not a claim that an off-the-shelf Obsidian plugin already provides this UX; T030 should verify plugin inventory."
+    },
+    {
+      "claim_id": "claim-tabby-turnkey-vscode-not-obsidian",
+      "text": "Tabby is the most turnkey self-hosted code-completion stack for VS Code because it bundles a server, completion model role, and VS Code extension, but it does not by itself solve Obsidian true inline autocomplete.",
+      "claim_type": "integration",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-tabby-readme",
+        "src-tabby-vscode",
+        "src-tabby-model-config",
+        "src-obsidian-api-dts"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "A custom Obsidian plugin could still call Tabby or a companion broker if the API is suitable."
+    },
+    {
+      "claim_id": "claim-ollama-good-local-front-door",
+      "text": "Ollama is a practical local front door for local models because it exposes a local HTTP API, streaming generation, and partial OpenAI-compatible chat completions.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-ollama-openai-compat",
+        "src-ollama-generate"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The cited docs do not document a dedicated FIM endpoint; clients must use chat/generate prompts or model-specific FIM tokens."
+    },
+    {
+      "claim_id": "claim-llamacpp-best-local-fim-api",
+      "text": "llama.cpp server is a strong local backend for custom autocomplete brokers because it has both OpenAI-compatible routes and a dedicated streaming /infill endpoint accepting prefix and suffix.",
+      "claim_type": "integration",
+      "evidence_type": "source_repository",
+      "source_ids": [
+        "src-llamacpp-server"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "The /infill endpoint is non-OpenAI-compatible, so a broker may be needed for clients that only speak OpenAI chat/completions."
+    },
+    {
+      "claim_id": "claim-vllm-good-throughput-but-fim-gap",
+      "text": "vLLM is attractive for GPU throughput and OpenAI-compatible serving, but the documented OpenAI completions route does not support the suffix parameter, so exact OpenAI-style FIM is not first-class through that endpoint.",
+      "claim_type": "integration",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-vllm-online-serving"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "FIM may still be possible by manually formatting model-specific FIM tokens in the prompt, but that is not the same as a standard suffix field."
+    },
+    {
+      "claim_id": "claim-openai-compatible-proxy-useful-but-leaky",
+      "text": "OpenAI-compatible gateways are useful for sharing one backend between editors, but autocomplete-specific FIM behavior is not standardized across Ollama, llama.cpp, vLLM, Mistral FIM, LiteLLM, and OpenRouter.",
+      "claim_type": "integration",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-ollama-openai-compat",
+        "src-llamacpp-server",
+        "src-vllm-online-serving",
+        "src-mistral-coding-fim",
+        "src-litellm-getting-started",
+        "src-openrouter-quickstart"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "A small custom broker with a normalized /autocomplete contract is safer than exposing raw provider differences to every editor plugin."
+    },
+    {
+      "claim_id": "claim-litellm-is-gateway-not-autocomplete-engine",
+      "text": "LiteLLM can centralize provider routing, keys, budgets, and OpenAI-format calls, but it is not itself an autocomplete model or FIM engine.",
+      "claim_type": "integration",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-litellm-getting-started"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "It is best used behind a broker or as the broker's provider gateway."
+    },
+    {
+      "claim_id": "claim-openrouter-api-key-not-subscription",
+      "text": "OpenRouter is useful as a hosted OpenAI-compatible model gateway with streaming, but it is an API-key architecture rather than a way to spend a ChatGPT or Claude UI subscription.",
+      "claim_type": "api_access",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-openrouter-quickstart",
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "OpenRouter documents its own unified API; no source found tying it to UI subscriptions."
+    },
+    {
+      "claim_id": "claim-chatgpt-subscription-not-api",
+      "text": "A ChatGPT subscription should not be treated as OpenAI API access for an autocomplete backend; OpenAI says API service is billed and managed separately from ChatGPT.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-openai-chatgpt-api-separate"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This does not preclude separate OpenAI API pay-as-you-go keys."
+    },
+    {
+      "claim_id": "claim-claude-subscription-not-api-except-code-nearscope",
+      "text": "A Claude paid plan does not include Claude API/Console access, although Pro/Max can officially access Claude Code as a terminal coding product under the same subscription.",
+      "claim_type": "subscription_constraint",
+      "evidence_type": "official_docs",
+      "source_ids": [
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-claude-code-pro-max"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "Claude Code is relevant but not a generic low-latency FIM endpoint for VS Code plus Obsidian."
+    },
+    {
+      "claim_id": "claim-unofficial-session-proxy-high-risk",
+      "text": "Unofficial session/cookie/browser proxies are a poor foundation for a cross-editor autocomplete product because they rely on non-API surfaces while the official vendors distinguish UI subscriptions from API access.",
+      "claim_type": "privacy_or_policy_risk",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-api-access-billing"
+      ],
+      "confidence": "medium",
+      "last_checked": "2026-05-28",
+      "notes": "This handoff did not audit specific unofficial proxy repositories; the risk rating is based on supported access boundaries and likely brittleness/account-policy exposure."
+    },
+    {
+      "claim_id": "claim-shared-backend-yes-client-ux-separate",
+      "text": "A shared backend can serve both VS Code and Obsidian if it exposes a normalized autocomplete API, but each editor still needs a native client to collect context, debounce requests, render ghost text, and accept with Tab.",
+      "claim_type": "integration",
+      "evidence_type": "inference_from_sources",
+      "source_ids": [
+        "src-vscode-inline-api",
+        "src-obsidian-api-dts",
+        "src-codemirror-decoration",
+        "src-continue-autocomplete",
+        "src-twinny-readme"
+      ],
+      "confidence": "high",
+      "last_checked": "2026-05-28",
+      "notes": "This is the key architecture recommendation for cross-editor support."
+    }
+  ],
+  "options": [
+    {
+      "option_id": "arch-local-only-fim-backend",
+      "name": "Local-only FIM-capable backend with editor clients",
+      "category": "custom_architecture",
+      "platforms": [
+        "vscode",
+        "obsidian"
+      ],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "no",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "local Ollama",
+          "local llama.cpp",
+          "local vLLM",
+          "Tabby server"
+        ],
+        "risk_level": "low",
+        "access_notes": "No external account or UI subscription is needed unless optional cloud models are enabled."
+      },
+      "strengths": [
+        "Best privacy posture and no per-token API bill.",
+        "Can use small, fast code models such as Qwen2.5-Coder locally.",
+        "VS Code can use existing clients; Obsidian can call the same local broker."
+      ],
+      "limitations": [
+        "Requires local CPU/GPU capacity; quality and latency depend heavily on hardware and model size.",
+        "Obsidian true inline UX requires custom plugin work.",
+        "Generic OpenAI-compatible local APIs do not standardize FIM; broker must know model/server-specific FIM format."
+      ],
+      "required_components": [
+        "FIM-capable local model",
+        "Ollama or llama.cpp or vLLM or Tabby",
+        "VS Code client such as Continue/Twinny/Tabby or custom extension",
+        "custom Obsidian plugin",
+        "optional shared autocomplete broker"
+      ],
+      "feasibility_by_platform": {
+        "vscode": {
+          "rating": "high",
+          "mode": "true_inline_tab",
+          "rationale": "Continue, Twinny, and Tabby all provide practical VS Code autocomplete paths against local/self-hosted endpoints."
+        },
+        "obsidian": {
+          "rating": "medium",
+          "mode": "custom_only",
+          "rationale": "Feasible via Obsidian CodeMirror extension and widget decorations, but no ready T040-verified packaged true-inline plugin."
+        }
+      },
+      "source_ids": [
+        "src-continue-autocomplete",
+        "src-twinny-readme",
+        "src-tabby-vscode",
+        "src-ollama-openai-compat",
+        "src-llamacpp-server",
+        "src-obsidian-api-dts",
+        "src-codemirror-decoration"
+      ],
+      "claim_ids": [
+        "claim-fim-is-right-shape",
+        "claim-vscode-open-source-clients-exist",
+        "claim-obsidian-custom-plugin-needed-for-true-inline",
+        "claim-shared-backend-yes-client-ux-separate"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "arch-api-key-official",
+      "name": "Official API-key backend using provider APIs",
+      "category": "custom_architecture",
+      "platforms": [
+        "vscode",
+        "obsidian"
+      ],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [
+          "ChatGPT Plus/Pro/Team/Enterprise",
+          "Claude Pro/Max/Team/Enterprise"
+        ],
+        "api_names": [
+          "OpenAI API",
+          "Anthropic Claude API",
+          "Mistral Codestral FIM",
+          "OpenRouter API"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Supported and stable, but ChatGPT and Claude UI subscriptions do not cover ordinary API usage; Claude Pro/Max's Claude Code is near-scope but not a generic autocomplete API."
+      },
+      "strengths": [
+        "No local GPU requirement and can use strong hosted models.",
+        "Mistral Codestral provides a purpose-built FIM API for code completion.",
+        "Provider APIs generally support streaming and production authentication/rate limits."
+      ],
+      "limitations": [
+        "Separate API billing and key management are required for OpenAI/Anthropic-style APIs.",
+        "OpenAI/Anthropic chat APIs are not inherently FIM endpoints; quality may be worse than code-specific FIM models for code autocomplete.",
+        "Remote calls add privacy, latency, quota, and cost concerns for every keystroke-adjacent request."
+      ],
+      "required_components": [
+        "provider API key",
+        "provider-specific or proxy client",
+        "autocomplete broker to shape context and cap tokens",
+        "VS Code client",
+        "custom Obsidian plugin"
+      ],
+      "feasibility_by_platform": {
+        "vscode": {
+          "rating": "high",
+          "mode": "true_inline_tab",
+          "rationale": "Existing clients can use provider APIs or OpenAI-compatible gateways; Codestral/FIM-capable endpoints are most appropriate."
+        },
+        "obsidian": {
+          "rating": "medium",
+          "mode": "custom_only",
+          "rationale": "Backend is straightforward, but editor integration and UX must be built or found in T030."
+        }
+      },
+      "source_ids": [
+        "src-mistral-coding-fim",
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-api-access-billing",
+        "src-openrouter-quickstart"
+      ],
+      "claim_ids": [
+        "claim-chatgpt-subscription-not-api",
+        "claim-claude-subscription-not-api-except-code-nearscope",
+        "claim-openrouter-api-key-not-subscription",
+        "claim-fim-is-right-shape"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "arch-openai-compatible-proxy",
+      "name": "OpenAI-compatible proxy or gateway shared by both editors",
+      "category": "proxy_or_gateway",
+      "platforms": [
+        "vscode",
+        "obsidian"
+      ],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "LiteLLM proxy",
+          "OpenRouter",
+          "Ollama OpenAI compatibility",
+          "vLLM OpenAI server",
+          "llama.cpp OpenAI-compatible routes"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Billing depends on upstream: local-only can be no-bill, hosted APIs require separate billing. Proxy compatibility is useful but does not guarantee FIM feature parity."
+      },
+      "strengths": [
+        "Single base URL and auth layer can serve VS Code and Obsidian.",
+        "Lets the backend switch among local models, OpenRouter, OpenAI, Anthropic-compatible adapters, or Mistral without changing editor plugins.",
+        "Good place to centralize budgets, caching, rate limiting, telemetry policy, and secret storage."
+      ],
+      "limitations": [
+        "OpenAI-compatible chat/completions is not a complete autocomplete standard.",
+        "Provider-specific FIM endpoints may need custom routes outside /v1/chat/completions.",
+        "If every editor talks directly to a generic proxy, autocomplete context shaping and stale-request cancellation tend to be duplicated."
+      ],
+      "required_components": [
+        "LiteLLM/OpenRouter/Ollama/vLLM/llama.cpp gateway",
+        "normalized /autocomplete broker or adapter layer",
+        "editor clients"
+      ],
+      "feasibility_by_platform": {
+        "vscode": {
+          "rating": "high",
+          "mode": "true_inline_tab",
+          "rationale": "Continue/Twinny-style clients already understand many OpenAI-compatible endpoints."
+        },
+        "obsidian": {
+          "rating": "medium",
+          "mode": "custom_only",
+          "rationale": "A plugin can call a single proxy/broker, but the inline UI remains custom work."
+        }
+      },
+      "source_ids": [
+        "src-litellm-getting-started",
+        "src-openrouter-quickstart",
+        "src-ollama-openai-compat",
+        "src-vllm-online-serving",
+        "src-llamacpp-server"
+      ],
+      "claim_ids": [
+        "claim-openai-compatible-proxy-useful-but-leaky",
+        "claim-litellm-is-gateway-not-autocomplete-engine",
+        "claim-shared-backend-yes-client-ux-separate"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "arch-unofficial-subscription-session-proxy",
+      "name": "Unofficial ChatGPT/Claude subscription or session proxy",
+      "category": "custom_architecture",
+      "platforms": [
+        "vscode",
+        "obsidian"
+      ],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "unknown",
+        "official_api_access": "not_supported",
+        "requires_separate_api_billing": "unknown",
+        "unofficial_session_automation": "required",
+        "subscription_names": [
+          "ChatGPT paid plans",
+          "Claude Pro/Max"
+        ],
+        "api_names": [],
+        "risk_level": "high",
+        "access_notes": "Would depend on non-API UI/session surfaces or reverse-engineered adapters. This is distinct from official Claude Code, which is a terminal coding product but not a generic FIM API."
+      },
+      "strengths": [
+        "Potentially aligns with the user's wish to reuse an existing UI subscription, if it works at all.",
+        "Could theoretically expose a local OpenAI-compatible endpoint to both editors."
+      ],
+      "limitations": [
+        "Unsupported, brittle, likely policy/account-risky, and difficult to verify or maintain.",
+        "No evidence of a stable, low-latency FIM surface suitable for keystroke-level autocomplete.",
+        "Obsidian still needs custom plugin work; VS Code clients may work only if the proxy perfectly emulates expected endpoints."
+      ],
+      "required_components": [
+        "session/cookie or CLI wrapper",
+        "local proxy emulating an API",
+        "editor clients",
+        "risk acceptance"
+      ],
+      "feasibility_by_platform": {
+        "vscode": {
+          "rating": "low",
+          "mode": "custom_only",
+          "rationale": "Technically possible if a proxy emulates OpenAI-compatible completions, but unsupported access and latency make it a poor recommendation."
+        },
+        "obsidian": {
+          "rating": "low",
+          "mode": "custom_only",
+          "rationale": "Adds all VS Code risks plus custom plugin work and weak FIM/streaming guarantees."
+        }
+      },
+      "source_ids": [
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-claude-code-pro-max"
+      ],
+      "claim_ids": [
+        "claim-unofficial-session-proxy-high-risk",
+        "claim-chatgpt-subscription-not-api",
+        "claim-claude-subscription-not-api-except-code-nearscope"
+      ],
+      "recommendation_fit": "poor",
+      "confidence": "medium",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "stack-tabby-self-hosted",
+      "name": "Tabby self-hosted coding assistant",
+      "category": "local_model_stack",
+      "platforms": [
+        "vscode"
+      ],
+      "autocomplete_mode": "true_inline_tab",
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "no",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "local Ollama",
+          "local llama.cpp",
+          "local vLLM",
+          "Tabby server"
+        ],
+        "risk_level": "low",
+        "access_notes": "No external account or UI subscription is needed unless optional cloud models are enabled."
+      },
+      "strengths": [
+        "Turnkey self-hosted code assistant",
+        "VS Code extension documented",
+        "FIM-oriented completion model role",
+        "OpenAPI interface for integration"
+      ],
+      "limitations": [
+        "Primarily code/editor-extension focused; no documented Obsidian true-inline plugin in this handoff",
+        "May be overkill if only a simple Obsidian note-completion backend is needed"
+      ],
+      "feasibility_by_platform": {
+        "vscode": {
+          "rating": "high",
+          "mode": "true_inline_tab",
+          "rationale": "Official VS Code extension and realtime multiline completions are documented."
+        },
+        "obsidian": {
+          "rating": "medium_low",
+          "mode": "custom_only",
+          "rationale": "Potential backend only; custom plugin and API compatibility testing required."
+        }
+      },
+      "source_ids": [
+        "src-tabby-readme",
+        "src-tabby-vscode",
+        "src-tabby-model-config"
+      ],
+      "claim_ids": [
+        "claim-tabby-turnkey-vscode-not-obsidian",
+        "claim-fim-is-right-shape"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "stack-llamacpp-ollama-vllm",
+      "name": "General local model servers: llama.cpp, Ollama, or vLLM",
+      "category": "local_model_stack",
+      "platforms": [
+        "vscode",
+        "obsidian"
+      ],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_applicable",
+        "official_api_access": "not_applicable",
+        "requires_separate_api_billing": "no",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "local Ollama",
+          "local llama.cpp",
+          "local vLLM",
+          "Tabby server"
+        ],
+        "risk_level": "low",
+        "access_notes": "No external account or UI subscription is needed unless optional cloud models are enabled."
+      },
+      "strengths": [
+        "Flexible model choice",
+        "Can run on local hardware",
+        "Can be hidden behind a shared broker",
+        "llama.cpp gives a dedicated infill API; Ollama is easy to operate; vLLM scales better on GPUs"
+      ],
+      "limitations": [
+        "Different endpoint semantics",
+        "FIM formatting must be model/server-specific",
+        "vLLM's OpenAI completions route lacks suffix support"
+      ],
+      "feasibility_by_platform": {
+        "vscode": {
+          "rating": "high",
+          "mode": "true_inline_tab",
+          "rationale": "Existing VS Code clients can call local endpoints, especially OpenAI-compatible ones."
+        },
+        "obsidian": {
+          "rating": "medium",
+          "mode": "custom_only",
+          "rationale": "Good backend for a custom plugin; no off-the-shelf UX guaranteed by this task."
+        }
+      },
+      "source_ids": [
+        "src-llamacpp-server",
+        "src-ollama-openai-compat",
+        "src-ollama-generate",
+        "src-vllm-online-serving"
+      ],
+      "claim_ids": [
+        "claim-llamacpp-best-local-fim-api",
+        "claim-ollama-good-local-front-door",
+        "claim-vllm-good-throughput-but-fim-gap"
+      ],
+      "recommendation_fit": "good",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    },
+    {
+      "option_id": "provider-mistral-codestral-fim",
+      "name": "Mistral Codestral FIM API",
+      "category": "api_provider",
+      "platforms": [
+        "vscode",
+        "obsidian"
+      ],
+      "autocomplete_mode": "custom_only",
+      "access_model": {
+        "subscription_ui_access": "not_supported",
+        "official_api_access": "supported",
+        "requires_separate_api_billing": "yes",
+        "unofficial_session_automation": "none_required",
+        "subscription_names": [],
+        "api_names": [
+          "Mistral Codestral /v1/fim/completions"
+        ],
+        "risk_level": "medium",
+        "access_notes": "Official code-FIM API; pricing/key requirements are separate from ChatGPT/Claude subscriptions and should be verified in synthesis if chosen."
+      },
+      "strengths": [
+        "Purpose-built FIM endpoint",
+        "Supports code completion and code generation",
+        "Good fit for code autocomplete if remote API is acceptable"
+      ],
+      "limitations": [
+        "Code-specialized, not necessarily best for prose notes",
+        "Remote API cost/privacy/latency",
+        "Not an existing Obsidian UX"
+      ],
+      "feasibility_by_platform": {
+        "vscode": {
+          "rating": "high",
+          "mode": "true_inline_tab",
+          "rationale": "VS Code autocomplete clients or a custom extension can call a broker that maps to /v1/fim/completions."
+        },
+        "obsidian": {
+          "rating": "medium",
+          "mode": "custom_only",
+          "rationale": "Usable from a custom plugin/broker, especially for code blocks; prose quality should be tested."
+        }
+      },
+      "source_ids": [
+        "src-mistral-coding-fim"
+      ],
+      "claim_ids": [
+        "claim-fim-is-right-shape"
+      ],
+      "recommendation_fit": "mixed",
+      "confidence": "high",
+      "last_checked": "2026-05-28"
+    }
+  ],
+  "architecture_patterns": [
+    {
+      "pattern_id": "pattern-shared-autocomplete-broker",
+      "name": "Shared autocomplete broker behind editor-native clients",
+      "summary": "Recommended cross-editor pattern: both VS Code and Obsidian call one local or hosted /autocomplete service that normalizes editor context into provider-specific FIM/chat requests.",
+      "components": [
+        "VS Code client: Continue/Twinny/Tabby where possible, or custom InlineCompletionItemProvider",
+        "Obsidian plugin: CodeMirror extension with ghost-text rendering and Tab accept",
+        "Broker API: debounced requests, cancellation tokens/request ids, prefix/suffix extraction, stop tokens, caching, provider routing",
+        "Provider adapters: llama.cpp /infill, Ollama generate/chat, vLLM completions/chat, Mistral FIM, LiteLLM/OpenRouter/OpenAI-compatible chat"
+      ],
+      "why_it_fits": [
+        "One backend can enforce privacy, rate limits, prompt shaping, and model selection for both editors.",
+        "Editor-specific code remains small and only handles UX/context capture.",
+        "It avoids assuming that OpenAI-compatible chat is enough for all FIM cases."
+      ],
+      "risks": [
+        "Broker must handle stale responses and per-editor cursor ranges carefully",
+        "More initial custom work than direct VS Code-only setup"
+      ],
+      "source_ids": [
+        "src-vscode-inline-api",
+        "src-obsidian-api-dts",
+        "src-codemirror-decoration",
+        "src-llamacpp-server",
+        "src-ollama-openai-compat",
+        "src-vllm-online-serving"
+      ],
+      "claim_ids": [
+        "claim-shared-backend-yes-client-ux-separate",
+        "claim-openai-compatible-proxy-useful-but-leaky"
+      ]
+    },
+    {
+      "pattern_id": "pattern-vscode-ready-client-plus-obsidian-custom",
+      "name": "Use ready VS Code client, build only Obsidian plugin",
+      "summary": "Lowest custom-code path for cross-editor local/API autocomplete: configure Continue/Twinny/Tabby in VS Code, then build an Obsidian plugin to call the same model server or broker.",
+      "components": [
+        "Continue or Twinny or Tabby in VS Code",
+        "shared Ollama/llama.cpp/Tabby/Mistral/OpenRouter backend",
+        "custom Obsidian plugin"
+      ],
+      "why_it_fits": [
+        "VS Code side is already solved well enough for most open-source/local architectures",
+        "Custom effort focuses on the missing Obsidian true-inline UX"
+      ],
+      "risks": [
+        "Different clients may shape prompts differently; accepted suggestions can diverge by editor",
+        "If using Tabby-specific APIs, Obsidian integration requires API inspection/testing"
+      ],
+      "source_ids": [
+        "src-continue-autocomplete",
+        "src-twinny-readme",
+        "src-tabby-vscode",
+        "src-obsidian-api-dts"
+      ],
+      "claim_ids": [
+        "claim-vscode-open-source-clients-exist",
+        "claim-obsidian-custom-plugin-needed-for-true-inline"
+      ]
+    },
+    {
+      "pattern_id": "pattern-direct-openai-compatible",
+      "name": "Editors call OpenAI-compatible endpoint directly",
+      "summary": "Simple but less robust: configure clients/plugins to call /v1/chat/completions or /v1/completions on Ollama, vLLM, LiteLLM, OpenRouter, or similar.",
+      "components": [
+        "OpenAI-compatible endpoint",
+        "client-side prompt builder in each editor",
+        "API key storage in each editor"
+      ],
+      "why_it_fits": [
+        "Fastest prototype if the chosen client already supports custom base URLs"
+      ],
+      "risks": [
+        "Duplicates secret handling and prompt logic",
+        "FIM suffix handling is not portable",
+        "Harder to enforce cross-editor privacy/cost limits"
+      ],
+      "source_ids": [
+        "src-ollama-openai-compat",
+        "src-vllm-online-serving",
+        "src-litellm-getting-started",
+        "src-openrouter-quickstart"
+      ],
+      "claim_ids": [
+        "claim-openai-compatible-proxy-useful-but-leaky"
+      ]
+    },
+    {
+      "pattern_id": "pattern-unofficial-session-proxy",
+      "name": "Subscription/session proxy exposing a fake API",
+      "summary": "Not recommended: use ChatGPT/Claude web session or an app-login wrapper to present a local API to editors.",
+      "components": [
+        "browser/session automation or CLI wrapper",
+        "local fake OpenAI-compatible server",
+        "editor clients"
+      ],
+      "why_it_fits": [
+        "Only potentially fits the desire to reuse a UI subscription without API billing"
+      ],
+      "risks": [
+        "Unsupported access boundary",
+        "brittleness",
+        "policy/account risk",
+        "latency unsuitable for live autocomplete",
+        "weak or absent FIM semantics"
+      ],
+      "source_ids": [
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-claude-code-pro-max"
+      ],
+      "claim_ids": [
+        "claim-unofficial-session-proxy-high-risk"
+      ]
+    }
+  ],
+  "feasibility_ratings": [
+    {
+      "architecture": "local_only",
+      "vscode": {
+        "rating": "high",
+        "fit": "Existing clients plus local model servers make this practical today.",
+        "latency": "good if small model/hardware is adequate; streaming and short completions help."
+      },
+      "obsidian": {
+        "rating": "medium",
+        "fit": "Backend is practical, but true inline/tab UX requires custom plugin.",
+        "latency": "good if plugin debounces, cancels stale requests, and limits max tokens."
+      },
+      "subscription_reuse": "not_applicable; does not use GPT/Claude subscriptions.",
+      "source_ids": [
+        "src-continue-autocomplete",
+        "src-twinny-readme",
+        "src-tabby-vscode",
+        "src-ollama-openai-compat",
+        "src-llamacpp-server"
+      ]
+    },
+    {
+      "architecture": "official_api_key",
+      "vscode": {
+        "rating": "high",
+        "fit": "Supported by existing VS Code clients and custom extension APIs.",
+        "latency": "mixed; hosted model/network speed and rate limits matter."
+      },
+      "obsidian": {
+        "rating": "medium",
+        "fit": "API calls are straightforward, but inline rendering/acceptance is custom.",
+        "latency": "mixed; needs debounce, request cancellation, token caps, and possibly non-streaming first-line responses."
+      },
+      "subscription_reuse": "poor for ChatGPT/Claude UI plans; API keys and separate billing are the supported route. Claude Pro/Max Claude Code is official but not a generic autocomplete endpoint.",
+      "source_ids": [
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-claude-code-pro-max",
+        "src-mistral-coding-fim"
+      ]
+    },
+    {
+      "architecture": "openai_compatible_proxy",
+      "vscode": {
+        "rating": "high",
+        "fit": "Many VS Code clients accept custom OpenAI-compatible base URLs.",
+        "latency": "good to mixed depending on upstream; gateway adds minimal overhead but upstream may dominate."
+      },
+      "obsidian": {
+        "rating": "medium",
+        "fit": "Good backend abstraction for a plugin; no built-in Obsidian UX solved by proxy alone.",
+        "latency": "good to mixed; plugin should call a normalized autocomplete endpoint rather than raw chat when possible."
+      },
+      "subscription_reuse": "poor for ChatGPT/Claude UI subscriptions; can route official API keys or local models.",
+      "source_ids": [
+        "src-litellm-getting-started",
+        "src-openrouter-quickstart",
+        "src-ollama-openai-compat",
+        "src-vllm-online-serving"
+      ]
+    },
+    {
+      "architecture": "unofficial_subscription_session_proxy",
+      "vscode": {
+        "rating": "low",
+        "fit": "Only works if a fragile proxy emulates the expected API; not recommended.",
+        "latency": "poor to unknown; session/web surfaces are not designed for keystroke-level autocomplete."
+      },
+      "obsidian": {
+        "rating": "low",
+        "fit": "Same risks plus custom plugin effort.",
+        "latency": "poor to unknown."
+      },
+      "subscription_reuse": "theoretically yes for UI subscriptions, but unsupported. Official Claude Code with Pro/Max is near-scope but not a stable generic FIM backend.",
+      "source_ids": [
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-claude-code-pro-max"
+      ]
+    }
+  ],
+  "fim_capable_models": [
+    {
+      "model_family": "Qwen2.5-Coder",
+      "example_models": [
+        "Qwen2.5-Coder-1.5B",
+        "Qwen2.5-Coder-7B",
+        "Qwen2.5-Coder-14B/32B if hardware allows"
+      ],
+      "access": "open weights; Qwen2.5-Coder-7B model card lists Apache-2.0",
+      "fim_evidence": "Model card says it can be used for fill in the middle tasks; Continue recommends qwen2.5-coder:1.5b for local autocomplete with Ollama.",
+      "autocomplete_fit": "high for local code autocomplete; 1.5B/7B are realistic latency candidates.",
+      "source_ids": [
+        "src-qwen25-coder-7b",
+        "src-continue-autocomplete"
+      ],
+      "confidence": "high"
+    },
+    {
+      "model_family": "StarCoder2",
+      "example_models": [
+        "starcoder2-3b",
+        "starcoder2-7b",
+        "starcoder2-15b"
+      ],
+      "access": "open weights under BigCode OpenRAIL-M terms",
+      "fim_evidence": "StarCoder2-7B model card says it was trained using the Fill-in-the-Middle objective.",
+      "autocomplete_fit": "high for code-oriented local autocomplete, subject to license suitability and hardware.",
+      "source_ids": [
+        "src-starcoder2-7b"
+      ],
+      "confidence": "high"
+    },
+    {
+      "model_family": "DeepSeek Coder",
+      "example_models": [
+        "deepseek-coder-1.3b-base",
+        "deepseek-coder-6.7b-base",
+        "deepseek-coder-33b-base"
+      ],
+      "access": "open weights under DeepSeek license; check commercial terms before productizing",
+      "fim_evidence": "Model card says models include a fill-in-the-blank task for project-level code completion and infilling and shows FIM tokens.",
+      "autocomplete_fit": "high for code if license and serving stack are acceptable.",
+      "source_ids": [
+        "src-deepseek-coder-67b"
+      ],
+      "confidence": "high"
+    },
+    {
+      "model_family": "Code Llama",
+      "example_models": [
+        "CodeLlama-7B",
+        "CodeLlama-13B",
+        "CodeLlama-34B"
+      ],
+      "access": "Llama 2 license; not OSI open-source",
+      "fim_evidence": "Model card lists code completion and infilling capabilities.",
+      "autocomplete_fit": "medium; older but still serviceable, license and quality should be weighed against Qwen/StarCoder/DeepSeek alternatives.",
+      "source_ids": [
+        "src-codellama-7b"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "model_family": "Codestral",
+      "example_models": [
+        "codestral-latest"
+      ],
+      "access": "official Mistral API; local/open-weight licensing not assessed in this task",
+      "fim_evidence": "Mistral docs say Codestral is trained for code generation and FIM and expose /v1/fim/completions.",
+      "autocomplete_fit": "high for API-key code autocomplete; remote latency/cost/privacy apply.",
+      "source_ids": [
+        "src-mistral-coding-fim"
+      ],
+      "confidence": "high"
+    }
+  ],
+  "serving_stacks": [
+    {
+      "stack": "Ollama",
+      "role": "easy local model runner and OpenAI-compatible chat/generate endpoint",
+      "fim_support": "indirect; use model-specific FIM prompt/tokens or client prompt shaping, because cited Ollama docs cover generate/chat streaming but not a dedicated FIM endpoint",
+      "streaming_or_latency": "supports streaming in generate and OpenAI-compatible chat; good for small local models",
+      "best_fit": "single-user local autocomplete prototype and Continue/Twinny custom-base-url workflows",
+      "risks": [
+        "FIM semantics not standardized",
+        "model templates may not preserve suffix exactly"
+      ],
+      "source_ids": [
+        "src-ollama-openai-compat",
+        "src-ollama-generate"
+      ]
+    },
+    {
+      "stack": "llama.cpp server",
+      "role": "lightweight local CPU/GPU server for quantized models",
+      "fim_support": "direct /infill endpoint with prefix/suffix and streaming; also OpenAI-compatible routes for generic clients",
+      "streaming_or_latency": "good for quantized small/medium models; /infill stream is a strong fit for editor autocomplete",
+      "best_fit": "custom shared broker that calls /infill for FIM models",
+      "risks": [
+        "/infill is not OpenAI-compatible, so generic clients need an adapter",
+        "model-specific FIM token order may matter"
+      ],
+      "source_ids": [
+        "src-llamacpp-server"
+      ]
+    },
+    {
+      "stack": "vLLM",
+      "role": "high-throughput GPU OpenAI-compatible server",
+      "fim_support": "partial/indirect; OpenAI /v1/completions suffix parameter is documented as unsupported, so broker must use model-specific FIM prompt formatting or another route",
+      "streaming_or_latency": "excellent for batched GPU serving; overkill for one small local CPU-only setup",
+      "best_fit": "team/shared GPU backend or multiple editors/users",
+      "risks": [
+        "suffix gap for FIM",
+        "requires stronger hardware/ops than Ollama or llama.cpp"
+      ],
+      "source_ids": [
+        "src-vllm-online-serving"
+      ]
+    },
+    {
+      "stack": "Tabby",
+      "role": "turnkey self-hosted coding assistant with server and editor extensions",
+      "fim_support": "explicit FIM-oriented completion model role",
+      "streaming_or_latency": "designed for real-time VS Code completions according to docs; local hardware still matters",
+      "best_fit": "VS Code self-hosted Copilot replacement; possible backend component for a custom Obsidian plugin after API testing",
+      "risks": [
+        "primarily code-focused",
+        "Obsidian integration not built-in"
+      ],
+      "source_ids": [
+        "src-tabby-readme",
+        "src-tabby-vscode",
+        "src-tabby-model-config"
+      ]
+    },
+    {
+      "stack": "LiteLLM",
+      "role": "self-hosted API gateway/proxy with OpenAI-format normalization, virtual keys, spend tracking, and routing",
+      "fim_support": "not a model/FIM endpoint itself; use upstream FIM where available or custom routes",
+      "streaming_or_latency": "gateway overhead should be small; upstream dominates",
+      "best_fit": "centralize keys, quotas, logging policy, and provider routing behind a broker",
+      "risks": [
+        "least-common-denominator chat API can hide FIM-specific provider features"
+      ],
+      "source_ids": [
+        "src-litellm-getting-started"
+      ]
+    },
+    {
+      "stack": "OpenRouter",
+      "role": "hosted multi-model OpenAI-compatible gateway",
+      "fim_support": "model-dependent and not guaranteed by the quickstart; best treated as chat/completions gateway unless a selected model documents FIM",
+      "streaming_or_latency": "supports streaming; latency/cost vary by routed provider/model",
+      "best_fit": "API-key experimentation across many hosted models without self-hosting",
+      "risks": [
+        "not tied to GPT/Claude UI subscriptions",
+        "model capability and retention/privacy policies vary"
+      ],
+      "source_ids": [
+        "src-openrouter-quickstart"
+      ]
+    }
+  ],
+  "shared_backend_assessment": {
+    "can_shared_backend_serve_both_vscode_and_obsidian": "yes_for_backend_no_for_ux",
+    "assessment": "The same model server or broker can serve both VS Code and Obsidian, but the editor-side UX cannot be shared wholesale. VS Code can rely on Continue/Twinny/Tabby or a custom InlineCompletionItemProvider; Obsidian needs a CodeMirror-based plugin for true inline/tab suggestions unless T030 finds an existing plugin with that exact UX.",
+    "recommended_backend_contract": {
+      "method": "POST",
+      "path": "/autocomplete",
+      "request_fields": [
+        "editor",
+        "document_uri",
+        "language",
+        "prefix",
+        "suffix",
+        "selection",
+        "max_tokens",
+        "temperature",
+        "stop",
+        "request_id"
+      ],
+      "response_fields": [
+        "request_id",
+        "insert_text",
+        "display_text",
+        "replace_range",
+        "model",
+        "finish_reason",
+        "latency_ms"
+      ],
+      "notes": "Keep the editor plugin provider-agnostic; all FIM token formatting and provider quirks belong in the broker."
+    },
+    "recommended_provider_order_for_prototype": [
+      "Local llama.cpp /infill with Qwen2.5-Coder or StarCoder2 for deterministic FIM testing",
+      "Ollama qwen2.5-coder via Continue/Twinny for quick VS Code proof of life",
+      "Mistral Codestral /v1/fim/completions for hosted code-FIM comparison",
+      "LiteLLM/OpenRouter only after deciding API-key billing is acceptable"
+    ],
+    "why_not_raw_chat_only": "Raw chat/completions can work for prose and simple continuations, but code autocomplete benefits from suffix-aware FIM and strict latency/token caps; chat-only prompts are a fallback, not the best default.",
+    "source_ids": [
+      "src-vscode-inline-api",
+      "src-obsidian-api-dts",
+      "src-codemirror-decoration",
+      "src-continue-autocomplete",
+      "src-twinny-readme",
+      "src-llamacpp-server",
+      "src-mistral-coding-fim"
+    ]
+  },
+  "obsidian_custom_plugin_path": {
+    "objective": "Implement true inline ghost-text autocomplete in Obsidian against the same backend used by VS Code.",
+    "minimum_viable_design": [
+      {
+        "step": 1,
+        "name": "Plugin shell and settings",
+        "details": "Create an Obsidian TypeScript plugin with settings for backend URL, optional API key or local-only mode, enabled file types, max tokens, debounce delay, and privacy exclusions. Keep remote provider keys in a local broker when possible rather than in the vault plugin."
+      },
+      {
+        "step": 2,
+        "name": "Register CodeMirror extension",
+        "details": "Use Plugin.registerEditorExtension with a CodeMirror 6 ViewPlugin/update listener and state field to track cursor, current suggestion, loading state, and request id."
+      },
+      {
+        "step": 3,
+        "name": "Context extraction",
+        "details": "On idle typing with an empty selection, collect prefix and suffix around the cursor under a token/character budget; include language hints for fenced code blocks, note path/title, and optional nearby headings. Avoid whole-vault context in the first version."
+      },
+      {
+        "step": 4,
+        "name": "Debounced cancellable request",
+        "details": "After roughly 150-350 ms of inactivity, POST to /autocomplete with prefix, suffix, editor='obsidian', file metadata, and max_tokens around 32-128. Use AbortController/request ids so stale responses never render."
+      },
+      {
+        "step": 5,
+        "name": "Backend normalization",
+        "details": "Broker maps the request to llama.cpp /infill, Mistral /v1/fim/completions, Ollama generate/chat, OpenAI-compatible chat, or another adapter. Use temperature 0 or low temperature and stop tokens such as blank-line/heading boundaries where appropriate."
+      },
+      {
+        "step": 6,
+        "name": "Ghost text rendering",
+        "details": "Render only the leading useful span as muted inline text with CodeMirror Decoration.widget at the cursor. Prefer single-line display first; allow multiline only after UX testing. Clear on document change, cursor movement, or Escape."
+      },
+      {
+        "step": 7,
+        "name": "Accept/reject keymap",
+        "details": "Install a keymap where Tab accepts the current suggestion by dispatching an insertion transaction at the recorded range; Esc clears; optionally Ctrl/Alt+Bracket cycles suggestions. Do not override Tab when no suggestion is visible or when Obsidian lists/indentation should win."
+      },
+      {
+        "step": 8,
+        "name": "Fallback popup mode",
+        "details": "If ghost text proves fragile, use EditorSuggest as a completion-popup fallback; this is easier but less Copilot-like than inline ghost text."
+      },
+      {
+        "step": 9,
+        "name": "Safety and observability",
+        "details": "Add visible local/remote indicator, per-vault enablement, excluded folders, request logging disabled by default, and a panic toggle. Track latency and acceptance rate locally for model tuning."
+      }
+    ],
+    "backend_request_contract": {
+      "method": "POST",
+      "path": "/autocomplete",
+      "request_fields": [
+        "editor",
+        "document_uri",
+        "language",
+        "prefix",
+        "suffix",
+        "selection",
+        "max_tokens",
+        "temperature",
+        "stop",
+        "request_id"
+      ],
+      "response_fields": [
+        "request_id",
+        "insert_text",
+        "display_text",
+        "replace_range",
+        "model",
+        "finish_reason",
+        "latency_ms"
+      ],
+      "notes": "Keep the editor plugin provider-agnostic; all FIM token formatting and provider quirks belong in the broker."
+    },
+    "source_ids": [
+      "src-obsidian-api-dts",
+      "src-codemirror-decoration",
+      "src-llamacpp-server",
+      "src-mistral-coding-fim"
+    ],
+    "confidence": "medium"
+  },
+  "risks": [
+    {
+      "risk_id": "risk-latency-budget",
+      "risk": "Autocomplete is keystroke-adjacent; models that feel fine in chat can feel unusable inline.",
+      "mitigation": "Use small FIM models, low temperature, max_tokens 32-128, debounce/cancel, cache prompt prefixes, and render only after cursor remains stable.",
+      "severity": "high"
+    },
+    {
+      "risk_id": "risk-fim-standardization",
+      "risk": "OpenAI-compatible endpoints do not standardize FIM; vLLM documents no suffix support for /v1/completions while Mistral and llama.cpp use distinct FIM endpoints.",
+      "mitigation": "Hide provider quirks behind a broker and maintain per-provider adapters/tests.",
+      "severity": "high",
+      "source_ids": [
+        "src-vllm-online-serving",
+        "src-mistral-coding-fim",
+        "src-llamacpp-server"
+      ]
+    },
+    {
+      "risk_id": "risk-subscription-confusion",
+      "risk": "Users may conflate ChatGPT/Claude UI subscriptions with API access; official docs say these are separate for normal API usage.",
+      "mitigation": "State clearly that official autocomplete backends require local models or separate API billing, except near-scope Claude Code subscription workflows that are not generic autocomplete APIs.",
+      "severity": "high",
+      "source_ids": [
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate",
+        "src-anthropic-claude-code-pro-max"
+      ]
+    },
+    {
+      "risk_id": "risk-obsidian-ux",
+      "risk": "Obsidian editing semantics differ from code editors: Markdown lists, tables, backlinks, commands, and IME input can conflict with Tab acceptance.",
+      "mitigation": "Make Tab override conditional, provide Escape, disable in excluded contexts, and offer popup fallback.",
+      "severity": "medium"
+    },
+    {
+      "risk_id": "risk-privacy",
+      "risk": "Remote API/autocomplete can leak note/code context repeatedly as the user types.",
+      "mitigation": "Default to local models when privacy matters; add vault/folder exclusions, visible remote indicator, and minimal context windows.",
+      "severity": "high"
+    },
+    {
+      "risk_id": "risk-license",
+      "risk": "Open-weight models are not uniformly OSI open-source or commercially permissive.",
+      "mitigation": "Prefer Apache-2.0 Qwen2.5-Coder for permissive local experiments; verify StarCoder2, DeepSeek, CodeLlama, and Codestral terms before redistribution or commercial use.",
+      "severity": "medium",
+      "source_ids": [
+        "src-qwen25-coder-7b",
+        "src-starcoder2-7b",
+        "src-deepseek-coder-67b",
+        "src-codellama-7b"
+      ]
+    },
+    {
+      "risk_id": "risk-unofficial-proxy",
+      "risk": "Unofficial subscription/session proxies may break, violate access expectations, or put accounts at risk.",
+      "mitigation": "Do not recommend for the final practical path; if mentioned, label as unsupported personal experimentation only.",
+      "severity": "high",
+      "source_ids": [
+        "src-openai-chatgpt-api-separate",
+        "src-anthropic-claude-api-separate"
+      ]
+    }
+  ],
+  "recommendations_for_synthesis": [
+    "Treat local-only and OpenAI-compatible-proxy architectures as the best-supported open-source paths; use a shared broker for cross-editor consistency.",
+    "For VS Code, prefer existing clients first: Continue/Twinny for flexible endpoints or Tabby for turnkey self-hosting. Only build a custom VS Code extension if these cannot meet UX or backend requirements.",
+    "For Obsidian, expect custom plugin work for true inline/tab ghost text unless T030 finds a current off-the-shelf plugin with that exact UX. The plugin should use CodeMirror decorations and a conditional Tab keymap.",
+    "Do not present ChatGPT or Claude UI subscriptions as official API access. Mention Claude Pro/Max Claude Code as a relevant official subscription-based coding product, but not as a generic shared autocomplete backend.",
+    "If remote API billing is acceptable, Mistral Codestral FIM is more autocomplete-shaped for code than generic chat APIs; for prose notes, compare quality empirically against general chat models.",
+    "Avoid final-report recommendations based on unofficial session proxies except as a clearly discouraged experimental path."
+  ],
+  "blockers": [],
+  "confidence": "medium"
+}
