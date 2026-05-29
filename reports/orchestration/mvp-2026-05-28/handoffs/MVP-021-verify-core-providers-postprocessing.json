@@ -1,0 +1,128 @@
+{
+  "task_id": "MVP-021",
+  "status": "completed",
+  "verification_result": "passed",
+  "created_on": "2026-05-28",
+  "scope": "Independent verification of the Rust core provider abstraction, engine orchestration, mock provider, postprocessing pipeline, pi subprocess provider, timeout/cancellation behavior, and pi safety boundaries implemented by MVP-020.",
+  "verdict": "MVP-020 passes independent verification for this slice. The workspace formats and tests cleanly; fake-pi tests verify isolation flags for tools, sessions, context files, and resource discovery; AutocompleteEngine routes every ProviderOutput::Candidate through the configured postprocessor pipeline before constructing an Ok protocol response; timeout and cancellation behavior is exercised through public engine/provider APIs; and source inspection found no production arbitrary shell or file access beyond spawning the configured pi executable with argv arguments. No real pi smoke test was run because it was a non-goal for this verification.",
+  "commands_run": [
+    {
+      "command": "git status --short",
+      "result": "Completed before verification edits. Status showed pre-existing unrelated deleted legacy reports/orchestration/* files and untracked .agents/.claude/.pi-workers/archive/mvp orchestration paths; these were preserved."
+    },
+    {
+      "command": "cargo fmt --all --check && cargo test",
+      "result": "passed. All workspace formatting checks and tests passed: autocomplete-core unit/integration tests, autocomplete-protocol tests, autocomplete-provider-pi unit/integration tests, and doc-test harnesses."
+    },
+    {
+      "command": "targeted source inspection of crates/autocomplete-core/src/{engine.rs,provider.rs,postprocess.rs,mock.rs} and crates/autocomplete-provider-pi/src/{provider.rs,parser.rs,prompt.rs,redaction.rs}",
+      "result": "passed. The engine applies deadlines and cancellation, maps provider errors to protocol responses, applies postprocessing to candidate text before Ok responses, and the pi provider constructs argv directly with isolation flags and redacted diagnostics."
+    },
+    {
+      "command": "targeted test inspection of crates/autocomplete-core/tests/{engine.rs,postprocessors.rs} and crates/autocomplete-provider-pi/tests/pi_provider.rs",
+      "result": "passed. Tests exercise public AutocompleteEngine::complete and CompletionProvider::complete behavior for repeated-prefix postprocessing, deterministic mock output, timeout, cancellation, fake-pi JSONL parsing, malformed-output repair retry, subprocess timeout/cancellation, and secret redaction."
+    },
+    {
+      "command": "grep inspection for production shell/file access in crates/**/*.rs",
+      "result": "passed for this slice. Production provider code uses tokio::process::Command::new(&config.command) plus arg() values; no sh -c, bash invocation, filesystem read/write, or built-in tool access was found in autocomplete-core or autocomplete-provider-pi production code. Filesystem writes found in autocomplete-protocol are explicit schema-export helpers outside the provider execution path; filesystem usage in pi_provider.rs is test-only fake-pi setup."
+    },
+    {
+      "command": "targeted pi CLI documentation inspection for relevant flags",
+      "result": "passed. The installed pi README documents --print, --mode json, --thinking, --no-session, --no-tools, --no-extensions, --no-skills, --no-prompt-templates, --no-themes, and --no-context-files; docs/json.md documents JSONL mode."
+    }
+  ],
+  "goals_checked": [
+    {
+      "goal": "Run relevant cargo tests.",
+      "result": "passed",
+      "evidence": [
+        "cargo fmt --all --check completed successfully.",
+        "cargo test completed successfully for all workspace crates, including autocomplete-core, autocomplete-protocol, and autocomplete-provider-pi.",
+        "Core tests covered engine behavior, dyn provider use, deterministic mock provider output, timeout, cancellation, and individual postprocessors.",
+        "Pi-provider tests covered fake-pi invocation/JSONL parsing, repair retry, timeout, cancellation, and diagnostic redaction."
+      ]
+    },
+    {
+      "goal": "Inspect fake-pi tests and confirm command arguments disable tools/session/context files.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-provider-pi/src/provider.rs:159-168 builds args with --print, --mode json, --no-tools, --no-session, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, and --no-themes.",
+        "crates/autocomplete-provider-pi/src/provider.rs:175-178 adds --model and --thinking minimal by default through PiProviderConfig.",
+        "crates/autocomplete-provider-pi/tests/pi_provider.rs:30-80 writes a fake pi executable, logs argv, and asserts required flags include --no-tools, --no-session, --no-context-files, --mode, json, --thinking, minimal, --no-extensions, --no-skills, and --no-prompt-templates.",
+        "Pi CLI docs confirm --no-tools disables all tools, --no-session is ephemeral mode, --no-context-files disables AGENTS.md/CLAUDE.md discovery, and the no-resource-discovery flags are supported."
+      ]
+    },
+    {
+      "goal": "Verify provider outputs cannot bypass postprocessing.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-core/src/engine.rs:90-99 only constructs AutocompleteResponse::Ok after self.postprocessors.process(&request, candidate.insert_text) succeeds with non-empty text.",
+        "crates/autocomplete-core/src/engine.rs:100-108 maps empty/rejected postprocessing results to NoSuggestion rather than returning raw provider text.",
+        "crates/autocomplete-core/tests/engine.rs:18-36 verifies a mock provider result that repeats the request prefix is returned only after repeated-prefix removal and metadata.postprocessed=true.",
+        "crates/autocomplete-core/tests/postprocessors.rs covers markdown-fence stripping, newline normalization, max_chars enforcement, and explanation/prose rejection.",
+        "No other production Rust path in crates/ constructs AutocompleteResponse::Ok from provider candidate text. Direct provider.complete returns provider-layer ProviderOutput by design; broker-facing protocol responses are produced by AutocompleteEngine."
+      ]
+    },
+    {
+      "goal": "Verify timeout/cancellation behavior is tested through public APIs.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-core/src/engine.rs:72-83 uses tokio::select! over cancellation.cancelled() and tokio::time::timeout(deadline, provider_future), cancelling the child token on either interruption path.",
+        "crates/autocomplete-core/tests/engine.rs:78-116 calls public AutocompleteEngine::complete with delayed MockProvider instances and verifies ProviderTimeout and Cancelled responses.",
+        "crates/autocomplete-provider-pi/src/provider.rs:118-126 selects over cancellation and timeout and calls child.start_kill() before returning ProviderError::Cancelled or ProviderError::Timeout.",
+        "crates/autocomplete-provider-pi/tests/pi_provider.rs:135-188 calls public CompletionProvider::complete on PiProvider with slow fake executables and verifies ProviderError::Timeout and ProviderError::Cancelled.",
+        "The engine also bounds the whole provider future by request.options.deadline_ms, so repair retry cannot extend the broker-facing request beyond the engine deadline."
+      ]
+    },
+    {
+      "goal": "Check for accidental arbitrary shell/file access outside intended pi subprocess execution.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-provider-pi/src/provider.rs:85 uses tokio::process::Command::new(&self.config.command) and passes all values through command.arg(), not through a shell string.",
+        "Source grep found no production sh -c, bash, std::process::Command elsewhere, provider filesystem reads, or provider filesystem writes in autocomplete-core or autocomplete-provider-pi.",
+        "The only production subprocess execution in this slice is the configured pi command. The command path is configurable for local configuration/testability; this verification treats that config as trusted local broker configuration, not user request data.",
+        "Provider diagnostics are redacted before exposure via ProcessOutput::diagnostics, and tests assert bearer/API-key-like values and pi auth paths are removed."
+      ]
+    }
+  ],
+  "issues": [],
+  "observations": [
+    {
+      "id": "MVP-021-O001",
+      "title": "Trust assumes broker construction uses the safety postprocessor pipeline",
+      "details": "AutocompleteEngine always calls its configured PostprocessorPipeline for candidates, and the default pipeline contains the intended safety postprocessors. PostprocessorPipeline::empty() is public for explicit use/testing, so downstream server/config work should avoid accidentally selecting an empty or unsafe pipeline for real autocomplete requests. This is a downstream configuration invariant, not a failure of the MVP-020 core slice."
+    },
+    {
+      "id": "MVP-021-O002",
+      "title": "Real pi runtime compatibility and latency remain unverified",
+      "details": "This task intentionally did not run real pi. Fake-pi coverage verifies argv construction and provider behavior; real model availability, latency, and end-to-end suggestion quality remain in the later runtime smoke/measurement task."
+    }
+  ],
+  "artifact_trust": {
+    "trusted_for_downstream_server_addon_work": [
+      "crates/autocomplete-core provider abstraction and AutocompleteEngine orchestration",
+      "crates/autocomplete-core deterministic MockProvider behavior for VS Code and Obsidian-style requests",
+      "crates/autocomplete-core default postprocessing pipeline behavior: newline normalization, markdown fence stripping, explanation rejection, repeated-prefix removal, and max-character enforcement",
+      "crates/autocomplete-provider-pi fake-tested subprocess invocation, pi JSONL assistant-text extraction, provider-response JSON parsing, one malformed-output repair retry, timeout/cancellation, and diagnostic redaction",
+      "Cargo workspace integration for autocomplete-core, autocomplete-protocol, and autocomplete-provider-pi"
+    ],
+    "trust_basis": [
+      "Full workspace cargo fmt and cargo test passed.",
+      "Source inspection confirmed broker-facing Ok responses are produced only after postprocessing succeeds.",
+      "Fake-pi tests and pi CLI docs confirm the relevant safety flags exist and are passed.",
+      "No arbitrary production shell/file access was found outside the intended configured pi subprocess execution path."
+    ],
+    "not_claimed": [
+      "Real pi-backed runtime suggestions, latency, and model availability were not verified in this task.",
+      "HTTP server, addon config loading, VS Code client, and Obsidian client behavior were outside this task's scope."
+    ]
+  },
+  "spawned_tasks": [],
+  "revived_tasks": [],
+  "queue_recommendation": "Treat MVP-020 core/provider/postprocessing artifacts as trusted for downstream MVP-030 server/addons work. Keep runtime pi smoke and latency verification for the later dedicated smoke/measurement task.",
+  "worktree_notes": [
+    "Pre-existing unrelated deleted reports/orchestration/* files and untracked .agents/.claude/.pi-workers/archive/mvp orchestration paths were visible in git status before this verification wrote its handoff.",
+    "This task did not read tmp/, archive/, prompt-buffer.md, or unrelated ~/dev directories. A git status listing mentioned archive/ as an untracked path; no archive files were opened or edited.",
+    "This task made no source-code changes; it wrote only reports/orchestration/mvp-2026-05-28/handoffs/MVP-021-verify-core-providers-postprocessing.json."
+  ]
+}
