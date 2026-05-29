@@ -1,0 +1,9 @@
+{
+  "name": "autocomplete-alternative-clients",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT OR Apache-2.0",
+  "scripts": {
+    "test": "node --test ./protocol/test/*.test.js ./vscode/test/*.test.js ./obsidian/test/*.test.js"
+  }
+}

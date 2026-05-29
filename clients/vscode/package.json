@@ -1,0 +1,54 @@
+{
+  "name": "autocomplete-alternative-vscode",
+  "displayName": "Autocomplete Alternative",
+  "description": "Thin VS Code client for the local autocomplete broker.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "MIT OR Apache-2.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Autocomplete Alternative",
+      "properties": {
+        "autocompleteAlternative.brokerUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:32145",
+          "description": "Local autocomplete broker base URL."
+        },
+        "autocompleteAlternative.debounceMs": {
+          "type": "number",
+          "default": 500,
+          "minimum": 0,
+          "description": "Delay before sending an autocomplete request after VS Code asks for inline completions."
+        },
+        "autocompleteAlternative.maxContextChars": {
+          "type": "number",
+          "default": 4700,
+          "minimum": 1,
+          "description": "Maximum prefix plus suffix characters sent to the broker."
+        },
+        "autocompleteAlternative.maxCompletionChars": {
+          "type": "number",
+          "default": 180,
+          "minimum": 1,
+          "description": "Maximum insert text length requested from the broker."
+        },
+        "autocompleteAlternative.deadlineMs": {
+          "type": "number",
+          "default": 2500,
+          "minimum": 1,
+          "description": "Broker-side request deadline in milliseconds."
+        }
+      }
+    }
+  }
+}

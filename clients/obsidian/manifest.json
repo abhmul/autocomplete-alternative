@@ -1,0 +1,9 @@
+{
+  "id": "autocomplete-alternative",
+  "name": "Autocomplete Alternative",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Thin Obsidian client for the local autocomplete broker.",
+  "author": "local",
+  "isDesktopOnly": true
+}

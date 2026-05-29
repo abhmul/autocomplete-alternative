@@ -1,0 +1,92 @@
+{
+  "task_id": "MVP-040",
+  "status": "passed_with_notes",
+  "created_on": "2026-05-28",
+  "scope": "TDD thin VS Code and Obsidian editor clients against the Rust broker /v1/autocomplete protocol.",
+  "summary": {
+    "result": "Minimal editor client artifacts are implemented and tested. VS Code and Obsidian clients share generated protocol constants/schemas plus one broker client/session helper, construct the same AutocompleteRequest shape, debounce calls, abort and cancel stale request_ids, and do not import provider-pi internals.",
+    "implemented_artifacts": [
+      "clients/protocol/src/generated/protocol-v1.js",
+      "clients/protocol/src/generated/schemas/autocomplete-request.v1.schema.json",
+      "clients/protocol/src/generated/schemas/autocomplete-response.v1.schema.json",
+      "clients/protocol/src/client.js",
+      "clients/vscode/src/extension.js",
+      "clients/vscode/src/extension-core.js",
+      "clients/vscode/package.json",
+      "clients/obsidian/src/main.js",
+      "clients/obsidian/src/plugin-core.js",
+      "clients/obsidian/manifest.json",
+      "clients/obsidian/styles.css",
+      "crates/autocomplete-protocol/src/bin/export_client_artifacts.rs"
+    ],
+    "tests_added": [
+      "clients/protocol/test/client.test.js",
+      "clients/protocol/test/boundaries.test.js",
+      "clients/vscode/test/extension-core.test.js",
+      "clients/obsidian/test/plugin-core.test.js"
+    ]
+  },
+  "tdd_cycles": [
+    {
+      "behavior": "Shared client artifact constructs protocol-v1 autocomplete requests and sends POST /v1/autocomplete.",
+      "test": "clients/protocol/test/client.test.js",
+      "implementation": "clients/protocol/src/client.js and generated protocol-v1 constants."
+    },
+    {
+      "behavior": "Debounced broker session cancels stale in-flight request_ids and ignores late stale responses.",
+      "test": "clients/protocol/test/client.test.js",
+      "implementation": "BrokerAutocompleteSession in clients/protocol/src/client.js."
+    },
+    {
+      "behavior": "VS Code host glue collects document/cursor context and renders fresh broker responses as inline completion ghost text.",
+      "test": "clients/vscode/test/extension-core.test.js",
+      "implementation": "clients/vscode/src/extension-core.js and extension registration in clients/vscode/src/extension.js."
+    },
+    {
+      "behavior": "Obsidian host glue collects note context, cancels stale requests, renders CodeMirror ghost text, and accepts with Tab.",
+      "test": "clients/obsidian/test/plugin-core.test.js",
+      "implementation": "clients/obsidian/src/plugin-core.js and CodeMirror ViewPlugin/keymap in clients/obsidian/src/main.js."
+    },
+    {
+      "behavior": "Editor clients stay provider-agnostic and do not reference provider-pi internals.",
+      "test": "clients/protocol/test/boundaries.test.js",
+      "implementation": "Clients import only protocol/shared broker client helpers."
+    }
+  ],
+  "verification": {
+    "commands_run": [
+      {
+        "command": "cargo run -q -p autocomplete-protocol --bin export_client_artifacts -- clients/protocol/src/generated",
+        "result": "passed; generated protocol constants and request/response JSON Schemas from the Rust protocol crate."
+      },
+      {
+        "command": "npm test --prefix clients",
+        "result": "passed; 9 Node tests cover protocol shape, endpoint use, stale cancellation, VS Code request construction/provider behavior, Obsidian request construction/controller behavior, and provider-boundary scanning."
+      },
+      {
+        "command": "node --check clients/obsidian/src/main.js && node --check clients/vscode/src/extension.js && node --check clients/protocol/src/client.js",
+        "result": "passed; host glue files parse without requiring editor runtime modules."
+      },
+      {
+        "command": "cargo fmt --all --check && cargo test",
+        "result": "passed; existing Rust workspace tests still pass after adding the protocol artifact export binary."
+      }
+    ],
+    "success_criteria": {
+      "same_protocol": "passed: both clients use shared clients/protocol BrokerClient and generated /v1/autocomplete constants.",
+      "settings": "passed: VS Code contributes brokerUrl/debounceMs/maxContextChars settings; Obsidian has matching plugin settings with a minimal setting tab.",
+      "stale_cancellation": "passed: shared session aborts local fetches and calls /v1/cancel/:request_id; VS Code and Obsidian tests cover stale request replacement.",
+      "thin_clients": "passed: no provider logic or provider-pi imports in clients; boundary test enforces this.",
+      "ghost_text": "passed by static/host glue: VS Code returns InlineCompletionItem; Obsidian registers a CodeMirror ViewPlugin decoration and Tab keymap."
+    }
+  },
+  "notes": [
+    "No marketplace packaging or real-editor UI smoke was performed in this slice.",
+    "The Obsidian and VS Code host modules intentionally keep runtime-specific imports out of pure core modules so Node tests can cover request construction and cancellation without editor test harnesses.",
+    "Regenerate clients/protocol/src/generated with `cargo run -p autocomplete-protocol --bin export_client_artifacts -- clients/protocol/src/generated` when the Rust protocol changes."
+  ],
+  "issues": [],
+  "blockers": [],
+  "spawned_tasks": [],
+  "queue_recommendation": "Proceed to MVP-041 independent verification of editor clients, including actual VS Code/Obsidian smoke if available."
+}

@@ -1,0 +1,8 @@
+{
+  "name": "autocomplete-alternative-obsidian",
+  "version": "0.1.0",
+  "description": "Thin Obsidian client for the local autocomplete broker.",
+  "license": "MIT OR Apache-2.0",
+  "main": "src/main.js",
+  "private": true
+}

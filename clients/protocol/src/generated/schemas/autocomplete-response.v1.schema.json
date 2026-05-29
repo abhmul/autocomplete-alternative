@@ -1,0 +1,224 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ErrorCode": {
+      "enum": [
+        "unsupported_protocol_version",
+        "invalid_request",
+        "context_too_large",
+        "max_chars_out_of_range",
+        "deadline_out_of_range",
+        "provider_timeout",
+        "provider_error",
+        "provider_malformed_output",
+        "cancelled",
+        "internal_error"
+      ],
+      "type": "string"
+    },
+    "ProtocolError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/definitions/ErrorCode"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object"
+    },
+    "ResponseMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "latency_ms": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "postprocessed": {
+          "type": "boolean"
+        },
+        "provider_latency_ms": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "latency_ms",
+        "postprocessed",
+        "provider_latency_ms"
+      ],
+      "type": "object"
+    }
+  },
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "format": "double",
+          "type": "number"
+        },
+        "insert_text": {
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ResponseMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "protocol_version": {
+          "format": "uint32",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "request_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ok"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "confidence",
+        "insert_text",
+        "protocol_version",
+        "request_id",
+        "source",
+        "status"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ResponseMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "protocol_version": {
+          "format": "uint32",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "request_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "no_suggestion"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol_version",
+        "request_id",
+        "status"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ResponseMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "protocol_version": {
+          "format": "uint32",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "request_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "cancelled"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol_version",
+        "request_id",
+        "status"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ProtocolError"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ResponseMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "protocol_version": {
+          "format": "uint32",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "request_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "error"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "error",
+        "protocol_version",
+        "request_id",
+        "status"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "AutocompleteResponse"
+}

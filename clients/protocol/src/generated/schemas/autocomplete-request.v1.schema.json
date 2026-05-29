@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "definitions": {
+    "AutocompleteContext": {
+      "additionalProperties": false,
+      "properties": {
+        "prefix": {
+          "type": "string"
+        },
+        "selected_text": {
+          "default": "",
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix",
+        "suffix"
+      ],
+      "type": "object"
+    },
+    "AutocompleteMode": {
+      "enum": [
+        "inline_tab"
+      ],
+      "type": "string"
+    },
+    "AutocompleteOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_ms": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "max_chars": {
+          "format": "uint32",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "mode": {
+          "$ref": "#/definitions/AutocompleteMode"
+        },
+        "trigger": {
+          "$ref": "#/definitions/TriggerKind"
+        }
+      },
+      "required": [
+        "deadline_ms",
+        "max_chars",
+        "mode",
+        "trigger"
+      ],
+      "type": "object"
+    },
+    "ClientInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "type": "object"
+    },
+    "CursorPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "character": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "line": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "offset": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "character",
+        "line",
+        "offset"
+      ],
+      "type": "object"
+    },
+    "DocumentInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "language_id": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "version": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "language_id",
+        "uri",
+        "version"
+      ],
+      "type": "object"
+    },
+    "TriggerKind": {
+      "enum": [
+        "idle",
+        "manual",
+        "document_change"
+      ],
+      "type": "string"
+    }
+  },
+  "properties": {
+    "client": {
+      "$ref": "#/definitions/ClientInfo"
+    },
+    "context": {
+      "$ref": "#/definitions/AutocompleteContext"
+    },
+    "cursor": {
+      "$ref": "#/definitions/CursorPosition"
+    },
+    "document": {
+      "$ref": "#/definitions/DocumentInfo"
+    },
+    "options": {
+      "$ref": "#/definitions/AutocompleteOptions"
+    },
+    "protocol_version": {
+      "format": "uint32",
+      "minimum": 0.0,
+      "type": "integer"
+    },
+    "request_id": {
+      "format": "uuid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "client",
+    "context",
+    "cursor",
+    "document",
+    "options",
+    "protocol_version",
+    "request_id"
+  ],
+  "title": "AutocompleteRequest",
+  "type": "object"
+}
