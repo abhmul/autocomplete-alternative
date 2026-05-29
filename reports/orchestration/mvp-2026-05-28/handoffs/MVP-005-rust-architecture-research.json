@@ -1,0 +1,723 @@
+{
+  "task_id": "MVP-005",
+  "status": "completed",
+  "created_on": "2026-05-28",
+  "scope": "Research/design only. No source code was edited, no dependencies were installed, and no long external smoke tests were run.",
+  "executive_decision": {
+    "architecture": "Use a Rust Cargo workspace with a standalone local broker binary. Keep protocol, core engine, built-in addons, pi provider, and HTTP server as separate Rust crates. Keep VS Code and Obsidian clients as thin TypeScript host glue only because those platforms expose JavaScript/TypeScript extension APIs.",
+    "transport": "MVP transport is local HTTP JSON on /health, /v1/autocomplete, /v1/cancel/:request_id, and /v1/reload, with /v1 path versioning plus an explicit protocol_version field in request/response payloads.",
+    "provider_strategy": "Implement mock and pi providers behind one Rust provider trait. Clients never import provider crates and switch providers only through broker config.",
+    "main_risk": "pi subprocess + model latency may be too slow for keystroke-level completion; implement idle/manual triggering first and measure before optimizing."
+  },
+  "evidence_checked": {
+    "local_sources": [
+      {
+        "id": "project-agents",
+        "path": "AGENTS.md",
+        "facts_used": [
+          "Do not read tmp/, archive/, prompt-buffer.md, or unrelated ~/dev directories.",
+          "Run checkpoint before ending file-modifying sessions."
+        ]
+      },
+      {
+        "id": "mvp-plan",
+        "path": "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+        "facts_used": [
+          "Standalone broker with thin VS Code and Obsidian clients is the core design decision.",
+          "MVP endpoints, request/response shape, pi subprocess mode, addon model, quality gates, and task order are defined there."
+        ]
+      },
+      {
+        "id": "orchestration-state",
+        "path": "reports/orchestration/mvp-2026-05-28/state.json",
+        "facts_used": [
+          "Hard implementation language is Rust for broker, protocol, providers, and reusable logic.",
+          "TypeScript/JavaScript is allowed only for unavoidable VS Code and Obsidian host glue."
+        ]
+      },
+      {
+        "id": "repo-surface",
+        "commands": [
+          "find Cargo.toml",
+          "find crates/*/Cargo.toml",
+          "find clients/**/package.json"
+        ],
+        "facts_used": [
+          "No Rust workspace, crates, or client package scaffolding currently exists in the checked repository surface."
+        ]
+      },
+      {
+        "id": "pi-readme-cli-reference",
+        "path": "/home/abhmul/.local/lib/node_modules/@earendil-works/pi-coding-agent/README.md",
+        "facts_used": [
+          "pi supports --mode json and --mode rpc.",
+          "pi supports --model, --thinking, --no-session, --no-tools, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, --system-prompt, and file arguments.",
+          "Pi packages/extensions execute arbitrary code, so autocomplete subprocess isolation should disable extension discovery."
+        ]
+      },
+      {
+        "id": "pi-json-doc",
+        "path": "/home/abhmul/.local/lib/node_modules/@earendil-works/pi-coding-agent/docs/json.md",
+        "facts_used": [
+          "--mode json emits JSONL session and event objects, not just the assistant's raw text.",
+          "Provider must extract the final assistant text from message/agent events and then parse the model-specified JSON object."
+        ]
+      },
+      {
+        "id": "pi-help-runtime-check",
+        "commands": [
+          "pi --help",
+          "pi --version"
+        ],
+        "facts_used": [
+          "Runtime pi version checked: 0.75.5.",
+          "Help output confirms the relevant flags above exist in this environment."
+        ]
+      }
+    ],
+    "external_sources_checked_2026_05_28": [
+      {
+        "id": "axum-docs",
+        "url": "https://docs.rs/axum/latest/axum/routing/index.html",
+        "facts_used": [
+          "axum Router supports route composition with HTTP method helpers such as get and post, and Router::with_state provides global handler state."
+        ]
+      },
+      {
+        "id": "schemars-docs",
+        "url": "https://github.com/gresau/schemars/blob/master/README.md",
+        "facts_used": [
+          "schemars supports deriving JsonSchema alongside serde derives and generating schemas with schema_for."
+        ]
+      },
+      {
+        "id": "jsonschema-docs",
+        "url": "https://docs.rs/jsonschema/latest/jsonschema/",
+        "facts_used": [
+          "jsonschema supports one-off validation and reusable validators via validator_for, useful for fixture/schema tests."
+        ]
+      },
+      {
+        "id": "tokio-process-docs",
+        "url": "https://docs.rs/tokio/latest/tokio/process/struct.Command.html",
+        "facts_used": [
+          "tokio::process::Command supports async subprocess execution and kill_on_drop, but docs caution that strong guarantees require explicit kill/wait."
+        ]
+      },
+      {
+        "id": "tokio-util-cancellation-docs",
+        "url": "https://docs.rs/tokio-util/latest/src/tokio_util/sync/cancellation_token.rs.html",
+        "facts_used": [
+          "CancellationToken supports cancel, cancelled, clone, and child_token semantics suitable for request cancellation trees."
+        ]
+      },
+      {
+        "id": "config-rs-docs",
+        "url": "https://context7.com/rust-cli/config-rs/llms.txt",
+        "facts_used": [
+          "config-rs supports layered defaults, files, environment variables, and serde deserialization into typed structs."
+        ]
+      },
+      {
+        "id": "globset-docs",
+        "url": "https://context7.com/burntsushi/globset/llms.txt",
+        "facts_used": [
+          "globset builds a GlobSet from multiple patterns and supports is_match/matches for path privacy filters."
+        ]
+      },
+      {
+        "id": "async-trait-docs",
+        "url": "https://docs.rs/async-trait/latest/async_trait/",
+        "facts_used": [
+          "Native async functions in traits are not dyn-compatible; async-trait makes async trait methods usable with dyn trait objects."
+        ]
+      },
+      {
+        "id": "clap-docs",
+        "url": "https://docs.rs/clap/latest/clap/",
+        "facts_used": [
+          "clap supports derive-based command-line parsing with generated --help and --version behavior."
+        ]
+      },
+      {
+        "id": "tower-serviceext-docs",
+        "url": "https://docs.rs/tower/latest/tower/trait.ServiceExt.html",
+        "facts_used": [
+          "tower ServiceExt provides oneshot for testing services without binding a real socket."
+        ]
+      },
+      {
+        "id": "vscode-inline-api",
+        "url": "https://raw.githubusercontent.com/microsoft/vscode/main/src/vscode-dts/vscode.d.ts",
+        "facts_used": [
+          "VS Code extensions can register languages.registerInlineCompletionItemProvider.",
+          "InlineCompletionItemProvider.provideInlineCompletionItems receives TextDocument, Position, InlineCompletionContext, and CancellationToken and returns items or a thenable.",
+          "InlineCompletionItem insertText is used for preview and accept; range must begin and end on one line."
+        ]
+      },
+      {
+        "id": "obsidian-editor-extensions-docs",
+        "url": "https://docs.obsidian.md/Plugins/Editor/Editor+extensions",
+        "facts_used": [
+          "Obsidian uses CodeMirror 6 for the Markdown editor.",
+          "Obsidian plugins register CodeMirror 6 extensions with registerEditorExtension in onload."
+        ]
+      },
+      {
+        "id": "obsidian-api-dts",
+        "url": "https://raw.githubusercontent.com/obsidianmd/obsidian-api/master/obsidian.d.ts",
+        "facts_used": [
+          "Plugin.registerEditorExtension accepts a CodeMirror 6 Extension or array of Extensions.",
+          "Plugin.addCommand supports editor callbacks and hotkeys."
+        ]
+      },
+      {
+        "id": "obsidian-cm6-decorations-docs",
+        "url": "https://marcusolsson.github.io/obsidian-plugin-docs/editor/extensions/decorations",
+        "facts_used": [
+          "CodeMirror/Obsidian view plugins can provide decorations; widget decorations insert custom HTML elements in the editor. This is suitable for ghost text if limited to the visible viewport."
+        ]
+      }
+    ]
+  },
+  "crate_layout": {
+    "workspace_root": {
+      "path": "Cargo.toml",
+      "recommendation": "Create a Cargo workspace with resolver = \"2\", edition = \"2024\", shared lint policy, and workspace dependency versions. Keep examples/fixtures outside crates so protocol fixtures are language-neutral."
+    },
+    "crates": [
+      {
+        "path": "crates/autocomplete-protocol",
+        "maps_plan_component": "protocol",
+        "responsibilities": [
+          "Define serde/schemars request, response, health, cancel, reload, client, document, cursor, context, options, provider metadata, and error types.",
+          "Export JSON Schema and validate fixtures.",
+          "Provide custom semantic validation for protocol invariants that JSON Schema alone cannot express well."
+        ],
+        "public_interfaces": [
+          "PROTOCOL_VERSION: u32 = 1",
+          "AutocompleteRequest, AutocompleteResponse, ErrorResponse, HealthResponse, CancelResponse, ReloadResponse",
+          "ErrorCode enum with stable snake_case wire names",
+          "Validate trait or validate_request/validate_response functions returning field-path diagnostics",
+          "schema module or export-schema binary for request/response schema files"
+        ],
+        "dependencies": [
+          "serde",
+          "serde_json",
+          "schemars",
+          "uuid",
+          "thiserror"
+        ],
+        "dev_dependencies": [
+          "jsonschema",
+          "pretty_assertions"
+        ]
+      },
+      {
+        "path": "crates/autocomplete-core",
+        "maps_plan_component": "server/core engine, provider abstraction, postprocessors, mock provider",
+        "responsibilities": [
+          "Define provider trait and engine request lifecycle independent of HTTP.",
+          "Implement deterministic mock provider for UI/client and server tests.",
+          "Implement postprocessing pipeline: strip markdown fences, remove repeated prefix, max character enforcement, explanation rejection, normalize newlines.",
+          "Represent cancellation, deadlines, provider errors, and normalized completion candidates."
+        ],
+        "public_interfaces": [
+          "CompletionProvider trait: async complete(request, prompt, cancellation) -> ProviderResult",
+          "AutocompleteEngine::complete(request, cancellation) -> AutocompleteResponse",
+          "Postprocessor trait and PostprocessorPipeline",
+          "MockProvider",
+          "ProviderError, PostprocessError, EngineError"
+        ],
+        "dependencies": [
+          "autocomplete-protocol",
+          "async-trait",
+          "tokio",
+          "tokio-util",
+          "thiserror",
+          "tracing",
+          "regex"
+        ]
+      },
+      {
+        "path": "crates/autocomplete-addons",
+        "maps_plan_component": "addons",
+        "responsibilities": [
+          "Define and implement built-in context providers, prompt templates, policy filters, and registries used by the broker.",
+          "Keep addon behavior inside the broker/core path and out of editor clients.",
+          "Enforce privacy policy before remote/pi provider calls."
+        ],
+        "public_interfaces": [
+          "ContextProvider trait",
+          "PromptTemplate trait and language_id-based registry",
+          "PolicyEngine with excluded_globs and remote_context_byte_limit",
+          "Built-in code and markdown prompt templates",
+          "Built-in nearby_text_window context provider that uses only explicit request context for MVP"
+        ],
+        "dependencies": [
+          "autocomplete-protocol",
+          "autocomplete-core",
+          "globset",
+          "url",
+          "thiserror",
+          "tracing"
+        ]
+      },
+      {
+        "path": "crates/autocomplete-provider-pi",
+        "maps_plan_component": "pi provider",
+        "responsibilities": [
+          "Invoke pi as a subprocess with tools/session/context/extensions/skills/templates disabled for autocomplete requests.",
+          "Render strict system/user prompts, parse pi JSONL event stream, extract final assistant text, parse provider response JSON, and perform one malformed-JSON repair retry.",
+          "Implement timeout, cancellation, stdout/stderr capture, and secret redaction.",
+          "Expose no file-system or shell functionality except spawning the configured pi executable."
+        ],
+        "public_interfaces": [
+          "PiProvider",
+          "PiProviderConfig { command, provider, model, thinking, timeout_ms, repair_retry }",
+          "RenderedPrompt",
+          "PiEventStreamParser",
+          "SecretRedactor"
+        ],
+        "dependencies": [
+          "autocomplete-protocol",
+          "autocomplete-core",
+          "tokio",
+          "tokio-util",
+          "serde",
+          "serde_json",
+          "thiserror",
+          "tracing",
+          "regex"
+        ],
+        "dev_dependencies": [
+          "tempfile",
+          "assert_cmd",
+          "predicates"
+        ]
+      },
+      {
+        "path": "crates/autocomplete-server",
+        "maps_plan_component": "server",
+        "responsibilities": [
+          "Build the axum Router and local HTTP endpoints.",
+          "Load typed broker config and instantiate mock or pi provider by config only.",
+          "Track in-flight request cancellation tokens by request_id.",
+          "Run protocol validation, addon/context/prompt pipeline, provider, postprocessors, and response mapping.",
+          "Provide the runnable autocomplete-broker binary."
+        ],
+        "public_interfaces": [
+          "app(state: AppState) -> axum::Router",
+          "BrokerConfig::load(path/env) -> BrokerConfig",
+          "AppState",
+          "run(listener/config) -> Result<()>"
+        ],
+        "dependencies": [
+          "autocomplete-protocol",
+          "autocomplete-core",
+          "autocomplete-addons",
+          "autocomplete-provider-pi",
+          "axum",
+          "tokio",
+          "tokio-util",
+          "tower-http",
+          "config",
+          "clap",
+          "serde",
+          "serde_json",
+          "uuid",
+          "thiserror",
+          "tracing",
+          "tracing-subscriber"
+        ],
+        "dev_dependencies": [
+          "tower",
+          "http-body-util",
+          "tempfile",
+          "assert_cmd",
+          "pretty_assertions"
+        ]
+      }
+    ],
+    "non_rust_host_glue": [
+      {
+        "path": "clients/vscode",
+        "language": "TypeScript host glue only",
+        "responsibilities": [
+          "Register InlineCompletionItemProvider.",
+          "Collect prefix/suffix/cursor/document metadata and POST to the broker.",
+          "Use VS Code CancellationToken and AbortController to cancel stale requests.",
+          "Render one InlineCompletionItem from insert_text; rely on VS Code inline completion acceptance rather than provider-specific logic."
+        ],
+        "must_not_do": [
+          "Import autocomplete-provider-pi or know pi command details.",
+          "Implement provider logic or postprocessing beyond minimal UI safety checks."
+        ]
+      },
+      {
+        "path": "clients/obsidian",
+        "language": "TypeScript host glue only",
+        "responsibilities": [
+          "Register a CodeMirror 6 editor extension from the Obsidian Plugin.onload method.",
+          "Collect note context and call the same broker protocol.",
+          "Render ghost text with a view plugin and widget decoration.",
+          "Accept with configurable Tab/key handling and cancel stale requests on document/cursor changes."
+        ],
+        "must_not_do": [
+          "Import autocomplete-provider-pi or know pi command details.",
+          "Read arbitrary vault files for provider context in the client."
+        ]
+      }
+    ],
+    "fixtures_and_docs": [
+      "examples/fixtures/autocomplete-request.v1.json",
+      "examples/fixtures/autocomplete-response-ok.v1.json",
+      "examples/fixtures/autocomplete-response-error.v1.json",
+      "examples/fixtures/pi-jsonl-success.jsonl",
+      "examples/fixtures/pi-jsonl-malformed-then-repair.jsonl",
+      "docs/protocol.md or crates/autocomplete-protocol/README.md"
+    ]
+  },
+  "dependency_stack": {
+    "runtime_http": {
+      "selected": [
+        "tokio",
+        "axum",
+        "tower-http"
+      ],
+      "rationale": "tokio is needed for async server, timeouts, cancellation, and subprocesses. axum integrates with Tower and has simple route/state/JSON handlers for local HTTP. tower-http can provide tracing and narrow localhost CORS if Obsidian/Electron fetch requires CORS.",
+      "alternatives_rejected": [
+        "actix-web: capable but less directly aligned with Tower oneshot tests for this small broker.",
+        "warp: workable but less current/conventional for new Tower-based services than axum."
+      ]
+    },
+    "serialization_schema_validation": {
+      "selected": [
+        "serde",
+        "serde_json",
+        "schemars",
+        "jsonschema"
+      ],
+      "rationale": "serde/serde_json are the wire format foundation; schemars generates JSON Schema from Rust types; jsonschema validates generated schemas/fixtures in tests. Use explicit Rust validation for user-facing protocol error codes."
+    },
+    "errors_observability": {
+      "selected": [
+        "thiserror",
+        "tracing",
+        "tracing-subscriber"
+      ],
+      "rationale": "Typed library errors should be explicit and testable; broker logs need structured latency/provider diagnostics with redaction."
+    },
+    "config_cli_privacy": {
+      "selected": [
+        "config",
+        "clap",
+        "globset",
+        "url"
+      ],
+      "rationale": "config-rs handles defaults + TOML + env overrides into typed structs; clap handles broker CLI; globset enforces excluded_globs; url parses file:// document URIs before path policy checks."
+    },
+    "subprocess_cancellation": {
+      "selected": [
+        "tokio::process::Command",
+        "tokio::time::timeout",
+        "tokio-util::sync::CancellationToken"
+      ],
+      "rationale": "Use async subprocesses without blocking the broker runtime. On cancellation/timeout, explicitly kill and wait for the child instead of relying only on kill_on_drop."
+    },
+    "dynamic_provider_trait": {
+      "selected": [
+        "async-trait"
+      ],
+      "rationale": "The broker needs Arc<dyn CompletionProvider> selected by config. Native async trait methods are not dyn-compatible per async-trait docs, so use async-trait or a manual boxed-future trait. async-trait is the pragmatic MVP choice."
+    },
+    "testing": {
+      "selected": [
+        "tokio::test",
+        "tower with util feature",
+        "assert_cmd",
+        "tempfile",
+        "predicates",
+        "pretty_assertions"
+      ],
+      "rationale": "Use fast unit tests, axum Router oneshot integration tests without sockets, fake-pi executable tests, temporary config/fixtures, and readable diffs. Avoid slow real pi tests until the dedicated runtime smoke task."
+    }
+  },
+  "protocol_and_interfaces": {
+    "wire_format": "JSON using snake_case field names and #[serde(deny_unknown_fields)] on request/response structs where practical.",
+    "versioning": "Use both /v1 endpoint paths and a required protocol_version: 1 field in request and response bodies. Reject unknown major versions with unsupported_protocol_version.",
+    "request_id": "Use UUIDs at the protocol boundary. Cancellation endpoint path parameter must match an in-flight request_id; cancellation is best-effort and idempotent.",
+    "validation_rules_mvp": [
+      "request_id must be UUID.",
+      "client.name and document.language_id must be non-empty bounded strings.",
+      "cursor line/character/offset must be non-negative and internally plausible when clients can provide enough text to check.",
+      "context.prefix/context.suffix must respect configured byte limits before provider calls.",
+      "options.max_chars and deadline_ms must be bounded by broker config maximums.",
+      "insert_text returned to clients must be non-empty after postprocessing unless response status is no_suggestion/error."
+    ],
+    "response_shape": "Prefer one tagged response enum internally, serialized to the plan-compatible status field: ok, no_suggestion, cancelled, or error. Include metadata.latency_ms and provider_latency_ms when available.",
+    "provider_trait_contract": [
+      "Provider receives an already-validated request and rendered prompt/context, not raw HTTP.",
+      "Provider may return a candidate, no_suggestion, cancelled, timeout, malformed_output, or provider_error.",
+      "Provider output is never returned directly to clients; it must pass postprocessing."
+    ],
+    "addon_contract": [
+      "Context providers must declare whether they use only request-supplied context or need workspace/file access. MVP built-ins should use only request-supplied context.",
+      "PolicyEngine runs before any remote/pi provider call and can reject sensitive paths or over-budget context.",
+      "Prompt templates are selected by language_id/mode and are broker config, not client behavior."
+    ]
+  },
+  "pi_provider_design": {
+    "recommended_command_args": [
+      "pi",
+      "--print",
+      "--mode",
+      "json",
+      "--no-tools",
+      "--no-session",
+      "--no-context-files",
+      "--no-extensions",
+      "--no-skills",
+      "--no-prompt-templates",
+      "--no-themes",
+      "--provider",
+      "<optional-provider>",
+      "--model",
+      "<configured-model>",
+      "--thinking",
+      "minimal",
+      "--system-prompt",
+      "<rendered-system-prompt>",
+      "<rendered-request-json>"
+    ],
+    "why_stricter_than_plan": "The plan disabled tools/session/context. Local pi docs also show extensions/packages can execute arbitrary code and skills/prompts can affect context, so MVP provider isolation should disable extension, skill, prompt-template, and theme discovery too.",
+    "jsonl_handling": "Because pi --mode json emits event JSONL, parse line by line, ignore tool events, extract the final assistant message text from message_end/turn_end/agent_end, then parse that text as the provider_response_schema object.",
+    "repair_retry": "On malformed assistant JSON, run one retry with the same isolation flags, shorter system prompt, and escaped invalid output. Do not retry timeouts or cancellations.",
+    "timeout_cancellation": "Wrap child execution in tokio::select! over timeout, cancellation.cancelled(), and process completion. On timeout/cancel, kill and wait for the child, then return provider_timeout or cancelled.",
+    "secret_redaction": "Before storing diagnostics, redact API-key-like tokens, Authorization headers, bearer tokens, and home-directory-local auth paths from stdout/stderr/args. Do not log full prompts by default.",
+    "model_availability_uncertainty": "The MVP plan names openai/gpt-5.5. pi CLI supports --model, but this environment did not confirm that openai/gpt-5.5 is listed/available. Treat the model as config, not a hard-coded invariant; runtime smoke must verify the chosen provider/model."
+  },
+  "minimal_host_glue_design": {
+    "vscode": {
+      "verified_constraints": [
+        "VS Code extension APIs are JavaScript APIs exposed to extension authors.",
+        "registerInlineCompletionItemProvider and InlineCompletionItemProvider are available in vscode.d.ts.",
+        "provideInlineCompletionItems receives VS Code's CancellationToken."
+      ],
+      "implementation_notes": [
+        "Use TypeScript because VS Code extension host APIs are TypeScript/JavaScript.",
+        "Debounce by extension setting and cancel previous AbortController on document version, cursor, or selection change.",
+        "Build prefix/suffix from TextDocument around Position with byte/char caps matching broker config.",
+        "Return no items if the broker response request_id, document.uri, or document.version is stale.",
+        "Keep generated protocol schema/fixtures in the client package for contract tests; do not duplicate provider logic."
+      ]
+    },
+    "obsidian": {
+      "verified_constraints": [
+        "Obsidian uses CodeMirror 6 for the Markdown editor.",
+        "Obsidian plugins can register CodeMirror 6 extensions with registerEditorExtension.",
+        "Obsidian Plugin.addCommand supports editor callbacks and hotkeys."
+      ],
+      "implementation_notes": [
+        "Use TypeScript because Obsidian plugin APIs are TypeScript/JavaScript.",
+        "Use a CodeMirror ViewPlugin plus widget decoration for viewport-local ghost text.",
+        "Make Tab acceptance configurable; exact interaction with Obsidian's editor and other plugins must be runtime-verified.",
+        "Cancel stale broker requests on docChanged, selection changes, or plugin unload.",
+        "Do not read arbitrary vault files in the client; send only explicit editor context."
+      ]
+    }
+  },
+  "test_strategy": {
+    "protocol_tests": [
+      "Deserialize/serialize request and response fixtures from examples/fixtures.",
+      "Generate JSON Schema and validate fixtures with jsonschema.",
+      "Reject invalid protocol_version, missing required fields, unknown fields, overlarge context, bad max_chars, bad deadline_ms, and invalid UUIDs.",
+      "Verify stable error code wire names."
+    ],
+    "core_tests": [
+      "Provider trait can be used behind Arc<dyn CompletionProvider>.",
+      "MockProvider returns deterministic suggestions for VS Code-style and Obsidian-style requests.",
+      "Postprocessor tests cover markdown fences, repeated prefix, max chars, explanations, multifile edits, and newline normalization.",
+      "CancellationToken tests cover normal completion, pre-cancelled token, and cancellation while provider awaits."
+    ],
+    "pi_provider_tests": [
+      "Use fake pi executable in a tempdir/PATH; do not call real pi.",
+      "Assert argv includes --no-tools, --no-session, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, --mode json, --thinking minimal, and configured --model.",
+      "Fake JSONL success event stream yields parsed insert_text/confidence.",
+      "Malformed assistant JSON triggers exactly one repair retry.",
+      "Timeout and cancellation kill/wait for the fake child.",
+      "stderr/stdout diagnostics are redacted."
+    ],
+    "server_tests": [
+      "Use axum Router with tower ServiceExt::oneshot for /health, /v1/autocomplete, /v1/cancel/:request_id, and /v1/reload.",
+      "Valid autocomplete with mock provider returns ok response after postprocessing.",
+      "Invalid JSON and semantically invalid requests return protocol errors.",
+      "Provider selection changes by config only.",
+      "Cancel endpoint cancels in-flight request and is idempotent for unknown/completed request_ids.",
+      "Privacy policy rejects excluded_globs before provider invocation."
+    ],
+    "client_tests": [
+      "VS Code request-builder unit tests cover cursor metadata, prefix/suffix caps, settings, stale response rejection, and AbortController cancellation.",
+      "Obsidian request-builder/decorator tests cover ghost text placement, stale response rejection, and configurable accept behavior where testable.",
+      "Static checks grep or test that clients never import provider-pi or pi command strings."
+    ],
+    "smoke_tests_deferred": [
+      "Real pi-backed suggestions and latency measurements are deferred to MVP-050."
+    ]
+  },
+  "implementation_order_tdd_slices": [
+    {
+      "slice": 1,
+      "task_alignment": "MVP-010",
+      "goal": "Scaffold workspace and protocol crate.",
+      "red_green_refactor": [
+        "Red: fixture validation test fails because types/schema do not exist.",
+        "Green: minimal protocol structs, serde, validation, and schema export pass.",
+        "Refactor: split types/errors/schema modules and write protocol README."
+      ],
+      "verifier_expectations": [
+        "cargo test for workspace/protocol passes.",
+        "Generated schema validates all fixtures and rejects at least one invalid fixture.",
+        "No server/provider/client code is introduced in this slice."
+      ]
+    },
+    {
+      "slice": 2,
+      "task_alignment": "MVP-020 first half",
+      "goal": "Core engine, mock provider, provider trait, and postprocessors.",
+      "red_green_refactor": [
+        "Red: provider trait dyn-use and postprocessor behavior tests fail.",
+        "Green: minimal async-trait provider, engine orchestration, mock provider, and postprocessors pass.",
+        "Refactor: typed errors and pipeline composition."
+      ],
+      "verifier_expectations": [
+        "Tests prove provider output cannot bypass postprocessing.",
+        "Mock provider supports both client request examples."
+      ]
+    },
+    {
+      "slice": 3,
+      "task_alignment": "MVP-020 second half",
+      "goal": "pi provider with fake executable tests only.",
+      "red_green_refactor": [
+        "Red: fake-pi argv and JSONL parsing tests fail.",
+        "Green: subprocess command construction, JSONL extraction, JSON parse, retry, timeout, cancellation, and redaction pass.",
+        "Refactor: isolate event parser and redactor for unit tests."
+      ],
+      "verifier_expectations": [
+        "No real pi invocation in tests.",
+        "Args disable tools/session/context/extensions/skills/templates.",
+        "Timeout/cancel tests do not leave child processes behind."
+      ]
+    },
+    {
+      "slice": 4,
+      "task_alignment": "MVP-030",
+      "goal": "Broker HTTP server, config, cancellation lifecycle, and minimal addon registries.",
+      "red_green_refactor": [
+        "Red: /health and mock /v1/autocomplete integration tests fail.",
+        "Green: axum app, typed config, provider factory, in-flight cancellation map, reload endpoint, and privacy policy pass.",
+        "Refactor: separate app construction from binary CLI."
+      ],
+      "verifier_expectations": [
+        "HTTP tests use in-process Router where possible.",
+        "Provider switch is config-only.",
+        "Excluded paths are blocked before provider invocation."
+      ]
+    },
+    {
+      "slice": 5,
+      "task_alignment": "MVP-040",
+      "goal": "Thin VS Code and Obsidian clients against mock broker.",
+      "red_green_refactor": [
+        "Red: request construction/cancellation tests fail in each client package.",
+        "Green: minimal host glue displays mock ghost text and cancels stale requests.",
+        "Refactor: shared generated schema/fixtures and minimal settings."
+      ],
+      "verifier_expectations": [
+        "Clients call the same /v1/autocomplete protocol.",
+        "Clients contain no provider-pi imports or pi command strings.",
+        "Tab/accept behavior is documented with any unresolved runtime caveats."
+      ]
+    },
+    {
+      "slice": 6,
+      "task_alignment": "MVP-050",
+      "goal": "Runtime smoke with real pi provider and latency measurement.",
+      "red_green_refactor": [
+        "Not a TDD implementation slice; run controlled smoke tests after mock path works."
+      ],
+      "verifier_expectations": [
+        "Record median and p95 latency separately for broker overhead and provider latency.",
+        "Verify at least one VS Code and one Obsidian pi-backed suggestion or document exact blocker."
+      ]
+    }
+  ],
+  "assumptions_and_uncertainties": [
+    {
+      "topic": "pi model availability",
+      "status": "uncertain",
+      "detail": "The plan names openai/gpt-5.5. CLI flags are verified, but this environment did not verify that model availability. Keep provider/model configurable and fail clearly if pi rejects the configured model."
+    },
+    {
+      "topic": "pi --print with --mode json",
+      "status": "assumption",
+      "detail": "pi help lists both flags and docs show --mode json with a prompt. The exact interaction of --print plus --mode json was not runtime-tested to avoid model calls. If --mode json already exits non-interactively, --print may be redundant."
+    },
+    {
+      "topic": "pi JSON output",
+      "status": "verified",
+      "detail": "Local docs say --mode json emits session/event JSONL. The provider must not expect raw provider_response_schema on stdout."
+    },
+    {
+      "topic": "VS Code Tab acceptance",
+      "status": "mostly_verified",
+      "detail": "VS Code inline completion API and InlineCompletionItem insert/preview behavior are verified from vscode.d.ts. The extension should avoid custom Tab binding unless default behavior fails in smoke tests."
+    },
+    {
+      "topic": "Obsidian ghost text and Tab handling",
+      "status": "partly_assumption",
+      "detail": "Obsidian/CM6 extension and decoration mechanisms are source-backed. Exact Tab acceptance behavior and conflicts with core editor/plugins require MVP-040/MVP-050 runtime verification."
+    },
+    {
+      "topic": "CORS from Obsidian/Electron",
+      "status": "assumption",
+      "detail": "The broker should include narrow localhost CORS support because Obsidian runs web technology in Electron, but the exact fetch/CORS behavior was not verified here."
+    },
+    {
+      "topic": "Rust crate API versions",
+      "status": "source_checked_but_not_pinned",
+      "detail": "Crate choices were checked against current docs/search results on 2026-05-28. Implementation workers should use cargo add/current compatible versions and adjust minor API details as needed."
+    }
+  ],
+  "blockers": [],
+  "risks_and_mitigations": [
+    {
+      "risk": "pi subprocess and model latency make completions too slow.",
+      "mitigation": "Use idle/manual trigger defaults, keep mock provider for UI work, expose provider behind trait/config, and measure in MVP-050 before optimizing."
+    },
+    {
+      "risk": "Model returns malformed JSON or explanatory text.",
+      "mitigation": "Strict prompt, parse assistant text only, one repair retry, postprocessing rejection, and tests for malformed outputs."
+    },
+    {
+      "risk": "Autocomplete requests accidentally load pi context, tools, extensions, or skills.",
+      "mitigation": "Use --no-tools --no-session --no-context-files --no-extensions --no-skills --no-prompt-templates --no-themes and fake-pi argv tests."
+    },
+    {
+      "risk": "Sensitive paths/context leak to remote provider.",
+      "mitigation": "PolicyEngine with excluded_globs, remote_context_byte_limit, no implicit file reads in MVP context providers, and tests that policy runs before provider invocation."
+    },
+    {
+      "risk": "Clients diverge from protocol or duplicate provider logic.",
+      "mitigation": "Generated schema/fixtures, client contract tests, and verifier grep/tests forbidding provider-pi imports and pi command strings."
+    }
+  ],
+  "handoff_for_next_workers": [
+    "MVP-010 should start by creating the Cargo workspace and protocol crate exactly enough to validate fixtures and export JSON Schema.",
+    "Do not implement HTTP server or pi provider in MVP-010.",
+    "MVP-020 should rely on this handoff's fake-pi JSONL insight; parsing raw stdout as provider JSON would be wrong for --mode json.",
+    "MVP-030 should ensure all provider selection is config-only and all privacy policy checks happen before provider invocation.",
+    "MVP-040 should keep TypeScript small and host-specific; all reusable logic stays in Rust unless platform APIs make that impossible."
+  ]
+}
