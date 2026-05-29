@@ -73,6 +73,31 @@ test("BrokerClient calls the shared /v1/autocomplete endpoint", async () => {
   assert.equal(calls[0].options.headers["content-type"], "application/json");
 });
 
+test("BrokerClient default fetch uses the global receiver browser hosts require", async (t) => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+  const calls = [];
+  globalThis.fetch = async function fetchRequiringGlobalReceiver(url, options) {
+    if (this !== globalThis) {
+      throw new TypeError("Illegal invocation");
+    }
+    calls.push({ url, options });
+    return {
+      async json() {
+        return { status: "no_suggestion", request_id: UUID_1 };
+      },
+    };
+  };
+
+  const client = new BrokerClient({ brokerUrl: "http://127.0.0.1:32145/" });
+  const response = await client.autocomplete({ request_id: UUID_1 });
+
+  assert.equal(response.status, "no_suggestion");
+  assert.equal(calls[0].url, protocolUrl("http://127.0.0.1:32145", AUTOCOMPLETE_PATH));
+});
+
 test("BrokerAutocompleteSession cancels stale in-flight requests and ignores their late results", async () => {
   const autocompleteCalls = [];
   const cancelCalls = [];

@@ -164,12 +164,13 @@ const __moduleFactories = Object.freeze({
     }
 
     class BrokerClient {
-      constructor({ brokerUrl = DEFAULT_BROKER_URL, fetchImpl = globalThis.fetch } = {}) {
-        if (typeof fetchImpl !== "function") {
+      constructor({ brokerUrl = DEFAULT_BROKER_URL, fetchImpl } = {}) {
+        const resolvedFetch = fetchImpl === undefined ? globalThis.fetch : fetchImpl;
+        if (typeof resolvedFetch !== "function") {
           throw new Error("fetch is not available; pass fetchImpl when constructing BrokerClient");
         }
         this.brokerUrl = normalizeBrokerUrl(brokerUrl);
-        this.fetchImpl = fetchImpl;
+        this.fetchImpl = fetchImpl === undefined ? resolvedFetch.bind(globalThis) : fetchImpl;
       }
 
       async autocomplete(request, { signal } = {}) {

@@ -1,0 +1,58 @@
+{
+  "task_id": "MVP-077",
+  "status": "passed_with_orchestrator_validation_after_worker_stall",
+  "created_on": "2026-05-29",
+  "scope": "Fix the Obsidian/Electron runtime transport failure where BrokerClient stored an unbound Window.fetch, causing TypeError: Illegal invocation before broker POSTs.",
+  "summary": {
+    "result": "Bound BrokerClient's default global fetch to globalThis while preserving custom fetchImpl injection. Added a regression test that simulates browser/Electron fetch receiver requirements. Regenerated the Obsidian artifact.",
+    "worker_note": "The pi worker made the code/test/artifact edits but stalled before validation or handoff. A debug-only subagent confirmed no child validation process, no handoff, and an idle pi process. The orchestrator stopped the stale worker and ran focused validation locally. MVP-078 remains required for independent verification and real GUI acceptance."
+  },
+  "changes": [
+    {
+      "path": "clients/protocol/src/client.js",
+      "details": "BrokerClient now resolves default globalThis.fetch at construction and stores resolvedFetch.bind(globalThis) only when no custom fetchImpl is supplied."
+    },
+    {
+      "path": "clients/protocol/test/client.test.js",
+      "details": "Added a regression test where globalThis.fetch throws TypeError unless called with globalThis as receiver."
+    },
+    {
+      "path": "clients/obsidian/main.js",
+      "details": "Regenerated artifact with the bound default fetch behavior."
+    }
+  ],
+  "tdd": {
+    "red": [
+      {
+        "evidence": "Regression test added for default fetch receiver binding. The stale worker did not preserve command output for the failing pre-fix run."
+      }
+    ],
+    "green": [
+      {
+        "command": "npm test --prefix clients",
+        "result": "passed; 11 tests, including BrokerClient default fetch receiver regression"
+      }
+    ]
+  },
+  "validation": [
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed; 11 tests"
+    },
+    {
+      "command": "node clients/obsidian/scripts/build-artifact.js --check",
+      "result": "passed"
+    },
+    {
+      "command": "node --check clients/obsidian/main.js",
+      "result": "passed"
+    }
+  ],
+  "not_validated_here": [
+    "Real Obsidian disposable-vault GUI smoke after the fetch fix.",
+    "Bounded pi-backed Obsidian Markdown GUI smoke."
+  ],
+  "next_steps": [
+    "Run MVP-078 as an independent verifier for tests, artifact freshness, real Obsidian mock GUI smoke, and bounded pi smoke if safe."
+  ]
+}
