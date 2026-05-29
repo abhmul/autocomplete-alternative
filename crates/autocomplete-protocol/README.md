@@ -1,6 +1,6 @@
 # Autocomplete protocol
 
-This crate defines the Rust source of truth for the MVP local autocomplete broker protocol. The MVP transport is local HTTP with JSON request and response bodies.
+This crate defines the Rust source of truth for the MVP local autocomplete broker protocol. The MVP transport is local HTTP with JSON request and response bodies. Developer-facing protocol setup is also summarized in `../../docs/protocol.md`.
 
 ## Versioning
 

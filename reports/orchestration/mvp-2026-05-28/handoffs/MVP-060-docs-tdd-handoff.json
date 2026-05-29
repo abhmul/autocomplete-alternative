@@ -1,0 +1,125 @@
+{
+  "task_id": "MVP-060",
+  "status": "completed",
+  "created_on": "2026-05-29",
+  "scope": "Prepared concise MVP handoff documentation for broker setup, provider config, protocol, clients, limitations, and optimization follow-ups.",
+  "summary": {
+    "result": "MVP developer documentation is now discoverable from the repository root. README.md explains build/test, broker run commands, mock and pi config, client setup entry points, protocol entry points, known limitations, and the next optimization plan. Dedicated docs cover protocol v1, client setup, limitations, and next steps.",
+    "docs_added": [
+      "README.md",
+      "docs/protocol.md",
+      "docs/client-setup.md",
+      "docs/limitations-and-next-steps.md"
+    ],
+    "docs_updated": [
+      "clients/README.md",
+      "crates/autocomplete-protocol/README.md"
+    ]
+  },
+  "content_covered": {
+    "setup_build_test": [
+      "cargo fmt --all --check",
+      "cargo test",
+      "cargo build",
+      "npm test --prefix clients",
+      "client protocol artifact regeneration command"
+    ],
+    "broker_run": [
+      "Default mock broker run on 127.0.0.1:32145",
+      "curl /health and /v1/autocomplete smoke commands",
+      "Minimal mock TOML config",
+      "Minimal pi TOML config using provider=openai-codex and model=gpt-5.5"
+    ],
+    "protocol": [
+      "GET /health",
+      "POST /v1/autocomplete",
+      "POST /v1/cancel/<request_id>",
+      "POST /v1/reload",
+      "request and response field contracts",
+      "stable error codes",
+      "schema and fixture locations"
+    ],
+    "clients": [
+      "VS Code local-source extension-development command and settings",
+      "Obsidian disposable-vault symlink/copy setup",
+      "provider switching without client changes",
+      "validation commands and packaging caveats"
+    ],
+    "limitations": [
+      "pi smoke latencies 4529.306 ms and 6254.653 ms, median 5391.979 ms over n=2",
+      "default openai/gpt-5.5 path failed on the smoke host due missing OpenAI API key",
+      "real editor GUI smoke remains unproven",
+      "quality beyond synthetic examples remains unproven",
+      "client packaging and Obsidian module resolution remain open",
+      "health/source omit configured pi provider namespace"
+    ],
+    "next_steps": [
+      "real-editor smoke with mock then bounded pi",
+      "client packaging/bundling",
+      "diagnostics improvements",
+      "persistent pi/RPC or direct provider API latency reduction",
+      "FIM-capable provider adapters",
+      "quality and latency harnesses",
+      "trigger tuning",
+      "privacy policy expansion before richer context"
+    ]
+  },
+  "validation": {
+    "commands_run": [
+      {
+        "command": "cargo fmt --all --check && cargo test && npm test --prefix clients && node --check clients/vscode/src/extension.js && node --check clients/obsidian/src/main.js",
+        "result": "passed; Rust workspace tests, client Node tests, and host entrypoint syntax checks all passed."
+      }
+    ],
+    "success_criteria": [
+      {
+        "criterion": "README lets a new developer start the broker and connect at least one client.",
+        "result": "passed",
+        "evidence": [
+          "README.md documents broker run/curl commands and links to docs/client-setup.md.",
+          "docs/client-setup.md documents VS Code local-source extension development setup and Obsidian disposable-vault setup."
+        ]
+      },
+      {
+        "criterion": "Protocol docs and client setup docs are discoverable.",
+        "result": "passed",
+        "evidence": [
+          "README.md links to docs/protocol.md, docs/client-setup.md, and crates/autocomplete-protocol/README.md.",
+          "clients/README.md links to ../docs/client-setup.md.",
+          "crates/autocomplete-protocol/README.md links to ../../docs/protocol.md."
+        ]
+      },
+      {
+        "criterion": "Known limitations and failed smoke results are explicit.",
+        "result": "passed",
+        "evidence": [
+          "README.md and docs/limitations-and-next-steps.md record the openai/gpt-5.5 API-key failure, pi latency measurements, synthetic-only quality evidence, and missing GUI editor smoke."
+        ]
+      }
+    ]
+  },
+  "safety_notes": [
+    "Did not edit any file tagged human-written.",
+    "Did not read prompt-buffer.md or tmp/ files.",
+    "No feature code was changed; documentation only."
+  ],
+  "worktree_notes": [
+    "Pre-existing unrelated deleted legacy reports/orchestration/* entries and untracked orchestration/skill paths were visible before this task and were not modified.",
+    "Current-task changes are limited to README/docs discoverability updates plus this handoff."
+  ],
+  "spawned_tasks": [],
+  "recommended_follow_ups": [
+    {
+      "title": "Run real editor-host smoke",
+      "details": "Use the documented VS Code Extension Development Host and disposable Obsidian vault setup to verify GUI ghost text and Tab acceptance with mock provider, then bounded pi."
+    },
+    {
+      "title": "Package clients",
+      "details": "Bundle or copy clients/protocol into VS Code and Obsidian distributions so local-source relative imports are not required after installation."
+    },
+    {
+      "title": "Improve pi diagnostics and latency",
+      "details": "Report configured pi provider namespace in health/source and evaluate persistent pi/RPC, direct API, or FIM provider adapters."
+    }
+  ]
+}
