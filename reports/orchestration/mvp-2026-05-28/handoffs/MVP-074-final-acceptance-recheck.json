@@ -1,0 +1,202 @@
+{
+  "task_id": "MVP-074",
+  "status": "fully_accepted_with_limitations",
+  "created_on": "2026-05-29",
+  "scope": "Final acceptance recheck after the strict clippy blocker and Obsidian/Electron fetch-binding blocker were resolved and independently verified.",
+  "overall_assessment": {
+    "objective_achieved": true,
+    "mvp_working_statement": "The MVP is working: one local broker serves VS Code and Obsidian over the shared protocol; provider switching is broker-config-only; both real editor hosts have demonstrated visible ghost text and Tab acceptance; and the pi provider has produced simple code and Markdown suggestions under bounded smoke tests.",
+    "summary": "Fresh static/test gates pass, including cargo fmt, strict clippy, cargo test, and npm client tests. MVP-073 cleared the strict clippy blocker. MVP-078 supersedes the stale/in-progress MVP-076 handoff and independently verifies the MVP-077 fetch binding fix plus real Obsidian GUI mock ghost text and Tab acceptance. VS Code real editor GUI evidence remains from MVP-071. No final acceptance blocker remains.",
+    "evidence_model": "This recheck reran the static/test suite locally and uses prior bounded GUI/runtime handoff evidence from MVP-071 and MVP-078 rather than rerunning GUI smokes in this task."
+  },
+  "commands_run": [
+    {
+      "command": "git status --short",
+      "result": "completed before this report write. It showed pre-existing unrelated deleted legacy reports/orchestration/* entries, a pre-existing modified reports/orchestration/mvp-2026-05-28/state.json, and untracked orchestration/archive/worker/task paths. These were preserved."
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed with no output."
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "result": "passed; finished dev profile with no warnings."
+    },
+    {
+      "command": "cargo test",
+      "result": "passed. Rust workspace unit, integration, and doc tests passed: 39 non-doc tests across autocomplete-addons, autocomplete-core, autocomplete-protocol, autocomplete-provider-pi, and autocomplete-server, plus zero-failure doc-test suites."
+    },
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed; 11 Node tests passed across Obsidian artifact/loadability, Obsidian host glue, shared protocol/client cancellation/fetch binding, provider-boundary checks, and VS Code host glue."
+    },
+    {
+      "command": "node clients/obsidian/scripts/build-artifact.js --check && node --check clients/obsidian/main.js && node --check clients/vscode/src/extension.js && node --check clients/obsidian/src/main.js",
+      "result": "passed with no output; generated Obsidian artifact is fresh and client entrypoints are syntactically valid."
+    },
+    {
+      "command": "command -v pi && pi --version",
+      "result": "passed; pi is /home/abhmul/.local/bin/pi, version 0.75.5."
+    }
+  ],
+  "blocker_recheck": [
+    {
+      "blocker": "Strict static check clean result",
+      "status": "cleared",
+      "evidence": [
+        "MVP-073 independently inspected the MVP-072 patch and verified cargo fmt --all --check, cargo clippy --all-targets -- -D warnings, and cargo test passed.",
+        "This task reran cargo fmt --all --check, cargo clippy --all-targets -- -D warnings, and cargo test; all passed."
+      ]
+    },
+    {
+      "blocker": "Obsidian real GUI plugin load/transport/ghost text/Tab acceptance",
+      "status": "cleared",
+      "evidence": [
+        "MVP-071 found the original Obsidian plugin artifact/load blocker and did not accept Obsidian at that time.",
+        "MVP-075 added a root generated Obsidian plugin artifact and tests for disposable-vault loadability.",
+        "MVP-077 fixed the Electron fetch receiver binding in BrokerClient and regenerated the Obsidian artifact.",
+        "MVP-078 independently verified the fetch-binding implementation and regression test, confirmed the artifact is fresh, then ran a real disposable-vault Obsidian GUI mock smoke that loaded the plugin, reached /v1/autocomplete, displayed visible ghost text, and changed note.md after Tab.",
+        "MVP-078 also ran one bounded request-only pi-backed Obsidian GUI smoke with visible synthetic Markdown ghost text."
+      ]
+    }
+  ],
+  "mvp_acceptance_criteria": [
+    {
+      "criterion": "A single broker serves both VS Code and Obsidian.",
+      "result": "passed",
+      "evidence": [
+        "MVP-070 fresh broker smokes served vscode/typescript and obsidian/markdown requests through the same /v1/autocomplete endpoint for both mock and pi configurations.",
+        "MVP-071 VS Code GUI smoke and MVP-078 Obsidian GUI smoke both used the local broker protocol rather than editor-specific providers.",
+        "cargo test passed server endpoint tests, including mock provider serving Obsidian-style Markdown requests."
+      ]
+    },
+    {
+      "criterion": "VS Code and Obsidian clients call the same protocol.",
+      "result": "passed",
+      "evidence": [
+        "Both clients use the shared clients/protocol helper according to MVP-070/MVP-078 inspection evidence.",
+        "npm test --prefix clients passed shared request construction, cancellation, VS Code host glue, and Obsidian host glue tests.",
+        "MVP-078 Obsidian smoke recorded real broker POSTs to /v1/autocomplete, matching the VS Code path exercised in MVP-071."
+      ]
+    },
+    {
+      "criterion": "Switching provider from mock to pi requires no client changes.",
+      "result": "passed",
+      "evidence": [
+        "MVP-070 demonstrated mock and pi smokes by changing broker TOML provider config while using the same HTTP endpoint and client-shaped payloads.",
+        "MVP-071 ran VS Code GUI smoke against mock and then pi using broker configuration changes, not client changes.",
+        "MVP-078 ran Obsidian GUI smoke against mock and one bounded request-only pi configuration, again through the broker.",
+        "npm provider-boundary test passed in this task as part of npm test --prefix clients."
+      ]
+    },
+    {
+      "criterion": "VS Code displays inline ghost text and accepts it with Tab.",
+      "result": "passed",
+      "evidence": [
+        "MVP-071 launched VS Code 1.120.0 Extension Development Host under Xvfb with clients/vscode loaded by --extensionDevelopmentPath.",
+        "MVP-071 mock smoke screenshot showed visible inline ghost text ` n + 1`; after Tab and save, the disposable sample.ts contained `return n + 1`.",
+        "MVP-071 bounded pi smoke screenshot showed visible inline ghost text ` n + 1;`; after Tab and save, sample.ts contained `return n + 1;`."
+      ]
+    },
+    {
+      "criterion": "Obsidian displays inline ghost text and accepts it with Tab.",
+      "result": "passed",
+      "evidence": [
+        "MVP-071 did not accept Obsidian and identified the plugin artifact/load blocker; this recheck does not rely on MVP-071 for Obsidian acceptance.",
+        "MVP-078 supersedes that blocker after MVP-075/MVP-077 fixes: a real Obsidian 1.12.7 disposable-vault GUI smoke loaded the plugin without failed-load toast, reached /v1/autocomplete, displayed visible ghost text ` mock GUI smoke`, and changed note.md after Tab to include that text.",
+        "MVP-078 additionally observed visible pi-backed Markdown ghost text ` latency and throughput` in Obsidian for one bounded request-only smoke."
+      ]
+    },
+    {
+      "criterion": "Requests are debounced and cancellable.",
+      "result": "passed",
+      "evidence": [
+        "cargo test passed engine timeout/cancellation tests and server /v1/cancel endpoint tests.",
+        "npm test --prefix clients passed BrokerAutocompleteSession stale-cancellation and VS Code/Obsidian stale-request tests.",
+        "MVP-070 source inspection evidence confirms server-side inflight CancellationToken tracking and client AbortController plus broker cancel calls."
+      ]
+    },
+    {
+      "criterion": "pi provider can complete simple code and Markdown examples.",
+      "result": "passed_with_latency_notes",
+      "evidence": [
+        "MVP-070 pi broker smoke returned TypeScript insert_text ` n + 1` and Markdown insert_text ` the core latency and throughput numbers` using provider=openai-codex, model=gpt-5.5, thinking=minimal.",
+        "MVP-071 real VS Code pi GUI smoke inserted ` n + 1;` into a synthetic TypeScript file.",
+        "MVP-078 real Obsidian pi GUI request-only smoke displayed visible Markdown ghost text ` latency and throughput` from exactly one POST /v1/autocomplete.",
+        "pi remains installed locally as /home/abhmul/.local/bin/pi version 0.75.5."
+      ],
+      "notes": "The evidence is bounded/synthetic and shows MVP functionality, not Copilot-level latency or daily-use quality. Prior measured pi latencies were several seconds."
+    },
+    {
+      "criterion": "Core tests cover protocol validation, provider parsing, postprocessing, timeout, and cancellation.",
+      "result": "passed",
+      "evidence": [
+        "cargo test passed protocol validation/schema/fixture tests, provider parser and repair tests, postprocessor tests, engine timeout/cancellation tests, and server endpoint/cancel tests.",
+        "npm test --prefix clients passed shared protocol/client request-construction, cancellation, fetch-binding, provider-boundary, and editor host-glue tests."
+      ]
+    }
+  ],
+  "quality_gates": [
+    {
+      "gate": "No platform client imports provider-specific code.",
+      "result": "passed",
+      "evidence": [
+        "npm provider-boundary test passed in this task.",
+        "MVP-070 and MVP-078 found provider selection remains in broker configuration, not clients."
+      ]
+    },
+    {
+      "gate": "No autocomplete request enables pi tools.",
+      "result": "passed",
+      "evidence": [
+        "MVP-070 inspected provider command_args and found --no-tools, --no-session, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, and --no-themes.",
+        "cargo test passed pi_provider_invokes_pi_with_isolation_flags_and_parses_jsonl_success."
+      ]
+    },
+    {
+      "gate": "No autocomplete request implicitly reads arbitrary files.",
+      "result": "passed",
+      "evidence": [
+        "MVP-070 verified pi invocation uses --no-context-files and --no-session, and addons only transform request-supplied context for MVP.",
+        "MVP-071 and MVP-078 real pi/editor smokes used disposable /tmp synthetic files/notes only."
+      ]
+    },
+    {
+      "gate": "All provider outputs pass postprocessing before reaching clients.",
+      "result": "passed",
+      "evidence": [
+        "MVP-070 inspected AutocompleteEngine postprocessing and observed metadata.postprocessed=true in fresh mock and pi smokes.",
+        "cargo test passed postprocessor and engine tests in this task."
+      ]
+    },
+    {
+      "gate": "All requests have deadline and cancellation handling.",
+      "result": "passed",
+      "evidence": [
+        "cargo test passed engine timeout/cancellation and server cancel endpoint tests.",
+        "npm test --prefix clients passed AbortController/stale cancellation behavior for shared client, VS Code, and Obsidian."
+      ]
+    },
+    {
+      "gate": "Sensitive path exclusions are applied before remote provider calls.",
+      "result": "passed",
+      "evidence": [
+        "cargo test passed privacy_policy_rejects_excluded_paths_before_provider_runs and privacy_policy_rejects_context_over_remote_byte_limit.",
+        "MVP-070 verified server prepares addon policy before provider execution."
+      ]
+    }
+  ],
+  "remaining_blockers": [],
+  "non_blocking_limitations": [
+    "pi-backed autocomplete latency is seconds-scale in the recorded smokes; this is acceptable for the MVP's manual/idle trigger posture but not Copilot-level keystroke latency.",
+    "GUI smokes are bounded single-scenario validations on disposable synthetic files/notes, not broad daily-use acceptance across languages, vaults, keymaps, or extension/plugin conflicts.",
+    "Obsidian pi Tab acceptance was not repeated in MVP-078 to avoid extra provider calls; real Obsidian Tab acceptance is trusted from the mock smoke in the same host after the transport fix, while pi request-only evidence proves real-provider ghost text visibility.",
+    "Marketplace packaging/public distribution remains outside the MVP scope; current evidence covers local-source/local-artifact development setup."
+  ],
+  "safety_notes": [
+    "Did not read prompt-buffer.md, repo tmp/, archive contents, or unrelated directories under ~/dev.",
+    "No implementation changes were made in this recheck; only this final acceptance report was written.",
+    "Pre-existing unrelated dirty and untracked worktree entries were preserved.",
+    "No fresh GUI or pi completion request was run in this task; prior real pi smokes used synthetic /tmp contexts only."
+  ]
+}
