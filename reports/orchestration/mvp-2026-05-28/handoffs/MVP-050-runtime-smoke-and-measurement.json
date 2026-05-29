@@ -1,0 +1,311 @@
+{
+  "task_id": "MVP-050",
+  "status": "passed_with_notes",
+  "created_on": "2026-05-28",
+  "scope": "Runtime smoke test of the Rust autocomplete broker from outside the process, first with the mock provider and then with a bounded real pi provider call using synthetic TypeScript and Markdown contexts.",
+  "summary": {
+    "result": "Broker runtime smoke passed for mock and real pi-backed requests. Rust and client tests pass. Real pi completed one TypeScript and one Markdown request through the broker using the installed openai-codex/gpt-5.5 model path, with external HTTP wall-clock median 5391.979 ms and nearest-rank p95 6254.653 ms over two successful samples.",
+    "important_notes": [
+      "The plan/default model path openai/gpt-5.5 failed on this host because pi reported no OpenAI API key. The installed pi model list showed openai-codex/gpt-5.5, and broker config with pi.provider=openai-codex plus pi.model=gpt-5.5 succeeded.",
+      "Measurements use synthetic prompt-only contexts and do not prove daily-use quality, GUI editor rendering, or keystroke-level latency.",
+      "Real pi latencies of roughly 4.5 s and 6.3 s are acceptable only for bounded smoke/manual-or-idle MVP behavior, not live per-keystroke autocomplete."
+    ]
+  },
+  "commands_run": [
+    {
+      "command": "git status --short",
+      "result": "completed before report write. Status showed pre-existing unrelated deleted legacy reports/orchestration/* paths and untracked orchestration/archive paths; these were preserved."
+    },
+    {
+      "command": "cargo fmt --all --check && cargo test",
+      "result": "passed. Full Rust workspace formatting check and tests passed for autocomplete-addons, autocomplete-core, autocomplete-protocol, autocomplete-provider-pi, and autocomplete-server, including doc tests."
+    },
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed. 9 Node tests passed across shared protocol, VS Code host glue, Obsidian host glue, cancellation, and client/provider boundary checks."
+    },
+    {
+      "command": "cargo build",
+      "result": "passed. Dev workspace build finished successfully."
+    },
+    {
+      "command": "command -v pi && pi --version",
+      "result": "passed. pi executable is /home/abhmul/.local/bin/pi; version 0.75.5."
+    },
+    {
+      "command": "timeout 20s pi --list-models | head -120",
+      "result": "completed. The model list on this host included openai-codex/gpt-5.5 and did not list openai/gpt-5.5."
+    },
+    {
+      "command": "python3 - <<'PY' ... mock broker smoke script ... PY",
+      "result": "passed. Started cargo run -q -p autocomplete-server --bin autocomplete-broker with a temporary mock TOML config, waited for /health, then posted 12 alternating synthetic TypeScript and Markdown requests to /v1/autocomplete."
+    },
+    {
+      "command": "python3 - <<'PY' ... pi broker smoke script with [pi] command=\"pi\", provider=\"openai-codex\", model=\"gpt-5.5\", thinking=\"minimal\", timeout_ms=10000 ... PY",
+      "result": "passed. Started cargo run -q -p autocomplete-server --bin autocomplete-broker with a temporary pi TOML config, waited for /health, then posted one synthetic TypeScript and one synthetic Markdown request to /v1/autocomplete. Both returned status=ok before the strict timeouts."
+    },
+    {
+      "command": "timeout 12s pi --print --mode json --no-tools --no-session --no-context-files --no-extensions --no-skills --no-prompt-templates --no-themes --model openai/gpt-5.5 --thinking minimal --system-prompt 'You are an inline autocomplete provider. Return only valid JSON with keys insert_text, confidence, and optional reason. The insert_text must be exactly the text to insert at the cursor: no markdown fences, no prose, no explanations, and no repeated prefix.' '<synthetic autocomplete request JSON>'",
+      "result": "failed as expected for the plan/default OpenAI-provider path on this host. pi exited with code 1 and reported: No API key found for openai. The bounded command completed in under 12 seconds."
+    }
+  ],
+  "mock_smoke": {
+    "status": "passed",
+    "server_command": "cargo run -q -p autocomplete-server --bin autocomplete-broker -- --config /tmp/autocomplete-mock-smoke-y8lzhncu/mock.toml",
+    "config_summary": {
+      "provider.kind": "mock",
+      "mock.insert_text": " synthetic completion",
+      "mock.confidence": 0.93,
+      "mock.delay_ms": 0
+    },
+    "health": {
+      "protocol_version": 1,
+      "status": "ok",
+      "provider": {
+        "name": "mock",
+        "status": "available"
+      }
+    },
+    "requests": {
+      "count": 12,
+      "languages": [
+        "typescript",
+        "markdown"
+      ],
+      "contexts": "synthetic only",
+      "client_names": [
+        "vscode",
+        "obsidian"
+      ]
+    },
+    "latency_ms": {
+      "measurement": "external HTTP wall clock from Python time.perf_counter; server startup excluded; nearest-rank p95",
+      "all_wall_ms": [
+        1.939,
+        1.024,
+        0.984,
+        0.924,
+        1.03,
+        0.872,
+        0.917,
+        0.882,
+        0.886,
+        0.894,
+        1.021,
+        0.89
+      ],
+      "median": 0.921,
+      "p95_nearest_rank": 1.939
+    },
+    "samples": [
+      {
+        "case": "typescript",
+        "http_status": 200,
+        "wall_ms": 1.939,
+        "response_status": "ok",
+        "insert_text": " synthetic completion",
+        "confidence": 0.93,
+        "source": "mock",
+        "metadata": {
+          "latency_ms": 0,
+          "provider_latency_ms": 0,
+          "postprocessed": true
+        }
+      },
+      {
+        "case": "markdown",
+        "http_status": 200,
+        "wall_ms": 1.024,
+        "response_status": "ok",
+        "insert_text": " synthetic completion",
+        "confidence": 0.93,
+        "source": "mock",
+        "metadata": {
+          "latency_ms": 0,
+          "provider_latency_ms": 0,
+          "postprocessed": true
+        }
+      }
+    ]
+  },
+  "pi_smoke": {
+    "status": "passed_with_notes",
+    "server_command": "cargo run -q -p autocomplete-server --bin autocomplete-broker -- --config /tmp/autocomplete-pi-codex-smoke-98rsrcze/pi-codex.toml",
+    "config_summary": {
+      "provider.kind": "pi",
+      "pi.command": "pi",
+      "pi.provider": "openai-codex",
+      "pi.model": "gpt-5.5",
+      "pi.thinking": "minimal",
+      "pi.timeout_ms": 10000,
+      "pi.repair_retry": true,
+      "privacy.remote_context_byte_limit": 2000
+    },
+    "strict_timeouts": {
+      "pi_timeout_ms": 10000,
+      "request_deadline_ms": 10000,
+      "client_http_timeout_s": 14,
+      "outer_command_timeout_s": 120
+    },
+    "health": {
+      "protocol_version": 1,
+      "status": "ok",
+      "provider": {
+        "name": "pi:gpt-5.5",
+        "status": "unknown"
+      }
+    },
+    "requests": {
+      "count": 2,
+      "languages": [
+        "typescript",
+        "markdown"
+      ],
+      "contexts": "synthetic only",
+      "client_names": [
+        "vscode",
+        "obsidian"
+      ]
+    },
+    "latency_ms": {
+      "measurement": "external HTTP wall clock from Python time.perf_counter; server startup excluded; nearest-rank p95; small n=2 sample",
+      "all_wall_ms": [
+        4529.306,
+        6254.653
+      ],
+      "median": 5391.979,
+      "p95_nearest_rank": 6254.653,
+      "ok_only_sample_count": 2
+    },
+    "samples": [
+      {
+        "case": "typescript",
+        "http_status": 200,
+        "wall_ms": 4529.306,
+        "response_status": "ok",
+        "insert_text": " n + 1",
+        "confidence": 0.99,
+        "source": "pi:gpt-5.5",
+        "metadata": {
+          "latency_ms": 4528,
+          "provider_latency_ms": 4528,
+          "postprocessed": true
+        },
+        "quality_note": "For prefix 'function increment(n: number): number {\\n  return' and suffix ';\\n}\\n', the insert text forms 'return n + 1;' and is plausible."
+      },
+      {
+        "case": "markdown",
+        "http_status": 200,
+        "wall_ms": 6254.653,
+        "response_status": "ok",
+        "insert_text": " end-to-end latency",
+        "confidence": 0.78,
+        "source": "pi:gpt-5.5",
+        "metadata": {
+          "latency_ms": 6253,
+          "provider_latency_ms": 6253,
+          "postprocessed": true
+        },
+        "quality_note": "For prefix '# Daily note\\n\\nToday I finished measuring' and suffix ' for the broker MVP.\\n', the insert text forms a plausible sentence."
+      }
+    ],
+    "default_plan_model_failure": {
+      "status": "failed_on_host_but_not_blocking_after_provider_override",
+      "exact_command": "timeout 12s pi --print --mode json --no-tools --no-session --no-context-files --no-extensions --no-skills --no-prompt-templates --no-themes --model openai/gpt-5.5 --thinking minimal --system-prompt 'You are an inline autocomplete provider. Return only valid JSON with keys insert_text, confidence, and optional reason. The insert_text must be exactly the text to insert at the cursor: no markdown fences, no prose, no explanations, and no repeated prefix.' '<synthetic autocomplete request JSON>'",
+      "timeout": "12 seconds via GNU timeout",
+      "observed_failure": "exit code 1; stdout/stderr included 'No API key found for openai. Use /login to log into a provider via OAuth or API key.'"
+    }
+  },
+  "acceptance_criteria": [
+    {
+      "criterion": "Build and test the workspace.",
+      "result": "passed",
+      "evidence": [
+        "cargo fmt --all --check && cargo test passed.",
+        "npm test --prefix clients passed.",
+        "cargo build passed."
+      ]
+    },
+    {
+      "criterion": "Run the Rust broker with mock provider and submit simple TypeScript and Markdown autocomplete requests.",
+      "result": "passed",
+      "evidence": [
+        "Mock /health returned status ok and provider mock/available.",
+        "12 alternating external HTTP /v1/autocomplete requests returned status ok with postprocessed metadata."
+      ]
+    },
+    {
+      "criterion": "Run the Rust broker with pi provider using strict timeout if practical; record whether pi returns at least one code and one markdown suggestion.",
+      "result": "passed_with_notes",
+      "evidence": [
+        "pi was available at /home/abhmul/.local/bin/pi version 0.75.5.",
+        "Broker pi config using provider=openai-codex and model=gpt-5.5 returned one TypeScript suggestion and one Markdown suggestion within 10 s request/provider deadlines.",
+        "The plan/default openai/gpt-5.5 path failed due missing OpenAI API key, so the successful smoke used the installed pi model/provider path."
+      ]
+    },
+    {
+      "criterion": "Record median and p95 latency for bounded repeated requests where feasible.",
+      "result": "passed_with_notes",
+      "evidence": [
+        "Mock: n=12, median 0.921 ms, nearest-rank p95 1.939 ms.",
+        "pi: n=2, median 5391.979 ms, nearest-rank p95 6254.653 ms; sample is intentionally small to keep real pi calls bounded."
+      ]
+    },
+    {
+      "criterion": "Document failure-mode notes without overstating quality.",
+      "result": "passed",
+      "evidence": [
+        "Failure modes and limitations are recorded in failure_mode_notes.",
+        "No GUI editor-host behavior or daily-use quality is claimed."
+      ]
+    }
+  ],
+  "failure_mode_notes": [
+    {
+      "id": "MVP-050-F001",
+      "title": "Default plan model path failed without OpenAI API key",
+      "details": "The direct bounded pi command using --model openai/gpt-5.5 exited with code 1 and reported no OpenAI API key. This host's pi --list-models output showed openai-codex/gpt-5.5, which worked when configured explicitly via pi.provider=openai-codex and pi.model=gpt-5.5. Documentation/config should avoid assuming openai/gpt-5.5 is universally usable."
+    },
+    {
+      "id": "MVP-050-F002",
+      "title": "Real pi latency is too slow for keystroke-level autocomplete",
+      "details": "Two successful real broker requests took 4529.306 ms and 6254.653 ms over external HTTP. This supports manual or idle-after-pause MVP smoke only; it does not satisfy Copilot-like per-keystroke latency."
+    },
+    {
+      "id": "MVP-050-F003",
+      "title": "Provider identity in health/source omits configured pi.provider",
+      "details": "The successful broker config set pi.provider=openai-codex and pi.model=gpt-5.5, but /health and response source reported pi:gpt-5.5. This is not a smoke blocker, but clearer diagnostics would include the provider prefix when configured."
+    },
+    {
+      "id": "MVP-050-F004",
+      "title": "GUI editor behavior remains source/test-only",
+      "details": "This task did not run VS Code Extension Development Host or a disposable Obsidian vault. It verifies the broker protocol path with vscode/obsidian client names, not actual editor rendering or Tab acceptance."
+    },
+    {
+      "id": "MVP-050-F005",
+      "title": "Small pi sample size limits latency statistics",
+      "details": "The pi measurement intentionally used only one code and one Markdown request to bound real model calls. Median and p95 are recorded, but n=2 is insufficient for production latency characterization."
+    }
+  ],
+  "safety_notes": [
+    "Real pi calls used synthetic TypeScript and Markdown contexts only; no repository or sensitive file content was sent.",
+    "Broker pi invocation includes --no-tools, --no-session, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, and --no-themes per the verified provider implementation.",
+    "Every real pi attempt had bounded provider/request/client/outer-command timeouts.",
+    "This task did not read tmp/, archive/, prompt-buffer.md, or unrelated ~/dev directories. A top-level git status/listing mentioned archive/ as an untracked path; no archive files were opened or edited."
+  ],
+  "spawned_tasks": [],
+  "recommended_follow_ups": [
+    {
+      "title": "Document pi provider/model selection for subscription-backed runs",
+      "details": "MVP-060 docs should show how to set [pi] provider=\"openai-codex\" model=\"gpt-5.5\" when pi --list-models exposes openai-codex models, and should mention the openai/gpt-5.5 API-key failure mode."
+    },
+    {
+      "title": "Consider including configured pi provider in health/source diagnostics",
+      "details": "When pi.provider is set, health/source strings should distinguish pi:openai-codex/gpt-5.5 from pi:gpt-5.5 to make runtime measurements easier to interpret."
+    }
+  ],
+  "worktree_notes": [
+    "This task wrote only reports/orchestration/mvp-2026-05-28/handoffs/MVP-050-runtime-smoke-and-measurement.json.",
+    "Pre-existing unrelated deleted legacy reports/orchestration/* entries and untracked orchestration/archive paths were visible before this task and were not modified."
+  ]
+}
