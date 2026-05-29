@@ -1,0 +1,234 @@
+{
+  "task_id": "MVP-070",
+  "status": "not_fully_accepted",
+  "created_on": "2026-05-29",
+  "scope": "Final independent verification against the MVP acceptance criteria and quality gates in reports/autocomplete-engine-mvp-plan-2026-05-28.json.",
+  "overall_assessment": {
+    "objective_achieved": false,
+    "summary": "The broker/protocol/provider path is working and all plan quality gates verified here pass, including a fresh mock broker smoke and a fresh real pi-backed synthetic TypeScript and Markdown smoke. Final acceptance is not fully achieved because real VS Code and Obsidian GUI ghost-text/Tab behavior remains unproven, and an added strict static check (`cargo clippy --all-targets -- -D warnings`) currently fails on style lints.",
+    "mvp_working_statement": "Working for broker-level mock and pi synthetic autocomplete over the shared local HTTP protocol; not yet independently accepted as an end-to-end editor GUI MVP."
+  },
+  "commands_run": [
+    {
+      "command": "git status --short",
+      "result": "completed before current-task writes; showed pre-existing unrelated deleted legacy reports/orchestration/* entries plus untracked orchestration/archive/worker paths. These were not modified for this verification."
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed with no output."
+    },
+    {
+      "command": "cargo test",
+      "result": "passed. Rust workspace tests all passed: 39 tests across autocomplete-addons, autocomplete-core, autocomplete-protocol, autocomplete-provider-pi, autocomplete-server, plus doc tests with zero failures."
+    },
+    {
+      "command": "cargo build",
+      "result": "passed. Dev workspace build finished successfully."
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "result": "failed. Clippy reported default-constructed unit struct lints in crates/autocomplete-addons/src/lib.rs, crates/autocomplete-provider-pi/src/parser.rs, and crates/autocomplete-provider-pi/src/provider.rs, plus clone-on-copy in crates/autocomplete-provider-pi/src/provider.rs. This is a static-check blocker, not a runtime acceptance failure."
+    },
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed. 9 Node tests passed across shared protocol, VS Code host glue, Obsidian host glue, cancellation, and provider-boundary checks."
+    },
+    {
+      "command": "node --check clients/vscode/src/extension.js && node --check clients/obsidian/src/main.js",
+      "result": "passed with no output."
+    },
+    {
+      "command": "mock broker external HTTP smoke on 127.0.0.1:32146 using a temporary TOML config",
+      "result": "passed. /health returned protocol_version=1, status=ok, provider mock/available. POST /v1/autocomplete returned status=ok with source=mock and postprocessed=true for one vscode/typescript request and one obsidian/markdown request. Wall-clock latencies were 0.847 ms and 0.597 ms."
+    },
+    {
+      "command": "command -v pi && pi --version",
+      "result": "passed. pi executable is /home/abhmul/.local/bin/pi; version 0.75.5."
+    },
+    {
+      "command": "timeout 20s pi --list-models | grep for gpt-5.5 provider availability",
+      "result": "completed. Output on this host included openai-codex gpt-5.5; openai/gpt-5.5 was not observed in the filtered output."
+    },
+    {
+      "command": "pi broker external HTTP smoke on 127.0.0.1:32147 using provider=openai-codex, model=gpt-5.5, thinking=minimal, timeout_ms=10000",
+      "result": "passed. /health returned provider name pi:gpt-5.5 and status unknown. A synthetic vscode/typescript request returned status=ok, insert_text=\" n + 1\", confidence=0.99, source=pi:gpt-5.5, postprocessed=true, wall_ms=4673.216. A synthetic obsidian/markdown request returned status=ok, insert_text=\" the core latency and throughput numbers\", confidence=0.72, source=pi:gpt-5.5, postprocessed=true, wall_ms=5098.615."
+    },
+    {
+      "command": "client provider-boundary search for provider-pi/PiProvider/openai/gpt/pi-specific tokens",
+      "result": "passed. No provider-specific implementation imports or model/provider selections were found in clients/. The npm boundary test also passed."
+    }
+  ],
+  "mvp_acceptance_criteria": [
+    {
+      "criterion": "A single broker serves both VS Code and Obsidian.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-server exposes one /v1/autocomplete endpoint through app(...).",
+        "Fresh mock smoke served both a vscode/typescript request and an obsidian/markdown request through the same broker process.",
+        "Fresh pi smoke served both a vscode/typescript request and an obsidian/markdown request through the same broker process."
+      ]
+    },
+    {
+      "criterion": "VS Code and Obsidian clients call the same protocol.",
+      "result": "passed",
+      "evidence": [
+        "clients/vscode/src/extension-core.js and clients/obsidian/src/plugin-core.js both import ../../protocol/src/client.js.",
+        "clients/protocol/src/generated/protocol-v1.js defines /v1/autocomplete and /v1/cancel/ shared constants.",
+        "npm test --prefix clients passed shared protocol, VS Code, and Obsidian request-construction tests."
+      ]
+    },
+    {
+      "criterion": "Switching provider from mock to pi requires no client changes.",
+      "result": "passed",
+      "evidence": [
+        "BrokerConfig selects provider.kind = mock or pi in crates/autocomplete-server/src/lib.rs; clients expose broker URL/debounce/context/deadline settings only.",
+        "The fresh mock and pi smokes used the same HTTP endpoint and client-shaped request payloads; only broker TOML config changed.",
+        "No provider-specific code or model/provider setting was found under clients/."
+      ]
+    },
+    {
+      "criterion": "VS Code displays inline ghost text and accepts it with Tab.",
+      "result": "partial",
+      "evidence": [
+        "Source path exists: clients/vscode/src/extension.js registers an InlineCompletionItemProvider and clients/vscode/src/extension-core.js returns vscode.InlineCompletionItem for broker insert_text.",
+        "Node host-glue test passed: VS Code inline provider cancels stale requests before rendering ghost text.",
+        "Limitation: no real VS Code Extension Development Host smoke was run in this verification or documented previous smoke; Tab acceptance depends on VS Code inline-completion keybinding behavior and remains GUI-unproven."
+      ]
+    },
+    {
+      "criterion": "Obsidian displays inline ghost text and accepts it with Tab.",
+      "result": "partial",
+      "evidence": [
+        "Source path exists: clients/obsidian/src/main.js defines GhostTextWidget, CodeMirror Decoration.widget rendering, and a high-priority Tab keymap that calls accept(view).",
+        "Node host-glue test passed: Obsidian controller cancels stale note requests and accepts fresh ghost text with Tab by dispatching insertion.",
+        "Limitation: no disposable-vault Obsidian GUI smoke was run; runtime module resolution and actual editor keymap interaction remain unproven."
+      ]
+    },
+    {
+      "criterion": "Requests are debounced and cancellable.",
+      "result": "passed",
+      "evidence": [
+        "clients/protocol/src/client.js implements BrokerAutocompleteSession with debounce timers, AbortController cancellation, and broker /v1/cancel calls for stale requests.",
+        "crates/autocomplete-server tracks inflight request CancellationToken values and implements POST /v1/cancel/{request_id}.",
+        "cargo test passed engine timeout/cancellation and server cancel endpoint tests; npm test passed client stale-cancellation tests for shared protocol, VS Code, and Obsidian."
+      ]
+    },
+    {
+      "criterion": "pi provider can complete simple code and Markdown examples.",
+      "result": "passed_with_notes",
+      "evidence": [
+        "Fresh pi smoke with provider=openai-codex and model=gpt-5.5 returned a plausible TypeScript insert_text \" n + 1\" for an increment function within 4673.216 ms.",
+        "Fresh pi smoke returned a Markdown insert_text \" the core latency and throughput numbers\" within 5098.615 ms.",
+        "Notes: evidence is synthetic and latency is too slow for per-keystroke autocomplete; docs correctly describe manual/idle MVP suitability only."
+      ]
+    },
+    {
+      "criterion": "Core tests cover protocol validation, provider parsing, postprocessing, timeout, and cancellation.",
+      "result": "passed",
+      "evidence": [
+        "Protocol validation tests passed in crates/autocomplete-protocol/tests/validation.rs and fixture/schema tests.",
+        "Provider parsing and repair tests passed in crates/autocomplete-provider-pi/tests/pi_provider.rs and parser unit tests.",
+        "Postprocessing tests passed in crates/autocomplete-core/tests/postprocessors.rs.",
+        "Timeout and cancellation tests passed in crates/autocomplete-core/tests/engine.rs, crates/autocomplete-provider-pi/tests/pi_provider.rs, and crates/autocomplete-server/tests/http_endpoints.rs."
+      ]
+    }
+  ],
+  "quality_gates": [
+    {
+      "gate": "No platform client imports provider-specific code.",
+      "result": "passed",
+      "evidence": [
+        "npm provider-boundary test passed.",
+        "Manual client search found no provider-pi/PiProvider/openai/gpt/pi-specific implementation imports or provider selections under clients/."
+      ]
+    },
+    {
+      "gate": "No autocomplete request enables pi tools.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-provider-pi/src/provider.rs command_args include --no-tools, --no-session, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, and --no-themes.",
+        "pi_provider_invokes_pi_with_isolation_flags_and_parses_jsonl_success asserts required isolation flags."
+      ]
+    },
+    {
+      "gate": "No autocomplete request implicitly reads arbitrary files.",
+      "result": "passed",
+      "evidence": [
+        "pi provider command_args include --no-context-files and --no-session.",
+        "MVP addons only transform request-supplied prefix/suffix and do not read workspace files; ContextConfig include_open_files/include_workspace_symbols default to false and have no file-indexing implementation."
+      ]
+    },
+    {
+      "gate": "All provider outputs pass postprocessing before reaching clients.",
+      "result": "passed",
+      "evidence": [
+        "AutocompleteEngine calls self.postprocessors.process before constructing AutocompleteResponse::Ok.",
+        "Fresh mock and pi smokes returned metadata.postprocessed=true for ok responses.",
+        "Postprocessor tests cover markdown fences, newline normalization, repeated prefix handling through engine test, max chars, and explanation rejection."
+      ]
+    },
+    {
+      "gate": "All requests have deadline and cancellation handling.",
+      "result": "passed",
+      "evidence": [
+        "AutocompleteOptions requires deadline_ms and validation enforces 1..=30000 ms by default.",
+        "AutocompleteEngine wraps provider future in tokio::time::timeout and cancellation token select.",
+        "Server /v1/cancel and client stale-cancellation tests passed."
+      ]
+    },
+    {
+      "gate": "Sensitive path exclusions are applied before remote provider calls.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-server/src/lib.rs calls snapshot.addons.prepare(request) before engine.complete_with_provider_context.",
+        "PolicyEngine rejects excluded paths and oversized remote context before provider execution.",
+        "privacy_policy_rejects_excluded_paths_before_provider_runs and privacy_policy_rejects_context_over_remote_byte_limit tests passed."
+      ]
+    }
+  ],
+  "docs_verification": {
+    "result": "passed",
+    "evidence": [
+      "README.md and docs/client-setup.md describe broker startup, mock config, pi config with provider=openai-codex/model=gpt-5.5, and provider switching without client changes.",
+      "README.md and docs/limitations-and-next-steps.md explicitly state pi latency limitations, synthetic-only pi quality evidence, default openai/gpt-5.5 API-key failure on this host, missing real VS Code/Obsidian GUI smoke, packaging caveats, and provider-source diagnostic limitation.",
+      "The prior MVP-050 smoke handoff's latency figures and limitations are reflected accurately in the docs; the fresh pi smoke is directionally consistent with those limitations."
+    ]
+  },
+  "blocker_fix_tasks": [
+    {
+      "id": "MVP-071",
+      "title": "Run real editor-host acceptance smoke",
+      "type": "verification",
+      "details": "Use VS Code Extension Development Host and a disposable Obsidian vault. Verify visible ghost text and Tab acceptance with mock provider first, then one bounded pi request per editor if practical. Record exact setup, results, and any keybinding/module-resolution defects.",
+      "blocks": [
+        "VS Code displays inline ghost text and accepts it with Tab",
+        "Obsidian displays inline ghost text and accepts it with Tab"
+      ]
+    },
+    {
+      "id": "MVP-072",
+      "title": "Make strict clippy pass",
+      "type": "maintenance",
+      "details": "Fix clippy -D warnings by replacing default() calls for unit structs with direct unit struct construction in autocomplete-addons/provider-pi and removing the clone-on-copy SecretRedactor clone. Then rerun cargo fmt --all --check, cargo clippy --all-targets -- -D warnings, and cargo test.",
+      "blocks": [
+        "strict static check clean result"
+      ]
+    }
+  ],
+  "recommended_follow_ups": [
+    {
+      "title": "Package/bundle clients after GUI smoke",
+      "details": "Current docs correctly call clients local-source MVPs relying on repository-relative clients/protocol imports. Packaging is not required by the MVP plan but should be solved before broader use."
+    },
+    {
+      "title": "Improve pi diagnostics",
+      "details": "Health/source currently report pi:gpt-5.5 and omit configured provider=openai-codex. This is documented and not a final-acceptance blocker, but it would make future smoke reports clearer."
+    }
+  ],
+  "safety_notes": [
+    "No implementation or documentation corrections were made in this verification; only this handoff report was written.",
+    "Did not read prompt-buffer.md, repo tmp/, archive contents, or unrelated directories under ~/dev.",
+    "Real pi calls used synthetic TypeScript and Markdown contexts only.",
+    "Pre-existing unrelated dirty/untracked worktree entries were preserved."
+  ]
+}
