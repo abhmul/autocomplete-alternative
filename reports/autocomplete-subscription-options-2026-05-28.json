@@ -14,6 +14,8 @@
     "fact": "Directly source-backed factual statement.",
     "recommendation": "Decision guidance derived from source-backed facts and stated assumptions.",
     "inference": "Reasoned conclusion from cited facts; not directly stated by a source.",
+    "fact_plus_inference": "Composite label for a statement that combines source-backed facts with a reasoned conclusion from those facts.",
+    "fact_plus_recommendation": "Composite label for a statement that combines source-backed facts with decision guidance derived from them.",
     "preference": "A value judgment such as privacy-first or low-setup preference.",
     "speculation": "Forward-looking or unverified possibility; not used as a primary basis."
   },
