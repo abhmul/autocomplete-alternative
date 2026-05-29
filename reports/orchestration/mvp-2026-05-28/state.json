@@ -1,0 +1,479 @@
+{
+  "schema_version": "orchestration-state-v1",
+  "objective": "Complete reports/autocomplete-engine-mvp-plan-2026-05-28.json and leave a working MVP autocomplete engine with a standalone local broker, shared protocol, mock and pi providers, VS Code and Obsidian thin clients, tests, verification, and handoff documentation.",
+  "constraints": {
+    "project_rules": [
+      "Be concise, direct, and precise.",
+      "Challenge weak assumptions and unsupported claims; separate fact, preference, and speculation.",
+      "Use higher-than-default rigor: make hypotheses and uncertainty explicit, and verify or cite nontrivial claims.",
+      "Do not read tmp/, archive/, other directories in ~/dev unless explicitly referenced, or prompt-buffer.md.",
+      "Treat files tagged human-written as read-only unless explicitly asked to edit them. Do not add the human-written tag.",
+      "For file-modifying sessions, run the checkpoint skill before ending and at coherent milestones."
+    ],
+    "user_directives": [
+      "Use orchestration and delegated workers.",
+      "Use the full range of task types where useful.",
+      "For implementation tasks, workers must use the tdd skill.",
+      "Independent verifier agents must verify tests and implementation completed by implementer tasks.",
+      "Write the implementation in Rust.",
+      "Workers may install Rust packages/dependencies they need through normal Rust package tooling."
+    ],
+    "quality_gates": [
+      "No platform client imports provider-specific code.",
+      "No autocomplete request enables pi tools.",
+      "No autocomplete request implicitly reads arbitrary files.",
+      "All provider outputs pass postprocessing before reaching clients.",
+      "All requests have deadline and cancellation handling.",
+      "Sensitive path exclusions are applied before remote provider calls."
+    ]
+  },
+  "queue": [
+    {
+      "id": "MVP-000",
+      "status": "completed",
+      "priority": 100,
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-000-init-state-and-queue.json"
+    },
+    {
+      "id": "MVP-005",
+      "status": "completed",
+      "priority": 95,
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-005-rust-architecture-research.json"
+    },
+    {
+      "id": "MVP-010",
+      "status": "completed",
+      "priority": 90,
+      "dependencies": [
+        "MVP-005"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-010-protocol-core-tdd.json"
+    },
+    {
+      "id": "MVP-011",
+      "status": "completed_failed",
+      "priority": 89,
+      "dependencies": [
+        "MVP-010"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-011-verify-protocol-core.json"
+    },
+    {
+      "id": "MVP-012",
+      "status": "completed",
+      "priority": 88,
+      "dependencies": [
+        "MVP-011"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-012-fix-protocol-plan-examples.json"
+    },
+    {
+      "id": "MVP-013",
+      "status": "completed",
+      "priority": 87,
+      "dependencies": [
+        "MVP-012"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-013-verify-protocol-plan-example-fix.json"
+    },
+    {
+      "id": "MVP-020",
+      "status": "completed",
+      "priority": 85,
+      "dependencies": [
+        "MVP-013"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-020-core-providers-postprocessing-tdd.json"
+    },
+    {
+      "id": "MVP-021",
+      "status": "completed",
+      "priority": 84,
+      "dependencies": [
+        "MVP-020"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-021-verify-core-providers-postprocessing.json"
+    },
+    {
+      "id": "MVP-030",
+      "status": "completed",
+      "priority": 80,
+      "dependencies": [
+        "MVP-021"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-030-server-addons-tdd.json"
+    },
+    {
+      "id": "MVP-031",
+      "status": "completed",
+      "priority": 79,
+      "dependencies": [
+        "MVP-030"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-031-verify-server-addons.json"
+    },
+    {
+      "id": "MVP-040",
+      "status": "completed",
+      "priority": 70,
+      "dependencies": [
+        "MVP-031"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-040-editor-clients-tdd.json"
+    },
+    {
+      "id": "MVP-041",
+      "status": "completed",
+      "priority": 69,
+      "dependencies": [
+        "MVP-040"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-041-verify-editor-clients.json"
+    },
+    {
+      "id": "MVP-050",
+      "status": "completed",
+      "priority": 60,
+      "dependencies": [
+        "MVP-021",
+        "MVP-031",
+        "MVP-041"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-050-runtime-smoke-and-measurement.json"
+    },
+    {
+      "id": "MVP-060",
+      "status": "completed",
+      "priority": 55,
+      "dependencies": [
+        "MVP-050"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-060-docs-tdd-handoff.json"
+    },
+    {
+      "id": "MVP-070",
+      "status": "completed_failed",
+      "priority": 50,
+      "dependencies": [
+        "MVP-060"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-070-final-independent-acceptance-verification.json"
+    },
+    {
+      "id": "MVP-071",
+      "status": "completed_failed",
+      "priority": 49,
+      "dependencies": [
+        "MVP-070"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-071-real-editor-host-smoke.json"
+    },
+    {
+      "id": "MVP-072",
+      "status": "completed",
+      "priority": 48,
+      "dependencies": [
+        "MVP-070"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-072-fix-strict-clippy.json"
+    },
+    {
+      "id": "MVP-073",
+      "status": "completed",
+      "priority": 47,
+      "dependencies": [
+        "MVP-072"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-073-verify-strict-clippy-fix.json"
+    },
+    {
+      "id": "MVP-074",
+      "status": "pending",
+      "priority": 44,
+      "dependencies": [
+        "MVP-073",
+        "MVP-078"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-074-final-acceptance-recheck.json"
+    },
+    {
+      "id": "MVP-075",
+      "status": "completed",
+      "priority": 46,
+      "dependencies": [
+        "MVP-071"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-075-fix-obsidian-plugin-artifact.json"
+    },
+    {
+      "id": "MVP-076",
+      "status": "completed_failed",
+      "priority": 45,
+      "dependencies": [
+        "MVP-075"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-076-verify-obsidian-plugin-smoke.json"
+    },
+    {
+      "id": "MVP-077",
+      "status": "completed",
+      "priority": 44.5,
+      "dependencies": [
+        "MVP-076"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-077-fix-obsidian-fetch-binding.json"
+    },
+    {
+      "id": "MVP-078",
+      "status": "completed",
+      "priority": 44,
+      "dependencies": [
+        "MVP-077"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-078-verify-obsidian-fetch-binding.json"
+    },
+    {
+      "id": "MVP-080",
+      "status": "pending",
+      "priority": 43,
+      "dependencies": [
+        "MVP-074"
+      ],
+      "task_file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-080-checkpoint.json"
+    }
+  ],
+  "artifacts": {
+    "trusted": [
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json protocol examples",
+      "crates/autocomplete-protocol public request/response contract",
+      "crates/autocomplete-protocol generated request/response JSON Schemas",
+      "crates/autocomplete-protocol protocol fixtures and plan example regression tests",
+      "crates/autocomplete-core provider abstraction, AutocompleteEngine, MockProvider, and default postprocessor pipeline",
+      "crates/autocomplete-provider-pi fake-tested subprocess provider, JSONL parsing, repair retry, timeout/cancellation, and redaction",
+      "Obsidian real GUI mock acceptance after fetch-binding fix: plugin load, /v1/autocomplete POST, visible ghost text, and Tab note.md change verified in MVP-078"
+    ],
+    "untrusted": [
+      "core engine/provider/postprocessor/server/client implementations not yet built"
+    ]
+  },
+  "blockers": [],
+  "worker_runs": [
+    {
+      "task_id": "DEBUG-pi-worker-watch",
+      "runner": "subagent",
+      "agent_id": "019e71c5-6384-7e23-816e-bd16879cbec1",
+      "scope": "Debug pi-worker-watch issue only, per user instruction.",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/DEBUG-pi-worker-watch.json",
+      "result": "Silent live worker is expected under watcher design until pi exits; older empty/no-status runs were likely aborted before status write."
+    },
+    {
+      "task_id": "MVP-005",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-222722-354882-6966",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-005-rust-architecture-research.json",
+      "commit": "e3fdf16 Add Rust architecture handoff",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-010",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-223609-369759-7168",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json",
+      "commit": "245dffa Implement protocol crate foundation",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-011",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-224523-383541-28789",
+      "status": "completed_failed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-011-verify-protocol-core.json",
+      "commit": "4ebf40e Record MVP-011 protocol verification",
+      "last_watch": "worker finished exit 0; verification_result failed; spawned MVP-012"
+    },
+    {
+      "task_id": "MVP-012",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-225213-393537-14726",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-012-fix-protocol-plan-examples.json",
+      "commit": "4a1bf7d Fix protocol plan examples",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-013",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-225626-398279-20752",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-013-verify-protocol-plan-example-fix.json",
+      "commit": "fa3ace5 Verify protocol plan examples",
+      "last_watch": "worker finished exit 0; verification_result passed"
+    },
+    {
+      "task_id": "MVP-020",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-230004-402365-26719",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-020-core-providers-postprocessing-tdd.json",
+      "commit": "7e053d3 Implement core providers and postprocessing",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-021",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-231331-420589-22439",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-021-verify-core-providers-postprocessing.json",
+      "commit": "4dcd652 Verify MVP-020 core provider slice",
+      "last_watch": "worker finished exit 0; verification_result passed"
+    },
+    {
+      "task_id": "MVP-030",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-231832-425665-21005",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-030-server-addons-tdd.json",
+      "commit": "77a16c9 Implement MVP-030 broker server addons",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-031",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-233119-446866-6046",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-031-verify-server-addons.json",
+      "commit": "1435acf Verify MVP server addons",
+      "last_watch": "worker finished exit 0; status passed_with_notes"
+    },
+    {
+      "task_id": "MVP-040",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-233604-452547-13187",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-040-editor-clients-tdd.json",
+      "commit": "526a108 Implement thin editor clients",
+      "last_watch": "worker finished exit 0; status passed_with_notes"
+    },
+    {
+      "task_id": "MVP-041",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-234842-466506-5036",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-041-verify-editor-clients.json",
+      "commit": "b7d28c3 Verify editor thin clients",
+      "last_watch": "worker finished exit 0; status passed_with_notes"
+    },
+    {
+      "task_id": "MVP-050",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260528-235325-471459-30038",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-050-runtime-smoke-and-measurement.json",
+      "commit": "ad221b9 Record MVP-050 runtime smoke results",
+      "last_watch": "worker finished exit 0; status passed_with_notes"
+    },
+    {
+      "task_id": "MVP-060",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-000039-479706-15612",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-060-docs-tdd-handoff.json",
+      "commit": "414ee52 Document MVP setup and handoff",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-070",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-000613-485674-15417",
+      "status": "completed_failed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-070-final-independent-acceptance-verification.json",
+      "commit": "5da6cd7 Record final MVP acceptance verification",
+      "last_watch": "worker finished exit 0; result not_fully_accepted; spawned MVP-071 and MVP-072"
+    },
+    {
+      "task_id": "MVP-071",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-001443-494696-9610",
+      "status": "completed_failed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-071-real-editor-host-smoke.json",
+      "commit": "ccb5728 Record real editor host smoke",
+      "last_watch": "worker finished exit 0; VS Code passed; Obsidian blocked by plugin artifact/module resolution"
+    },
+    {
+      "task_id": "MVP-072",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-003637-518184-12550",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-072-fix-strict-clippy.json",
+      "commit": "ea793d9 Fix strict clippy warnings",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-073",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-003943-523550-22774",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-073-verify-strict-clippy-fix.json",
+      "commit": "c5c2d73 Verify strict clippy fix",
+      "last_watch": "worker finished exit 0"
+    },
+    {
+      "task_id": "MVP-075",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-004205-526644-28479",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-075-fix-obsidian-plugin-artifact.json",
+      "commit": "8be489b Fix Obsidian plugin artifact loading",
+      "last_watch": "worker finished exit 0; artifact/loadability checks passed; real Obsidian GUI smoke remains for MVP-076"
+    },
+    {
+      "task_id": "MVP-076",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-005043-538032-19183",
+      "status": "stalled",
+      "last_watch": "debug subagent found pi idle with zero-byte log, no status file, no child processes, and no CPU progress; tmux worker stopped before retry",
+      "debug_agent": "019e7256-a854-7841-ad19-59a176443c08"
+    },
+    {
+      "task_id": "MVP-076",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-010939-562764-15306",
+      "status": "stalled",
+      "last_watch": "debug subagent found only initial in-progress handoff, zero-byte log, no status file, no active child work, and idle pi process after bounded Obsidian probe; tmux worker stopped before focused fetch-binding fix",
+      "debug_agent": "019e7268-497e-7ab1-b174-bd3fa05d78d7"
+    },
+    {
+      "task_id": "MVP-077",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-013104-597862-23441",
+      "status": "stalled_after_edits",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-077-fix-obsidian-fetch-binding.json",
+      "commit": "353d31c Fix Obsidian fetch binding",
+      "last_watch": "pi worker edited code/test/artifact but stalled before validation/handoff; debug subagent confirmed idle state; orchestrator ran focused validation and checkpointed coherent fix"
+    },
+    {
+      "task_id": "MVP-078",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-014417-625186-30105",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-078-verify-obsidian-fetch-binding.json",
+      "last_watch": "worker finished exit 0; independent verification passed; Obsidian GUI mock acceptance trusted and MVP-076-B001 cleared"
+    }
+  ],
+  "environment": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "node": "v24.14.1",
+    "npm": "11.14.1"
+  },
+  "interrupted_worker_runs": [
+    {
+      "task_id": "MVP-000",
+      "run_dir": ".pi-workers/pi-worker-20260528-221253-336299-29709",
+      "reason": "Stopped by orchestrator after user added Rust implementation constraint before the worker completed."
+    }
+  ],
+  "last_updated": "2026-05-29T01:56:09-05:00"
+}

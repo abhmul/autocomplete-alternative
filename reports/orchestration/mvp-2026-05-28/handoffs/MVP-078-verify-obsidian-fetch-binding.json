@@ -1,0 +1,221 @@
+{
+  "task_id": "MVP-078",
+  "status": "passed",
+  "created_on": "2026-05-29",
+  "scope": "Independent verification of the MVP-077 Obsidian/Electron fetch-binding fix, Obsidian artifact freshness, and real disposable-vault Obsidian GUI smoke.",
+  "summary": {
+    "result": "Passed. The shared BrokerClient binds default globalThis.fetch to globalThis while preserving injected fetchImpl, the regression test directly exercises the browser/Electron receiver requirement, the generated Obsidian artifact is fresh and contains the bound behavior, and real Obsidian GUI smoke in a disposable vault reached /v1/autocomplete, displayed ghost text, and accepted it with Tab against the mock broker.",
+    "acceptance_statement": "Obsidian GUI mock acceptance is now trusted for plugin load, broker POST, visible ghost text, and Tab acceptance. MVP-076-B001 is fixed by MVP-077 and independently verified here.",
+    "pi_statement": "A bounded request-only Obsidian GUI smoke against the pi provider also passed with exactly one POST /v1/autocomplete and visible synthetic Markdown ghost text. Tab acceptance was intentionally not repeated for pi to keep real provider calls bounded; mock already proved Tab acceptance in the same real Obsidian host."
+  },
+  "independent_inspection": [
+    {
+      "path": "clients/protocol/src/client.js",
+      "finding": "BrokerClient constructor resolves default globalThis.fetch and stores resolvedFetch.bind(globalThis) only when fetchImpl is not supplied; custom fetchImpl remains unbound/injected.",
+      "lines": "140-147"
+    },
+    {
+      "path": "clients/protocol/test/client.test.js",
+      "finding": "Regression test replaces globalThis.fetch with a function that throws TypeError unless this === globalThis, then verifies default BrokerClient.autocomplete succeeds and calls /v1/autocomplete.",
+      "lines": "76-99"
+    },
+    {
+      "path": "clients/obsidian/main.js",
+      "finding": "Generated artifact contains the same bound default fetch implementation, so the disposable-vault plugin uses the fixed transport path.",
+      "lines": "168-173"
+    }
+  ],
+  "commands_run": [
+    {
+      "command": "git status --short",
+      "result": "completed before writes; showed pre-existing unrelated deleted legacy orchestration files and untracked orchestration/archive/worker paths, preserved."
+    },
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed; 11 Node tests, including BrokerClient default fetch receiver regression."
+    },
+    {
+      "command": "node clients/obsidian/scripts/build-artifact.js --check",
+      "result": "passed with no output; clients/obsidian/main.js is fresh."
+    },
+    {
+      "command": "node --check clients/obsidian/main.js",
+      "result": "passed with no output."
+    },
+    {
+      "command": "xvfb-run -a -s '-screen 0 1280x900x24' timeout 150s node /tmp/mvp078_obsidian_smoke.mjs mock",
+      "result": "passed; real Obsidian disposable-vault GUI smoke with copied plugin artifact, mock broker, CDP-driven trust/open/cursor/Tab, strict stage timeouts."
+    },
+    {
+      "command": "xvfb-run -a -s '-screen 0 1280x900x24' timeout 180s node /tmp/mvp078_obsidian_smoke.mjs pi",
+      "result": "passed_request_only; exactly one pi-backed POST /v1/autocomplete from real Obsidian GUI produced visible Markdown ghost text."
+    }
+  ],
+  "mock_obsidian_gui_smoke": {
+    "status": "passed",
+    "run_dir": "/tmp/mvp078-obsidian-mock-2XUqDh",
+    "broker": {
+      "bind_addr": "127.0.0.1:45931",
+      "provider.kind": "mock",
+      "mock.insert_text": " mock GUI smoke",
+      "health": {
+        "protocol_version": 1,
+        "status": "ok",
+        "provider": {
+          "name": "mock",
+          "status": "available"
+        }
+      },
+      "post_autocomplete_count": 3,
+      "log": "/tmp/mvp078-obsidian-mock-2XUqDh/broker.stdout.log"
+    },
+    "obsidian": {
+      "vault": "/tmp/mvp078-obsidian-mock-2XUqDh/vault",
+      "plugin_setup": "Copied clients/obsidian/manifest.json, main.js, and styles.css into the disposable vault plugin directory; wrote plugin data.json with the temporary broker URL; enabled via community-plugins.json and clicked the trust prompt.",
+      "failed_load_toast_present_after_trust": false,
+      "failed_load_toast_present_final": false,
+      "cursor": {
+        "line": 2,
+        "ch": 26,
+        "prefix": "# Daily note\n\nToday I finished measuring",
+        "suffix": " for the broker MVP.\n"
+      }
+    },
+    "ghost_text_before_tab": {
+      "text": " mock GUI smoke",
+      "visible": true,
+      "rect": {
+        "x": 579.875,
+        "y": 227.109375,
+        "width": 132.875,
+        "height": 20
+      },
+      "opacity": "0.45",
+      "screenshot": "/tmp/mvp078-obsidian-mock-2XUqDh/mock-before-tab.png"
+    },
+    "tab_acceptance": {
+      "status": "passed",
+      "note_before": "# Daily note\n\nToday I finished measuring for the broker MVP.\n",
+      "note_after": "# Daily note\n\nToday I finished measuring mock GUI smoke for the broker MVP.\n",
+      "note_path": "/tmp/mvp078-obsidian-mock-2XUqDh/vault/note.md",
+      "screenshot_after_tab": "/tmp/mvp078-obsidian-mock-2XUqDh/mock-after-tab.png"
+    },
+    "strict_timeouts": {
+      "outer_command_s": 150,
+      "broker_health_ms": 45000,
+      "obsidian_cdp_ms": 30000,
+      "trust_prompt_ms": 20000,
+      "ghost_wait_ms": 15000,
+      "note_disk_change_ms": 10000
+    }
+  },
+  "pi_obsidian_gui_smoke": {
+    "status": "passed_request_only",
+    "run_dir": "/tmp/mvp078-obsidian-pi-hw6VAj",
+    "broker": {
+      "bind_addr": "127.0.0.1:34195",
+      "provider.kind": "pi",
+      "pi.command": "pi",
+      "pi.provider": "openai-codex",
+      "pi.model": "gpt-5.5",
+      "pi.thinking": "minimal",
+      "pi.timeout_ms": 10000,
+      "health": {
+        "protocol_version": 1,
+        "status": "ok",
+        "provider": {
+          "name": "pi:gpt-5.5",
+          "status": "unknown"
+        }
+      },
+      "post_autocomplete_count": 1,
+      "observed_provider_latency_ms": 7892,
+      "log": "/tmp/mvp078-obsidian-pi-hw6VAj/broker.stdout.log"
+    },
+    "obsidian": {
+      "vault": "/tmp/mvp078-obsidian-pi-hw6VAj/vault",
+      "failed_load_toast_present_after_trust": false,
+      "failed_load_toast_present_final": false,
+      "synthetic_note_only": true
+    },
+    "ghost_text_before_tab": {
+      "text": " latency and throughput",
+      "visible": true,
+      "rect": {
+        "x": 579.875,
+        "y": 227.109375,
+        "width": 181.515625,
+        "height": 20
+      },
+      "opacity": "0.45",
+      "screenshot": "/tmp/mvp078-obsidian-pi-hw6VAj/pi-before-tab.png"
+    },
+    "why_no_pi_tab": "Not repeated for pi because the task asked for one bounded pi-backed Markdown request if safe; accepting would trigger a document-change follow-up request. Mock smoke already proved real Obsidian Tab acceptance after the fetch-binding fix.",
+    "strict_timeouts": {
+      "outer_command_s": 180,
+      "broker_health_ms": 45000,
+      "obsidian_cdp_ms": 30000,
+      "trust_prompt_ms": 20000,
+      "ghost_wait_ms": 60000,
+      "provider_timeout_ms": 10000,
+      "client_deadline_ms": 12000
+    }
+  },
+  "acceptance_criteria": [
+    {
+      "criterion": "Do not trust MVP-077 self-verification; independently inspect regression test and implementation shape.",
+      "result": "passed",
+      "evidence": [
+        "clients/protocol/src/client.js lines 140-147 bind only default global fetch.",
+        "clients/protocol/test/client.test.js lines 76-99 simulates Illegal invocation unless receiver is globalThis."
+      ]
+    },
+    {
+      "criterion": "Run npm/client artifact/syntax checks.",
+      "result": "passed",
+      "evidence": [
+        "npm test --prefix clients passed with 11 tests.",
+        "node clients/obsidian/scripts/build-artifact.js --check passed.",
+        "node --check clients/obsidian/main.js passed."
+      ]
+    },
+    {
+      "criterion": "Real disposable-vault Obsidian GUI mock smoke verifies no failed-load toast, broker POST, visible ghost text before Tab, and note.md change after Tab.",
+      "result": "passed",
+      "evidence": [
+        "failed_load_toast_present_after_trust=false and final=false.",
+        "Broker log recorded POST /v1/autocomplete.",
+        "Before-Tab screenshot and DOM rect show visible ghost text ` mock GUI smoke`.",
+        "After Tab, note.md changed to include ` mock GUI smoke`."
+      ]
+    },
+    {
+      "criterion": "If mock succeeds and safe, run one bounded pi-backed Obsidian Markdown request with synthetic note content only.",
+      "result": "passed_request_only",
+      "evidence": [
+        "Exactly one pi-backed POST /v1/autocomplete reached the broker.",
+        "Visible ghost text ` latency and throughput` appeared in Obsidian before Tab.",
+        "Vault and note were disposable /tmp paths with synthetic Markdown only."
+      ]
+    }
+  ],
+  "blockers_cleared": [
+    {
+      "id": "MVP-076-B001",
+      "status": "fixed_verified",
+      "evidence": "The real Obsidian mock smoke loaded the plugin without failed-load toast and reached /v1/autocomplete; the previous unbound Window.fetch Illegal invocation no longer blocks broker POSTs."
+    }
+  ],
+  "spawned_tasks": [],
+  "safety_notes": [
+    "All Obsidian vaults and notes were disposable /tmp paths with synthetic Markdown content only.",
+    "The pi-backed smoke used one request-only GUI path and exactly one broker POST /v1/autocomplete.",
+    "The disposable vault copied plugin artifact files instead of symlinking the repository plugin directory, avoiding writes back into clients/obsidian/data.json.",
+    "No repository content was sent to pi; the Obsidian document URI used a vault-local note path and the context was the synthetic Markdown sentence recorded above.",
+    "Did not read prompt-buffer.md, repo tmp/, archive contents, or unrelated ~/dev directories."
+  ],
+  "remaining_notes": [
+    "The pi GUI smoke proves one bounded real-provider suggestion can appear in Obsidian, but it is still a single-sample latency/quality check and not daily-use quality evidence.",
+    "Mock Obsidian GUI acceptance is sufficient to clear the fetch-binding blocker and trust Tab acceptance for this slice."
+  ]
+}
