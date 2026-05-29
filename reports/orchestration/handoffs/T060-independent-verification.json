@@ -1,0 +1,190 @@
+{
+  "schema_version": "autocomplete-research-handoff-v1",
+  "task_id": "T060",
+  "status": "complete",
+  "last_checked": "2026-05-28",
+  "title": "Independent verification of final JSON report",
+  "scope": "Audited the final JSON report for parseability, source support, internal consistency, completeness against the requested VS Code plus Obsidian autocomplete question, and current high-risk factual claims. Used narrow ketch checks and no browser automation.",
+  "final_report": {
+    "path": "reports/autocomplete-subscription-options-2026-05-28.json",
+    "jq_parseable_after_verification": true,
+    "source_ref_count": 169,
+    "missing_cited_source_refs_after_verification": 0,
+    "verification_status_after_patch": "independently_verified_with_minor_source_correction"
+  },
+  "overall_result": "pass_after_minor_patch",
+  "summary": "The final report answers the requested question for both VS Code and Obsidian and its core conclusion is supported: official OpenAI Codex and Claude Code can use eligible subscriptions for agent/chat/edit workflows, but current checked official docs do not document Copilot-style live inline Tab autocomplete; practical true autocomplete paths use local models, product-specific autocomplete services, or separately billed APIs. The only required correction found was a stale Mistral FIM citation URL, which was patched in the final report.",
+  "web_discovery": {
+    "ketch_available": true,
+    "ketch_version": "ketch v0.9.2",
+    "routes_used": [
+      "ketch scrape for official docs, marketplace listings, and GitHub repository pages",
+      "ketch search for current Mistral FIM documentation discovery",
+      "curl fallback for Anthropic docs extraction spot check"
+    ],
+    "browser_automation_used": false,
+    "sessionful_retrieval_used": false
+  },
+  "checks": {
+    "json_validity": {
+      "result": "pass",
+      "method": "jq empty and Python json.loads after patches"
+    },
+    "citation_integrity": {
+      "result": "pass",
+      "method": "Python traversal of all citation source_refs against source_list",
+      "missing_cited_source_refs": 0
+    },
+    "request_completeness": {
+      "result": "pass",
+      "notes": [
+        "Report covers VS Code options, Obsidian options, official subscription constraints, open-source/self-hosted paths, and shared backend implementation paths.",
+        "The report separates true inline Tab autocomplete from chat/sidebar/agent/inline-edit tools.",
+        "The report includes decision paths for no API spend, API spend, local-only/privacy-first, and highest-quality autocomplete."
+      ]
+    },
+    "internal_consistency": {
+      "result": "pass_after_minor_patch",
+      "notes": [
+        "Updated verification_status because T055 and T060 have now run.",
+        "No contradictory recommendation was found: Kilo ChatGPT OAuth is treated as agent-workflow support, not autocomplete billing evidence; Codex Autocomplete is treated as experimental/non-official rather than default."
+      ]
+    },
+    "runtime_testing": {
+      "result": "not_performed",
+      "notes": "No VS Code extension or Obsidian plugin was installed or exercised; verification is source-based."
+    }
+  },
+  "independent_web_checks": [
+    {
+      "topic": "OpenAI Codex subscription access and official IDE mode",
+      "result": "supports_report",
+      "sources_checked": [
+        "https://developers.openai.com/codex/auth",
+        "https://developers.openai.com/codex/pricing",
+        "https://developers.openai.com/codex/ide/features"
+      ],
+      "findings": [
+        "Codex auth docs support both ChatGPT sign-in for subscription access and API-key sign-in for usage-based access.",
+        "Codex pricing docs list Codex in the web, CLI, and IDE extension for eligible plans and API-key usage charged at API rates.",
+        "Codex IDE feature docs describe chat, edit, approval modes, cloud delegation, web search, and image generation; a grep for autocomplete/ghost/tab-style completion did not find inline Tab autocomplete evidence."
+      ]
+    },
+    {
+      "topic": "Claude subscription/API boundary and official VS Code mode",
+      "result": "supports_report_with_one_retrieval_caveat",
+      "sources_checked": [
+        "https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console",
+        "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan",
+        "https://code.claude.com/docs/en/ide-integrations",
+        "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan"
+      ],
+      "findings": [
+        "Claude Help Center says Claude paid plans and Claude Console/API are separate and paid subscriptions do not include API/Console access.",
+        "Claude Help Center says Pro/Max include Claude Code in terminal with one unified subscription and separate API-credit behavior is distinct.",
+        "Claude Code VS Code docs describe a native graphical interface for plans, diffs, @-mentions, prompt boxes, permissions, sessions, and terminal access; checked text does not document live inline ghost-text Tab autocomplete.",
+        "Claude Agent SDK credit is described as starting June 15, 2026 and applying to Agent SDK/claude -p/third-party Agent SDK apps, not as an existing live autocomplete path on 2026-05-28."
+      ],
+      "retrieval_caveat": "ketch scrape of https://docs.anthropic.com/en/api/overview returned only 'Loading...'; this was treated as needs-review and not relied on for the core API-separate conclusion because the Help Center article directly supports that conclusion."
+    },
+    {
+      "topic": "Kilo Code and non-official Codex Autocomplete subscription/editor-mode claims",
+      "result": "supports_report",
+      "sources_checked": [
+        "https://kilo.ai/docs/code-with-ai/features/autocomplete",
+        "https://kilo.ai/docs/ai-providers/openai-chatgpt-plus-pro",
+        "https://marketplace.visualstudio.com/items?itemName=kc99.codex-autocomplete",
+        "https://github.com/kevchan9922/codex_autocomplete",
+        "https://github.com/kevchan9922/codex_autocomplete/blob/HEAD/configuration.md"
+      ],
+      "findings": [
+        "Kilo autocomplete docs say FIM autocomplete is routed through Kilo Gateway, default Codestral is billed through a Kilo account or free with Mistral BYOK, and suggestions appear as ghost text accepted with Tab.",
+        "Kilo ChatGPT Plus/Pro provider docs say OAuth can use a ChatGPT subscription for core agentic workflows, but the checked autocomplete docs separately specify Kilo Gateway/BYOK for autocomplete; the report correctly avoids claiming ChatGPT subscription pays for Kilo autocomplete.",
+        "Codex Autocomplete marketplace/GitHub pages claim VS Code inline ghost-text completions with Tab and Codex OAuth using existing Codex plan limits/credits, while warning it is not official OpenAI and currently macOS-only.",
+        "Codex Autocomplete configuration docs expose a default ChatGPT Codex backend endpoint for OAuth mode and the OpenAI Responses API for API-key mode; the report correctly treats this as experimental/high-review, not default."
+      ]
+    },
+    {
+      "topic": "VS Code true autocomplete alternatives",
+      "result": "supports_report",
+      "sources_checked": [
+        "https://docs.continue.dev/customize/deep-dives/autocomplete",
+        "https://docs.continue.dev/customize/model-roles/autocomplete",
+        "https://docs.windsurf.com/autocomplete/overview.md",
+        "https://marketplace.visualstudio.com/items?itemName=Supermaven.supermaven",
+        "https://tabby.tabbyml.com/docs/administration/model/",
+        "https://marketplace.visualstudio.com/items?itemName=ggml-org.llama-vscode"
+      ],
+      "findings": [
+        "Continue docs support inline autocomplete, FIM-model guidance, local Ollama and Mistral/Codestral setup, and warnings that chat/thinking models can be unsuitable for autocomplete latency/format.",
+        "Windsurf docs support inline/multiline suggestions accepted with Tab.",
+        "Supermaven Marketplace supports VS Code code completion with a Supermaven account/product, not ChatGPT/Claude subscription reuse for autocomplete.",
+        "Tabby docs support completion/chat/embedding model roles and FIM-oriented completion models with local or remote HTTP connectors.",
+        "llama.vscode Marketplace supports local auto-suggest, Tab accept, context configuration, and llama.cpp/FIM model presets."
+      ]
+    },
+    {
+      "topic": "Obsidian true-inline and near-scope plugin mode claims",
+      "result": "supports_report",
+      "sources_checked": [
+        "https://github.com/leoyishou/obsidian-ai-autocomplete",
+        "https://github.com/ahmetildirim/obsidian-inscribe",
+        "https://github.com/j0rd1smit/obsidian-copilot-auto-completion",
+        "https://github.com/rizerphe/obsidian-companion",
+        "https://github.com/YishenTu/claudian"
+      ],
+      "findings": [
+        "AI Autocomplete, Inscribe, Copilot auto completion, and Companion GitHub pages each support Obsidian inline/ghost-text autocomplete with Tab or equivalent accept behavior and API/local-provider setup rather than ChatGPT/Claude UI subscription reuse.",
+        "Claudian GitHub supports Obsidian chat/sidebar, inline edit, slash commands, Plan Mode, Claude Code/Codex/Opencode provider workflows, and vault read/write/search/bash; it does not present itself as continuous live ghost-text autocomplete, matching the report's near-scope classification."
+      ]
+    },
+    {
+      "topic": "Mistral FIM documentation source",
+      "result": "corrected_in_final_report",
+      "sources_checked": [
+        "https://docs.mistral.ai/capabilities/code_generation/",
+        "https://docs.mistral.ai/api/endpoint/fim",
+        "https://docs.mistral.ai/models/codestral-25-08"
+      ],
+      "findings": [
+        "The final report's original Mistral source URL now resolves/scrapes as a Vibe Code overview, not the quoted FIM evidence.",
+        "Mistral's current FIM endpoint docs directly show /v1/fim/completions and SDK examples with prompt/suffix; the Codestral model page says Codestral specializes in low-latency high-frequency FIM and code generation.",
+        "The final report was patched to cite https://docs.mistral.ai/api/endpoint/fim for the existing Mistral FIM source_ref and all six Mistral FIM citation objects."
+      ]
+    },
+    {
+      "topic": "Policy/security caution for browser-session scraping",
+      "result": "supports_report",
+      "sources_checked": [
+        "https://openai.com/policies/terms-of-use/",
+        "https://www.anthropic.com/legal/consumer-terms"
+      ],
+      "findings": [
+        "OpenAI terms prohibit sharing account credentials, automatically/programmatically extracting data or output, and circumventing rate limits/restrictions.",
+        "Anthropic consumer terms prohibit sharing credentials/API keys, scraping/harvesting, and automated or non-human access except via API key or explicit permission.",
+        "This supports the report's recommendation not to build around browser-cookie/session scraping."
+      ]
+    }
+  ],
+  "corrections_applied": [
+    {
+      "path": "reports/autocomplete-subscription-options-2026-05-28.json",
+      "type": "verification_status_update",
+      "description": "Changed verification_status from not independently verified to independently_verified_with_minor_source_correction and added concise notes about T055/T060, lack of runtime tests, and the Mistral citation patch."
+    },
+    {
+      "path": "reports/autocomplete-subscription-options-2026-05-28.json",
+      "type": "source_url_patch",
+      "description": "Replaced six Mistral coding/FIM citation labels/URLs and the T040:src-mistral-coding-fim source_list entry to use https://docs.mistral.ai/api/endpoint/fim, because the old code_generation URL no longer contained the quoted FIM evidence."
+    }
+  ],
+  "required_corrections_remaining": [],
+  "residual_uncertainty": [
+    "No extension or plugin was installed or runtime-tested; latency, auth flows, data handling, and Tab-key conflicts need hands-on evaluation before operational adoption.",
+    "Non-official Codex Autocomplete needs policy/security review and disposable-profile runtime testing before use, despite matching the subscription-reuse autocomplete shape on paper.",
+    "Marketplace install counts, pricing, model names, and plan limits can change quickly; rerun narrow checks before purchasing or deploying.",
+    "Rendered/sessionful pages were not accessed. Anthropic API overview extraction returned an app-shell/Loading result via ketch, so that specific docs page remains needs-review, though redundant official Help Center/API billing sources support the report's key Claude API-separation claim."
+  ],
+  "blockers": [],
+  "confidence": "high"
+}

@@ -3,11 +3,12 @@
   "generated_on": "2026-05-28",
   "requested_deliverable": "Deep-research breakdown of practical replacements for GitHub Copilot-style live autocomplete in VS Code and Obsidian, prioritizing existing GPT or Claude subscriptions where possible.",
   "verification_status": {
-    "status": "synthesis_from_worker_handoffs_not_independently_verified",
+    "status": "independently_verified_with_minor_source_correction",
     "notes": [
       "This report synthesizes completed worker handoffs T000, T005, T010, T020, T030, T040, and T045.",
-      "No extension or plugin was installed or runtime-tested during synthesis.",
-      "Do not treat this report as final factual verification; queued follow-up tasks T055 and T060 should check schema, traceability, and current facts."
+      "T055 checked schema and traceability; T060 independently verified high-risk subscription and editor-mode claims with narrow web checks.",
+      "No extension or plugin was installed or runtime-tested; conclusions remain source-based.",
+      "T060 patched a stale Mistral FIM citation URL; see reports/orchestration/handoffs/T060-independent-verification.json for details."
     ]
   },
   "claim_labeling": {
@@ -279,8 +280,8 @@
             ]
           },
           {
-            "label": "Mistral coding/FIM docs",
-            "url": "https://docs.mistral.ai/capabilities/code_generation/",
+            "label": "Mistral FIM endpoint docs",
+            "url": "https://docs.mistral.ai/api/endpoint/fim",
             "source_refs": [
               "T040:src-mistral-coding-fim"
             ]
@@ -335,8 +336,8 @@
             ]
           },
           {
-            "label": "Mistral coding/FIM docs",
-            "url": "https://docs.mistral.ai/capabilities/code_generation/",
+            "label": "Mistral FIM endpoint docs",
+            "url": "https://docs.mistral.ai/api/endpoint/fim",
             "source_refs": [
               "T040:src-mistral-coding-fim"
             ]
@@ -402,8 +403,8 @@
           ]
         },
         {
-          "label": "Mistral coding/FIM docs",
-          "url": "https://docs.mistral.ai/capabilities/code_generation/",
+          "label": "Mistral FIM endpoint docs",
+          "url": "https://docs.mistral.ai/api/endpoint/fim",
           "source_refs": [
             "T040:src-mistral-coding-fim"
           ]
@@ -552,8 +553,8 @@
       "confidence": "high",
       "citations": [
         {
-          "label": "Mistral coding/FIM docs",
-          "url": "https://docs.mistral.ai/capabilities/code_generation/",
+          "label": "Mistral FIM endpoint docs",
+          "url": "https://docs.mistral.ai/api/endpoint/fim",
           "source_refs": [
             "T040:src-mistral-coding-fim"
           ]
@@ -1423,8 +1424,8 @@
       "short_rationale": "Cleanly separates editor UX from providers and lets both editors share rate limits, context shaping, and secret storage.",
       "citations": [
         {
-          "label": "Mistral coding/FIM docs",
-          "url": "https://docs.mistral.ai/capabilities/code_generation/",
+          "label": "Mistral FIM endpoint docs",
+          "url": "https://docs.mistral.ai/api/endpoint/fim",
           "source_refs": [
             "T040:src-mistral-coding-fim"
           ]
@@ -1597,8 +1598,8 @@
       "not_good_when": "You want zero development/ops.",
       "citations": [
         {
-          "label": "Mistral coding/FIM docs",
-          "url": "https://docs.mistral.ai/capabilities/code_generation/",
+          "label": "Mistral FIM endpoint docs",
+          "url": "https://docs.mistral.ai/api/endpoint/fim",
           "source_refs": [
             "T040:src-mistral-coding-fim"
           ]
@@ -4422,15 +4423,15 @@
       "source_ref": "T040:src-mistral-coding-fim",
       "task_id": "T040",
       "source_id": "src-mistral-coding-fim",
-      "title": "Mistral coding and FIM documentation",
-      "url": "https://docs.mistral.ai/capabilities/code_generation/",
-      "final_url": "https://docs.mistral.ai/vibe/code/overview",
+      "title": "Mistral FIM endpoint documentation",
+      "url": "https://docs.mistral.ai/api/endpoint/fim",
+      "final_url": "https://docs.mistral.ai/api/endpoint/fim",
       "publisher": "Mistral AI",
       "source_type": "official_docs",
       "http_status": 200,
-      "retrieved_via": "web_fetch",
+      "retrieved_via": "ketch_scrape",
       "last_checked": "2026-05-28",
-      "quoted_evidence": "Mistral documents Codestral as specifically trained for Code Generation and FIM and documents /v1/fim/completions as a Fill-in-the-middle endpoint for code completion and generation supporting codestral-latest."
+      "quoted_evidence": "Mistral FIM endpoint docs show SDK examples using mistral.fim.complete with prompt and suffix and a curl example for POST https://api.mistral.ai/v1/fim/completions; the example response uses model codestral-2508."
     },
     {
       "source_ref": "T040:src-openai-chatgpt-api-separate",
