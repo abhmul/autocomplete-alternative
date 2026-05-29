@@ -1,0 +1,263 @@
+{
+  "schema_version": "next-orchestrator-handoff-v1",
+  "created_on": "2026-05-29",
+  "repo": "/home/abhmul/dev/autocomplete-alternative",
+  "pre_handoff_head": "34945da archive old orchestration, add web-discovery skill",
+  "objective_for_next_orchestrator": "Take the accepted Rust MVP autocomplete engine from local-source MVP to a better daily-use/developer-preview tool, starting with documentation correction, packaging, diagnostics, latency, and quality/privacy hardening.",
+  "current_mvp_status": {
+    "accepted": true,
+    "acceptance_status": "fully_accepted_with_limitations",
+    "truth_source": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-074-final-acceptance-recheck.json",
+    "summary": "One local Rust broker serves VS Code and Obsidian over the shared protocol. Provider switching is broker-config-only. Real VS Code Extension Development Host and real disposable-vault Obsidian GUI smokes demonstrated visible ghost text and Tab acceptance. Bounded pi-backed smokes produced simple TypeScript and Markdown suggestions on synthetic contexts.",
+    "fresh_validation_from_acceptance": [
+      "cargo fmt --all --check passed",
+      "cargo clippy --all-targets -- -D warnings passed",
+      "cargo test passed",
+      "npm test --prefix clients passed",
+      "node clients/obsidian/scripts/build-artifact.js --check passed",
+      "node --check clients/obsidian/main.js, clients/vscode/src/extension.js, and clients/obsidian/src/main.js passed"
+    ],
+    "important_evidence": [
+      "MVP-071: VS Code mock and bounded pi GUI smokes passed.",
+      "MVP-078: Obsidian mock GUI smoke passed with plugin load, broker POST, visible ghost text, and Tab note.md change.",
+      "MVP-078: Obsidian bounded pi request-only GUI smoke passed with visible synthetic Markdown ghost text.",
+      "MVP-074: final acceptance recheck cleared all blockers and listed only non-blocking limitations."
+    ]
+  },
+  "repository_map": {
+    "rust_workspace": [
+      "crates/autocomplete-protocol",
+      "crates/autocomplete-core",
+      "crates/autocomplete-addons",
+      "crates/autocomplete-provider-pi",
+      "crates/autocomplete-server"
+    ],
+    "clients": [
+      "clients/protocol",
+      "clients/vscode",
+      "clients/obsidian"
+    ],
+    "docs": [
+      "README.md",
+      "docs/client-setup.md",
+      "docs/protocol.md",
+      "docs/limitations-and-next-steps.md"
+    ],
+    "orchestration_state": "reports/orchestration/mvp-2026-05-28/state.json",
+    "prior_handoffs": "reports/orchestration/mvp-2026-05-28/handoffs/"
+  },
+  "must_preserve_rules": {
+    "project_rules": [
+      "Do not read prompt-buffer.md.",
+      "Do not read tmp/, archive/, or unrelated directories under ~/dev unless the user explicitly references them.",
+      "Treat files tagged human-written as read-only unless the user explicitly asks to edit them.",
+      "For file-modifying sessions, run the checkpoint skill before ending and at coherent milestones.",
+      "Use rg/rg --files first for search."
+    ],
+    "user_orchestration_rules_from_previous_run": [
+      "Use the pi worker through the orchestration skill for delegated worker tasks.",
+      "Do not use the subagent interface for ordinary worker tasks.",
+      "Use subagents only to debug pi-worker issues if the pi worker has a problem.",
+      "For implementer tasks, require the tdd skill.",
+      "Independent verifier workers must verify implementation tasks."
+    ],
+    "quality_gates_to_carry_forward": [
+      "No platform client imports provider-specific code.",
+      "No autocomplete request enables pi tools.",
+      "No autocomplete request implicitly reads arbitrary files.",
+      "All provider outputs pass postprocessing before reaching clients.",
+      "All requests have deadline and cancellation handling.",
+      "Sensitive path exclusions are applied before remote provider calls."
+    ]
+  },
+  "worker_mechanics": {
+    "pi_worker_command": "bash /home/abhmul/Documents/vaults/agent-vault/skills/orchestration/references/pi-worker-watch.sh \"<task-file>\"",
+    "watch_existing_run": "bash /home/abhmul/Documents/vaults/agent-vault/skills/orchestration/references/pi-worker-watch.sh --watch <run-dir>",
+    "known_pi_worker_behavior": [
+      "The watcher log can remain empty until completion.",
+      "Several runs stalled inside pi before or after partial edits. If a worker is idle with no handoff/status/child commands for a long time, spawn a debug-only subagent to inspect process state, then either wait, stop, or requeue based on evidence.",
+      "For GUI or long-running tasks, require immediate in-progress handoff writes and explicit timeouts around every broker, npm, Obsidian, VS Code, Playwright/CDP, or pi command.",
+      "Do not trust partial edits from a stalled worker until validation and an independent verifier task are complete."
+    ]
+  },
+  "known_limitations_and_stale_docs": {
+    "non_blocking_limitations_from_acceptance": [
+      "pi-backed autocomplete latency is seconds-scale in recorded smokes; good enough for manual or idle-after-pause MVP, not Copilot-like per-keystroke behavior.",
+      "GUI smokes are bounded single-scenario validations on disposable synthetic files/notes, not broad daily-use acceptance across languages, vaults, keymaps, or extension/plugin conflicts.",
+      "Obsidian pi Tab acceptance was not repeated to avoid extra provider calls; Obsidian Tab acceptance is trusted from mock smoke in the same host, while pi request-only evidence proves real-provider ghost text visibility.",
+      "Marketplace packaging/public distribution remains outside the MVP scope; current evidence covers local-source/local-artifact setup."
+    ],
+    "stale_docs_to_fix_first": [
+      "README.md current limitations still says GUI rendering/Tab acceptance are not covered by real editor smoke. That was true before MVP-071/MVP-078, but is now stale.",
+      "docs/limitations-and-next-steps.md still says real VS Code and Obsidian UI smoke has not been run and Obsidian module resolution is unproven. That is stale after MVP-071, MVP-075, MVP-077, and MVP-078.",
+      "Docs should distinguish accepted MVP evidence from non-blocking limitations rather than retaining old blocker language."
+    ]
+  },
+  "suggested_next_queue": [
+    {
+      "id": "NEXT-001",
+      "type": "documentation correction + verification",
+      "priority": 100,
+      "dependencies": [],
+      "title": "Reconcile README and limitations docs with final acceptance",
+      "scope": "Update docs so setup and limitations reflect the accepted MVP and no longer claim real GUI smoke is missing.",
+      "goals": [
+        "Use MVP-074, MVP-071, and MVP-078 as truth sources.",
+        "Update README.md and docs/limitations-and-next-steps.md.",
+        "Keep latency, packaging, quality, and scope limitations explicit.",
+        "Add a short 'ready for local-source use' statement and link to docs/client-setup.md."
+      ],
+      "success_criteria": [
+        "No doc claims contradict MVP-074 final acceptance.",
+        "Docs still warn that pi latency is seconds-scale and packaging is not Marketplace-ready.",
+        "A verifier task independently checks the docs against MVP-074."
+      ]
+    },
+    {
+      "id": "NEXT-010",
+      "type": "implement with tdd",
+      "priority": 90,
+      "dependencies": [
+        "NEXT-001"
+      ],
+      "title": "Package VS Code client as an installable local VSIX",
+      "scope": "Remove repository-relative runtime dependency assumptions for VS Code and produce an installable artifact for local testing.",
+      "goals": [
+        "Bundle or copy clients/protocol into the VS Code extension artifact.",
+        "Add package/build scripts and artifact freshness checks.",
+        "Add tests that load the VS Code extension from an installed/package-like layout, not only --extensionDevelopmentPath.",
+        "Document install, uninstall, and update steps."
+      ],
+      "success_criteria": [
+        "A local VSIX can be built from a clean checkout.",
+        "An isolated VS Code Extension Development Host or installed-extension smoke loads the packaged extension and shows mock ghost text.",
+        "Provider selection remains broker-only and client boundary tests pass."
+      ],
+      "needs_independent_verifier": true
+    },
+    {
+      "id": "NEXT-020",
+      "type": "implement with tdd",
+      "priority": 85,
+      "dependencies": [
+        "NEXT-001"
+      ],
+      "title": "Package Obsidian client as a local release artifact",
+      "scope": "Make Obsidian installation copyable without relying on repository symlinks.",
+      "goals": [
+        "Add a release artifact command that emits manifest.json, main.js, and styles.css into a versioned directory or zip.",
+        "Keep clients/protocol bundled into main.js and host externals limited to Obsidian/CodeMirror runtime modules.",
+        "Add freshness/layout tests for the release artifact.",
+        "Document disposable-vault and real-vault install/update steps."
+      ],
+      "success_criteria": [
+        "A copied artifact loads in a disposable vault.",
+        "Real Obsidian mock GUI smoke passes from the packaged artifact.",
+        "No repository files are written through vault plugin data during smoke."
+      ],
+      "needs_independent_verifier": true
+    },
+    {
+      "id": "NEXT-030",
+      "type": "implement with tdd",
+      "priority": 80,
+      "dependencies": [
+        "NEXT-001"
+      ],
+      "title": "Improve broker and client diagnostics",
+      "scope": "Make failures observable without leaking sensitive context.",
+      "goals": [
+        "Include configured pi provider namespace in /health and autocomplete response source.",
+        "Return or log privacy rejection, timeout, malformed provider output, and broker-down categories safely.",
+        "Expose minimal client-visible diagnostics in VS Code and Obsidian, such as status output or command/log channel, without dumping prompt/context."
+      ],
+      "success_criteria": [
+        "Tests cover health/source strings with provider=openai-codex and model=gpt-5.5.",
+        "Client tests verify broker failure categories do not crash providers.",
+        "Privacy tests confirm sensitive context is not surfaced in diagnostics."
+      ],
+      "needs_independent_verifier": true
+    },
+    {
+      "id": "NEXT-040",
+      "type": "research + design",
+      "priority": 70,
+      "dependencies": [
+        "NEXT-001"
+      ],
+      "title": "Reduce provider latency path",
+      "scope": "Assess and design a lower-latency provider path behind the existing broker trait.",
+      "goals": [
+        "Measure current broker overhead separately from pi subprocess/provider time over a larger synthetic fixture set.",
+        "Evaluate persistent pi worker/RPC options if available.",
+        "Evaluate direct provider APIs or local FIM providers behind the same Rust Provider trait.",
+        "Recommend one implementation path with risk, privacy, and subscription constraints."
+      ],
+      "success_criteria": [
+        "Report median/p95 for current path over meaningful n.",
+        "Clear recommendation for NEXT-041 implementation task or no-go.",
+        "No client protocol changes required unless explicitly justified."
+      ]
+    },
+    {
+      "id": "NEXT-050",
+      "type": "implement with tdd",
+      "priority": 65,
+      "dependencies": [
+        "NEXT-001"
+      ],
+      "title": "Add quality and latency evaluation harness",
+      "scope": "Create repeatable code and Markdown autocomplete fixtures and metrics.",
+      "goals": [
+        "Add fixture suites for TypeScript/Rust/Python/Markdown note completions.",
+        "Record acceptance checks, no-explanation constraints, max length, and latency buckets.",
+        "Separate broker overhead from provider time when possible.",
+        "Produce machine-readable reports for future regressions."
+      ],
+      "success_criteria": [
+        "Harness can run mock provider quickly in CI/local tests.",
+        "Harness can run bounded pi provider manually with explicit opt-in and synthetic contexts only.",
+        "Results include median, p95, success rate, and common failure reasons."
+      ],
+      "needs_independent_verifier": true
+    },
+    {
+      "id": "NEXT-060",
+      "type": "design + implement with tdd",
+      "priority": 60,
+      "dependencies": [
+        "NEXT-030"
+      ],
+      "title": "Harden privacy and richer context policy",
+      "scope": "Prepare for optional open-file or workspace-symbol context without implicit file reads.",
+      "goals": [
+        "Add explicit local/remote provider state to config and diagnostics.",
+        "Add workspace allowlists and stronger default sensitive globs.",
+        "Design opt-in context providers with visible byte limits and audit metadata.",
+        "Keep default MVP behavior request-supplied only."
+      ],
+      "success_criteria": [
+        "Tests prove remote provider calls do not read arbitrary files by default.",
+        "Opt-in context providers are rejected or redacted according to policy before provider execution.",
+        "Docs clearly describe what can leave the machine."
+      ],
+      "needs_independent_verifier": true
+    }
+  ],
+  "recommended_first_actions": [
+    "Start with NEXT-001 before coding so user-facing docs match the accepted state.",
+    "Then choose either VS Code packaging (NEXT-010) if the user wants daily editor use, or diagnostics (NEXT-030) if debugging/observability is more important.",
+    "Keep latency work separate from packaging; seconds-scale pi latency is the main product-quality limit, but packaging is the main usability limit."
+  ],
+  "validation_baseline_for_future_tasks": [
+    "cargo fmt --all --check",
+    "cargo clippy --all-targets -- -D warnings",
+    "cargo test",
+    "npm test --prefix clients",
+    "node clients/obsidian/scripts/build-artifact.js --check",
+    "node --check clients/obsidian/main.js",
+    "node --check clients/vscode/src/extension.js",
+    "node --check clients/obsidian/src/main.js"
+  ],
+  "checkpoint_expectation": "Checkpoint each coherent task slice: update daily-notes/YYYY-MM-DD.md and commit only relevant files. Leave unrelated dirty worktree entries untouched."
+}
