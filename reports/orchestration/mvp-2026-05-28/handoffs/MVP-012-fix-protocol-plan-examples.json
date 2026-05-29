@@ -1,0 +1,71 @@
+{
+  "task_id": "MVP-012",
+  "status": "completed",
+  "created_on": "2026-05-28",
+  "scope": "Resolve the MVP-011 blocking finding that exact protocol examples embedded in the MVP plan did not validate against the implemented Rust protocol/schema.",
+  "summary": [
+    "Updated reports/autocomplete-engine-mvp-plan-2026-05-28.json protocol examples to include protocol_version: 1.",
+    "Replaced placeholder request_id values with the valid v1 fixture UUID 018f160e-7152-7b43-9d9a-6083e0bd3cc8.",
+    "Added a protocol regression test that loads the exact MVP plan examples and validates them through generated JSON Schema, public deserialization, and semantic Validate."
+  ],
+  "files_changed": [
+    "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+    "crates/autocomplete-protocol/tests/plan_examples.rs",
+    "reports/orchestration/mvp-2026-05-28/handoffs/MVP-012-fix-protocol-plan-examples.json"
+  ],
+  "tdd_evidence": [
+    {
+      "cycle": 1,
+      "red": "Added crates/autocomplete-protocol/tests/plan_examples.rs; cargo test -p autocomplete-protocol mvp_plan_autocomplete_examples_validate_against_public_protocol_contract failed because protocol.autocomplete_request_example did not validate against generated JSON Schema.",
+      "green": "Updated the MVP plan request/response examples with protocol_version: 1 and valid fixture UUID request_id values; the targeted plan-example test then passed."
+    }
+  ],
+  "plan_example_checker_result": [
+    {
+      "example": "protocol.autocomplete_request_example",
+      "schema_valid": true,
+      "deserialize": "ok",
+      "semantic_valid": true
+    },
+    {
+      "example": "protocol.autocomplete_response_example",
+      "schema_valid": true,
+      "deserialize": "ok",
+      "semantic_valid": true
+    },
+    {
+      "example": "protocol.error_response_example",
+      "schema_valid": true,
+      "deserialize": "ok",
+      "semantic_valid": true
+    }
+  ],
+  "commands_run": [
+    {
+      "command": "cargo test -p autocomplete-protocol mvp_plan_autocomplete_examples_validate_against_public_protocol_contract",
+      "result": "failed before the plan fix, confirming the regression test caught MVP-011-I001"
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed"
+    },
+    {
+      "command": "cargo test -p autocomplete-protocol --test plan_examples -- --nocapture",
+      "result": "passed and reported schema_valid=true, deserialize=ok, semantic_valid=true for request, ok response, and error response examples"
+    },
+    {
+      "command": "cargo fmt --all --check && cargo test",
+      "result": "passed"
+    }
+  ],
+  "boundary_notes": [
+    "Did not weaken the protocol_version requirement or UUID request_id contract.",
+    "Did not add HTTP server, provider, postprocessing, VS Code, or Obsidian functionality.",
+    "Only the MVP plan examples, a protocol regression test, and this handoff were changed."
+  ],
+  "mvp_011_recheck_assessment": "The specific MVP-011 blocking finding should now be passable after independent recheck: the exact embedded MVP plan request, ok response, and error response examples validate against generated schemas, deserialize through AutocompleteRequest/AutocompleteResponse, and pass semantic Validate. MVP-011 should still be independently rerun before being marked trusted.",
+  "worktree_notes": [
+    "Pre-existing unrelated deleted reports/orchestration/* files and untracked .agents/.claude/.pi-workers/archive/mvp orchestration files were visible before this task and were not modified intentionally.",
+    "Did not read tmp/, archive/, prompt-buffer.md, or unrelated ~/dev directories."
+  ]
+}

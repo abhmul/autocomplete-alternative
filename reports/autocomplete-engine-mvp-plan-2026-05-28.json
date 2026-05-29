@@ -114,7 +114,8 @@
       }
     ],
     "autocomplete_request_example": {
-      "request_id": "uuid",
+      "protocol_version": 1,
+      "request_id": "018f160e-7152-7b43-9d9a-6083e0bd3cc8",
       "client": {
         "name": "vscode",
         "version": "0.1.0"
@@ -142,7 +143,8 @@
       }
     },
     "autocomplete_response_example": {
-      "request_id": "uuid",
+      "protocol_version": 1,
+      "request_id": "018f160e-7152-7b43-9d9a-6083e0bd3cc8",
       "status": "ok",
       "insert_text": "completion only",
       "confidence": 0.71,
@@ -154,7 +156,8 @@
       }
     },
     "error_response_example": {
-      "request_id": "uuid",
+      "protocol_version": 1,
+      "request_id": "018f160e-7152-7b43-9d9a-6083e0bd3cc8",
       "status": "error",
       "error": {
         "code": "provider_timeout",
