@@ -39,24 +39,39 @@ Notes:
 - Settings are read when the extension/provider is created. Reload the extension host after changing settings if behavior does not update.
 - Broker/network errors are swallowed as no suggestion in the current MVP client.
 
-## Obsidian local-source client
+## Obsidian local artifact client
 
-Use a disposable vault for MVP smoke. Symlink both the plugin and its shared protocol helper into the vault plugin directory:
+Use a disposable vault for MVP smoke. The Obsidian plugin artifact lives at `clients/obsidian` and has the root files Obsidian expects: `manifest.json`, `main.js`, and `styles.css`. `main.js` is a generated bundle of the Obsidian client plus shared protocol helper; it intentionally leaves only Obsidian/CodeMirror runtime packages external and contains no provider logic.
+
+After changing `clients/obsidian/src/*` or `clients/protocol/src/*`, rebuild the artifact:
+
+```sh
+npm run --prefix clients build:obsidian
+```
+
+Symlink the plugin artifact into a disposable vault:
 
 ```sh
 VAULT=/path/to/disposable-vault
 mkdir -p "$VAULT/.obsidian/plugins"
 ln -s "$PWD/clients/obsidian" "$VAULT/.obsidian/plugins/autocomplete-alternative"
-ln -s "$PWD/clients/protocol" "$VAULT/.obsidian/plugins/protocol"
+```
+
+If symlinks are not acceptable, copy only the artifact root files:
+
+```sh
+VAULT=/path/to/disposable-vault
+PLUGIN="$VAULT/.obsidian/plugins/autocomplete-alternative"
+mkdir -p "$PLUGIN"
+cp clients/obsidian/manifest.json clients/obsidian/main.js clients/obsidian/styles.css "$PLUGIN/"
 ```
 
 Open the vault, enable Community plugins, enable `Autocomplete Alternative`, and set the Broker URL to `http://127.0.0.1:32145`. Type in a Markdown note and use Tab to accept a visible ghost-text suggestion.
 
 Notes:
 
-- The current Obsidian artifact is a local-source MVP, not a packaged plugin. If symlinks are not acceptable, copy `clients/obsidian` to `.obsidian/plugins/autocomplete-alternative` and copy `clients/protocol` to `.obsidian/plugins/protocol` so `src/main.js` can resolve `../../protocol/src/client.js`.
-- Obsidian runtime module resolution has not been proven by an actual disposable-vault smoke in this repository; source files parse and Node host-glue tests pass.
-- Existing editor views may need to be reopened after settings changes.
+- Do not symlink `clients/protocol` into the vault; the protocol helper is already bundled into `clients/obsidian/main.js`.
+- Existing editor views may need to be reopened after settings changes or after rebuilding the artifact.
 
 ## Provider switching
 
@@ -87,9 +102,11 @@ For pi smoke, raise the client `deadlineMs` enough to cover expected provider la
 ## Validation commands
 
 ```sh
+npm run --prefix clients build:obsidian
+node clients/obsidian/scripts/build-artifact.js --check
 npm test --prefix clients
 node --check clients/vscode/src/extension.js
-node --check clients/obsidian/src/main.js
+node --check clients/obsidian/main.js
 ```
 
-These checks verify request construction, debounce/cancellation, provider-boundary tests, and syntax. They do not replace real editor-host smoke.
+These checks verify request construction, debounce/cancellation, provider-boundary tests, Obsidian artifact freshness/layout, and syntax. They do not replace real editor-host smoke.

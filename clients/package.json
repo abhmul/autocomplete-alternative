@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT OR Apache-2.0",
   "scripts": {
+    "build:obsidian": "node ./obsidian/scripts/build-artifact.js",
     "test": "node --test ./protocol/test/*.test.js ./vscode/test/*.test.js ./obsidian/test/*.test.js"
   }
 }

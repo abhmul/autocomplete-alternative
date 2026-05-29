@@ -12,6 +12,16 @@ Local setup and packaging caveats are documented in `../docs/client-setup.md`.
 cargo run -p autocomplete-protocol --bin export_client_artifacts -- clients/protocol/src/generated
 ```
 
+## Obsidian artifact
+
+`clients/obsidian/main.js` is a generated root plugin artifact for real Obsidian vaults. Rebuild it after changing Obsidian client or shared protocol code:
+
+```sh
+npm run --prefix clients build:obsidian
+```
+
+A disposable-vault install can symlink `clients/obsidian` directly; the required root files are `manifest.json`, `main.js`, and `styles.css`.
+
 ## Test
 
 ```sh

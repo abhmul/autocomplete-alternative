@@ -1,0 +1,97 @@
+{
+  "task_id": "MVP-075",
+  "status": "passed",
+  "created_on": "2026-05-29",
+  "scope": "Fix Obsidian plugin artifact loading for real runtime by adding a root plugin artifact, preserving broker/provider boundaries, documenting the disposable-vault setup, and adding regression coverage.",
+  "summary": {
+    "result": "Added a generated root clients/obsidian/main.js bundle so Obsidian sees manifest.json, main.js, and styles.css at the plugin root. The bundle contains the Obsidian client and shared protocol helper, while leaving obsidian and CodeMirror imports external for the Obsidian host. Updated setup docs to remove the obsolete clients/protocol symlink. Added an artifact regression test that symlinks clients/obsidian into a disposable vault path, checks root files, verifies bundle freshness, runs node --check, and evaluates the artifact with stubbed Obsidian runtime requires.",
+    "acceptance_statement": "Artifact/loadability checks now pass locally. A real Obsidian GUI ghost-text smoke was not run in this task and remains the next verification slice."
+  },
+  "changes": [
+    {
+      "path": "clients/obsidian/main.js",
+      "details": "Generated root Obsidian plugin artifact. Internal relative imports are bundled; host require is used only for runtime external modules such as obsidian and CodeMirror."
+    },
+    {
+      "path": "clients/obsidian/scripts/build-artifact.js",
+      "details": "Added a dependency-free build/check script that regenerates clients/obsidian/main.js from clients/protocol and clients/obsidian source files."
+    },
+    {
+      "path": "clients/obsidian/test/artifact.test.js",
+      "details": "Added a regression test for disposable-vault artifact layout, artifact freshness, syntax, and host-runtime module loading shape."
+    },
+    {
+      "path": "clients/package.json",
+      "details": "Added npm run build:obsidian."
+    },
+    {
+      "path": "clients/obsidian/package.json",
+      "details": "Changed package main to the root main.js artifact and added build/check scripts."
+    },
+    {
+      "path": "docs/client-setup.md",
+      "details": "Updated Obsidian setup to symlink/copy the real root artifact and removed the obsolete clients/protocol symlink instruction."
+    },
+    {
+      "path": "clients/README.md",
+      "details": "Documented the generated Obsidian artifact and rebuild command."
+    }
+  ],
+  "tdd": {
+    "red": [
+      {
+        "command": "npm test --prefix clients",
+        "result": "failed as expected after adding clients/obsidian/test/artifact.test.js because disposable-vault plugin root had no main.js"
+      }
+    ],
+    "green": [
+      {
+        "command": "node clients/obsidian/scripts/build-artifact.js",
+        "result": "generated clients/obsidian/main.js"
+      },
+      {
+        "command": "npm test --prefix clients",
+        "result": "passed with 10 tests"
+      }
+    ]
+  },
+  "validation": [
+    {
+      "command": "npm run --prefix clients build:obsidian && node clients/obsidian/scripts/build-artifact.js --check",
+      "result": "passed; generated artifact is fresh"
+    },
+    {
+      "command": "node clients/obsidian/scripts/build-artifact.js --check",
+      "result": "passed"
+    },
+    {
+      "command": "node --check clients/obsidian/main.js",
+      "result": "passed"
+    },
+    {
+      "command": "node --check clients/vscode/src/extension.js",
+      "result": "passed"
+    },
+    {
+      "command": "node --check clients/obsidian/src/main.js",
+      "result": "passed"
+    },
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed; 10 tests, 10 passed"
+    },
+    {
+      "command": "VAULT=$(mktemp -d); mkdir -p \"$VAULT/.obsidian/plugins\"; ln -s \"$PWD/clients/obsidian\" \"$VAULT/.obsidian/plugins/autocomplete-alternative\"; test -f manifest/main/styles through the symlink; node --check main.js",
+      "result": "passed; disposable Obsidian artifact layout exposed root manifest.json, main.js, and styles.css"
+    }
+  ],
+  "safety_notes": [
+    "No provider logic was added to the Obsidian client. The generated bundle includes only client/protocol code and leaves provider selection in the broker.",
+    "No real pi request was run.",
+    "Disposable temp paths were used for artifact layout checks.",
+    "Pre-existing unrelated worktree deletions and untracked orchestration/archive paths were preserved."
+  ],
+  "next_steps": [
+    "Run MVP-076 or equivalent real Obsidian disposable-vault GUI smoke to confirm plugin enablement, ghost text rendering, and Tab acceptance in Obsidian itself."
+  ]
+}
