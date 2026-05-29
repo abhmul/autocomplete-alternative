@@ -77,7 +77,7 @@
     },
     {
       "id": "T060",
-      "status": "pending",
+      "status": "complete",
       "task_file": "reports/orchestration/tasks/T060-independent-verification.json"
     }
   ],
@@ -122,11 +122,16 @@
         "task_id": "T055",
         "path": "reports/orchestration/handoffs/T055-schema-and-traceability-check.json",
         "trust": "schema_traceability_passed"
+      },
+      {
+        "task_id": "T060",
+        "path": "reports/orchestration/handoffs/T060-independent-verification.json",
+        "trust": "independent_verification_passed_after_minor_patch"
       }
     ],
     "final_report": {
       "path": "reports/autocomplete-subscription-options-2026-05-28.json",
-      "trust": "schema_traceability_passed_factual_verification_pending"
+      "trust": "independently_verified_with_minor_source_correction"
     }
   },
   "blockers": []
