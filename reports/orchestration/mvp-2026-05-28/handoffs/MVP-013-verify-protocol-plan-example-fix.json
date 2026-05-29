@@ -1,0 +1,99 @@
+{
+  "task_id": "MVP-013",
+  "status": "completed",
+  "verification_result": "passed",
+  "created_on": "2026-05-28",
+  "scope": "Independent verification that MVP-012 fixed the MVP-011 blocking plan-example validation failure without weakening the protocol contract or adding downstream implementation code.",
+  "verdict": "MVP-012 passes independent verification. The exact MVP plan request, ok response, and error response examples now include protocol_version: 1 and a valid UUID request_id, validate against generated JSON Schemas, deserialize through the public AutocompleteRequest/AutocompleteResponse types, and pass semantic Validate. The protocol_version contract remains required in the Rust public types and semantic validator. No server, provider implementation, VS Code client, or Obsidian client code was introduced by this slice.",
+  "commands_run": [
+    {
+      "command": "git status --short && cargo fmt --all --check && cargo test",
+      "result": "passed for cargo fmt --all --check and cargo test; cargo test passed all protocol tests (8 integration tests plus crate/doc harnesses). git status showed pre-existing unrelated deleted legacy orchestration files and untracked orchestration/worker files before this handoff was written."
+    },
+    {
+      "command": "cargo test -p autocomplete-protocol --test plan_examples -- --nocapture",
+      "result": "passed; output reported schema_valid=true, deserialize=ok, semantic_valid=true for protocol.autocomplete_request_example, protocol.autocomplete_response_example, and protocol.error_response_example."
+    },
+    {
+      "command": "targeted inspection of reports/autocomplete-engine-mvp-plan-2026-05-28.json, crates/autocomplete-protocol/src/{types.rs,validation.rs}, and crates/autocomplete-protocol/tests/plan_examples.rs",
+      "result": "passed; plan examples contain protocol_version: 1 and UUID request_id values; public types keep protocol_version as a non-optional field; semantic validation rejects unsupported protocol versions; regression test loads exact plan examples and validates generated schema, public deserialization, and Validate."
+    },
+    {
+      "command": "find/grep inspection for downstream implementation boundaries",
+      "result": "passed; Cargo workspace contains only crates/autocomplete-protocol; clients/ and packages/ directories are absent; grep found protocol data-model/provider-health/error-code references only, not server/provider/client implementation code."
+    }
+  ],
+  "goals_checked": [
+    {
+      "goal": "Run cargo fmt --all --check and cargo test.",
+      "result": "passed",
+      "evidence": [
+        "cargo fmt --all --check completed successfully as part of the combined command.",
+        "cargo test completed successfully: endpoint_response_types, plan_examples, request_fixture, response_fixtures, schema_export, and validation integration tests all passed."
+      ]
+    },
+    {
+      "goal": "Verify the exact plan examples deserialize through public AutocompleteRequest/AutocompleteResponse types, validate against generated schemas, and pass semantic Validate.",
+      "result": "passed",
+      "evidence": [
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:117-118 request example includes protocol_version: 1 and request_id 018f160e-7152-7b43-9d9a-6083e0bd3cc8.",
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:146-147 ok response example includes protocol_version: 1 and the same valid UUID request_id.",
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:159-160 error response example includes protocol_version: 1 and the same valid UUID request_id.",
+        "crates/autocomplete-protocol/tests/plan_examples.rs loads protocol.autocomplete_request_example, protocol.autocomplete_response_example, and protocol.error_response_example directly from the MVP plan JSON.",
+        "The plan_examples test validates the request against schema::autocomplete_request_schema(), validates both responses against schema::autocomplete_response_schema(), deserializes via public AutocompleteRequest/AutocompleteResponse, and calls Validate::validate().",
+        "cargo test -p autocomplete-protocol --test plan_examples -- --nocapture printed schema_valid=true deserialize=ok semantic_valid=true for all three examples."
+      ]
+    },
+    {
+      "goal": "Verify regression tests exist so plan examples drifting invalid breaks cargo test.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-protocol/tests/plan_examples.rs is an integration test included in cargo test.",
+        "The test reads the exact reports/autocomplete-engine-mvp-plan-2026-05-28.json file at runtime, so drift in those embedded protocol examples is exercised by cargo test rather than by duplicated fixture data.",
+        "The assertions fail on generated schema invalidity, public deserialization failure, or semantic validation failure."
+      ]
+    },
+    {
+      "goal": "Verify protocol_version remains required unless an explicit design change was documented and justified.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-protocol/src/types.rs keeps AutocompleteRequest.protocol_version as a non-optional u32 field without serde default.",
+        "crates/autocomplete-protocol/src/types.rs keeps each AutocompleteResponse variant's protocol_version as a non-optional u32 field without serde default.",
+        "crates/autocomplete-protocol/src/validation.rs calls validate_protocol_version for requests and all autocomplete response variants, requiring PROTOCOL_VERSION == 1 semantically.",
+        "crates/autocomplete-protocol/README.md documents versioned payloads include protocol_version: 1 and receivers must reject unsupported major versions. No contrary design change was found in the MVP-012 handoff or inspected protocol files."
+      ]
+    },
+    {
+      "goal": "Verify no server/provider/client code was added in the fix task.",
+      "result": "passed",
+      "evidence": [
+        "MVP-012 handoff lists only reports/autocomplete-engine-mvp-plan-2026-05-28.json, crates/autocomplete-protocol/tests/plan_examples.rs, and its handoff as changed files.",
+        "Cargo.toml workspace members remain [\"crates/autocomplete-protocol\"].",
+        "clients/ and packages/ directories are absent in the current workspace.",
+        "crates/autocomplete-protocol contains protocol types, validation, schema generation, and tests only. Grep hits for provider/client are protocol field names, provider-health response types, metadata/error-code names, or README text, not implementation code."
+      ]
+    }
+  ],
+  "issues": [],
+  "artifact_trust": {
+    "trusted_for_downstream_core_provider_work": [
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json protocol examples",
+      "crates/autocomplete-protocol public AutocompleteRequest and AutocompleteResponse contract",
+      "crates/autocomplete-protocol generated request/response JSON Schemas",
+      "crates/autocomplete-protocol/tests/plan_examples.rs regression coverage for exact MVP plan examples"
+    ],
+    "trust_basis": [
+      "Full workspace cargo fmt and cargo test passed.",
+      "Exact embedded plan examples now validate through schema, public deserialization, and semantic validation.",
+      "Protocol version remains required and validated."
+    ]
+  },
+  "spawned_tasks": [],
+  "revived_tasks": [],
+  "queue_recommendation": "MVP-011-I001 is resolved by MVP-012 and independently rechecked by MVP-013. Protocol artifacts may be treated as trusted for downstream MVP-020 core/provider/postprocessing work.",
+  "worktree_notes": [
+    "Pre-existing unrelated deleted reports/orchestration/* files and untracked .agents/.claude/.pi-workers/archive/mvp orchestration files were visible in git status before this verification wrote its handoff.",
+    "This task did not read tmp/, archive/, prompt-buffer.md, or unrelated ~/dev directories.",
+    "This task made no source-code changes; it wrote only this verification handoff."
+  ]
+}
