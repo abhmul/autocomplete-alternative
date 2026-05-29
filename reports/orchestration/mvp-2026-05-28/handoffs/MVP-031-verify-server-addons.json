@@ -1,0 +1,115 @@
+{
+  "task_id": "MVP-031",
+  "status": "passed_with_notes",
+  "created_on": "2026-05-28",
+  "scope": "Independent verification of the Rust broker server, config/reload semantics, cancellation lifecycle, provider boundary, addon boundary, postprocessing path, and test quality for the MVP-030 slice.",
+  "summary": {
+    "result": "Broker/server/addon artifacts are trusted for the MVP server/addons slice. No blocking defects were found.",
+    "trusted_artifacts": [
+      "crates/autocomplete-server",
+      "crates/autocomplete-addons",
+      "crates/autocomplete-core provider/postprocessing integration used by the server",
+      "crates/autocomplete-provider-pi as a broker-selected provider dependency only",
+      "crates/autocomplete-protocol as provider-agnostic protocol contract"
+    ],
+    "non_blocking_notes": [
+      "No editor clients exist yet in this workspace, so client/provider-pi separation can only be verified as absence of client artifacts plus protocol/core/addon dependency cleanliness. MVP-041 should re-check once clients are added.",
+      "Cancellation registration starts after JSON validation and addon preparation. Those steps are cheap and deterministic now, but a cancel request racing before start_request can return not_found. This is acceptable for the current MVP slice, not a blocker.",
+      "Completed request_id tracking is in-memory and unbounded, matching MVP-030's known limitation. It is not a verification failure for this slice."
+    ]
+  },
+  "commands_run": [
+    {
+      "command": "cargo test",
+      "result": "passed. Full workspace test suite passed: addon, core, protocol, provider-pi, and server tests/doc-tests."
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed with no formatting diffs."
+    },
+    {
+      "command": "cargo run -q -p autocomplete-server --bin autocomplete-broker -- --config <temp mock config>; curl /health; curl /v1/autocomplete",
+      "result": "passed. /health returned protocol_version 1, status ok, provider mock/available. /v1/autocomplete against examples/fixtures/autocomplete-request.v1.json returned status ok, insert_text '\"Ada\")', confidence 0.93, source mock, metadata.postprocessed true."
+    },
+    {
+      "command": "grep for autocomplete-provider-pi/provider symbols across Cargo.toml and source files",
+      "result": "passed. autocomplete-provider-pi is imported only by autocomplete-server production code and provider-pi tests; protocol/core/addons do not depend on provider-pi. No clients directory exists yet."
+    }
+  ],
+  "verification": {
+    "endpoint_behavior": {
+      "status": "passed",
+      "evidence": [
+        "crates/autocomplete-server/src/lib.rs exposes GET /health, POST /v1/autocomplete, POST /v1/cancel/{request_id}, and POST /v1/reload via axum routes.",
+        "Live broker smoke with mock provider returned expected /health and /v1/autocomplete responses.",
+        "crates/autocomplete-server/tests/http_endpoints.rs covers health, valid autocomplete, semantic invalid request rejection, cancel lifecycle, reload, pi health selection, privacy rejection, context-byte-limit rejection, and Obsidian-style Markdown requests."
+      ]
+    },
+    "config_semantics": {
+      "status": "passed",
+      "evidence": [
+        "BrokerConfig loads TOML with serde defaults and deny_unknown_fields; validate rejects zero context window, zero remote context byte limit, and zero idle delay.",
+        "provider_from_config switches between mock and pi solely from BrokerConfig.provider.kind.",
+        "reload_config reloads from the original config path and swaps BrokerRuntime under the runtime RwLock.",
+        "config_loading.rs and http_endpoints.rs verify partial TOML defaults, pi selection in health, and reload changing mock output without client/protocol changes."
+      ]
+    },
+    "provider_boundary": {
+      "status": "passed",
+      "evidence": [
+        "The protocol crate has no provider-pi dependency and grep found no provider-pi/pi-provider symbols in crates/autocomplete-protocol.",
+        "Cargo dependency graph keeps provider-pi at the server composition layer: autocomplete-server depends on autocomplete-provider-pi; autocomplete-core and autocomplete-addons depend only on protocol/core abstractions.",
+        "PiProvider command construction includes --mode json, --no-tools, --no-session, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, --no-themes, model, thinking, and system prompt arguments; pi provider tests assert the isolation flags with a fake executable.",
+        "No editor clients are present yet, so no client can currently import provider-pi. This must be re-verified when MVP-040 adds clients."
+      ]
+    },
+    "addon_boundary": {
+      "status": "passed",
+      "evidence": [
+        "AddonRuntime.prepare applies request-supplied context trimming, enforces privacy policy, and selects a prompt before the server calls the provider.",
+        "AddonRuntime.postprocessor_pipeline supplies the broker's postprocessor pipeline to AutocompleteEngine at BrokerRuntime construction.",
+        "Built-in addons do not read workspace files; NearbyTextWindow only trims prefix/suffix already supplied by the client, and PolicyEngine only matches the request document URI/context byte counts."
+      ]
+    },
+    "postprocessing_guarantee": {
+      "status": "passed",
+      "evidence": [
+        "AutocompleteEngine processes every ProviderOutput::Candidate through self.postprocessors.process before constructing an Ok response.",
+        "Rejected or empty postprocessed candidates become NoSuggestion rather than leaking raw provider text.",
+        "Live smoke and server tests assert metadata.postprocessed true for successful candidate responses."
+      ]
+    },
+    "cancellation": {
+      "status": "passed_with_note",
+      "evidence": [
+        "AppState tracks in-flight request_ids with CancellationToken values; cancel_request cancels in-flight tokens and reports already_completed after finish_request.",
+        "AutocompleteEngine selects over cancellation and request deadline while awaiting provider completion, and MockProvider/PiProvider observe cancellation tokens.",
+        "http_endpoints.rs verifies cancellation of a slow mock autocomplete and subsequent already_completed status."
+      ],
+      "note": "Cancel-before-registration can return not_found because start_request occurs after validation/addon preparation. Current preparation is cheap; not a blocker."
+    },
+    "test_quality": {
+      "status": "passed",
+      "strengths": [
+        "Tests cover public HTTP routes and semantic response bodies, not only unit internals.",
+        "Provider-pi subprocess behavior is fake-tested for isolation flags, JSONL parsing, repair retry, timeout, cancellation, and redaction.",
+        "Protocol fixtures/schema validation and server endpoint tests exercise the same JSON fixtures used by smoke tests.",
+        "Privacy policy and postprocessing are tested at both addon/core and server-integration levels."
+      ],
+      "gaps_not_blocking": [
+        "No live real-pi smoke or latency measurement; explicitly deferred to MVP-050.",
+        "No concurrent duplicate request_id stress test; existing start_request logic cancels previous tokens but is not stress-tested.",
+        "No client boundary tests yet because client artifacts are not present."
+      ]
+    },
+    "complexity_and_boundaries": {
+      "status": "passed",
+      "assessment": "The design stays within acceptable MVP complexity: protocol/core/provider/addon/server crates have clear directions of dependency, server composes providers/addons, and provider-specific code is not in protocol/core/addons. The addon registries are intentionally simple built-ins rather than premature dynamic plugin loading.",
+      "avoidable_complexity_found": []
+    }
+  },
+  "issues": [],
+  "blockers": [],
+  "spawned_tasks": [],
+  "queue_recommendation": "Proceed to MVP-040 editor clients. Re-check provider boundary once clients exist, and leave real pi runtime latency/model smoke to MVP-050."
+}
