@@ -1,0 +1,131 @@
+{
+  "task_id": "MVP-041",
+  "status": "passed_with_notes",
+  "created_on": "2026-05-28",
+  "scope": "Independent verification of VS Code and Obsidian thin clients, shared protocol client artifacts, tests, cancellation/debounce behavior, provider boundary, and MVP usability gaps.",
+  "summary": {
+    "result": "VS Code and Obsidian client artifacts are trusted for the thin-client source/test slice. Relevant tests and static checks pass, generated client protocol artifacts match the Rust protocol exporter, and no blocking source-level provider-boundary or protocol-shape defects were found.",
+    "trusted_artifacts": [
+      "clients/protocol/src/generated/protocol-v1.js",
+      "clients/protocol/src/generated/schemas/autocomplete-request.v1.schema.json",
+      "clients/protocol/src/generated/schemas/autocomplete-response.v1.schema.json",
+      "clients/protocol/src/client.js",
+      "clients/vscode/src/extension.js",
+      "clients/vscode/src/extension-core.js",
+      "clients/vscode/package.json",
+      "clients/obsidian/src/main.js",
+      "clients/obsidian/src/plugin-core.js",
+      "clients/obsidian/manifest.json",
+      "clients/obsidian/styles.css",
+      "crates/autocomplete-protocol/src/bin/export_client_artifacts.rs"
+    ],
+    "non_blocking_notes": [
+      "Ghost text and Tab acceptance are verified by Node host-glue tests, not by real VS Code or Obsidian extension-host smoke. This remains an MVP acceptance evidence gap for MVP-050/final verification, not a source-level failure in this slice.",
+      "Both editor clients import shared protocol helpers by repository-relative paths. That is adequate for current local-source tests, but packaged VS Code/Obsidian distribution needs a bundling or copy step so the protocol helper files are present.",
+      "Obsidian runtime module resolution is not independently proven: src/main.js statically parses, but it requires Obsidian and CodeMirror modules in an actual Obsidian plugin environment. A disposable-vault smoke should verify this before claiming UI acceptance.",
+      "Client UX for broker failures is intentionally minimal: network/HTTP errors are swallowed into no suggestion, with no user-visible diagnostics or health indicator.",
+      "Settings are read when providers/controllers are created. Existing VS Code providers and Obsidian editor views may need reload/reopen to pick up debounce/deadline/context changes reliably. This is acceptable for MVP but should be documented."
+    ]
+  },
+  "commands_run": [
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed. 9 Node tests cover shared protocol request shape, /v1/autocomplete endpoint use, stale cancellation, VS Code request construction/rendering, Obsidian request construction/acceptance, and provider-boundary scanning."
+    },
+    {
+      "command": "node --check clients/obsidian/src/main.js && node --check clients/obsidian/src/plugin-core.js && node --check clients/vscode/src/extension.js && node --check clients/vscode/src/extension-core.js && node --check clients/protocol/src/client.js && node --check clients/protocol/src/generated/protocol-v1.js",
+      "result": "passed with no parse errors."
+    },
+    {
+      "command": "cargo run -q -p autocomplete-protocol --bin export_client_artifacts -- <temp-dir>; diff -ru clients/protocol/src/generated <temp-dir>",
+      "result": "passed. Generated JS protocol constants and JSON Schemas are in sync with the Rust protocol exporter."
+    },
+    {
+      "command": "cargo test",
+      "result": "passed. Full Rust workspace tests passed, including protocol schema/fixture validation, server cancellation/reload/privacy behavior, provider-pi isolation tests, and postprocessing tests."
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed with no formatting diffs."
+    },
+    {
+      "command": "grep for provider-pi/autocomplete-provider-pi/PiProvider/pi-provider tokens under clients",
+      "result": "passed. Only the boundary test itself contains split forbidden-token strings; production client files contain no provider-pi imports or provider-specific logic."
+    }
+  ],
+  "verification": {
+    "thin_client_boundary": {
+      "status": "passed",
+      "evidence": [
+        "clients/vscode/src/extension.js imports only vscode runtime APIs, clients/protocol BrokerClient, and VS Code core glue.",
+        "clients/obsidian/src/main.js imports only Obsidian/CodeMirror runtime APIs, clients/protocol BrokerClient and trigger constants, and Obsidian core glue.",
+        "clients/vscode/src/extension-core.js and clients/obsidian/src/plugin-core.js both call shared clients/protocol helpers; neither imports Rust crates or provider-pi internals.",
+        "clients/protocol/test/boundaries.test.js enforces absence of provider-pi/provider-pi-style symbols across client JS/JSON artifacts."
+      ]
+    },
+    "same_protocol_shape": {
+      "status": "passed",
+      "evidence": [
+        "Both clients construct requests through clients/protocol/src/client.js:createAutocompleteRequest, which emits protocol_version, request_id, client, document, cursor, context, and options matching protocol v1.",
+        "VS Code fills client.name=vscode, document.uri/language_id/version from the VS Code TextDocument, cursor line/character/offset from the Position, and options mode=inline_tab plus max_chars/deadline_ms/trigger.",
+        "Obsidian fills client.name=obsidian, markdown language_id, obsidian:// document URI, cursor line/character/offset from CodeMirror state, and the same options fields.",
+        "The generated protocol-v1.js constants and request/response JSON Schemas exactly match a fresh export from crates/autocomplete-protocol."
+      ]
+    },
+    "broker_only_transport": {
+      "status": "passed",
+      "evidence": [
+        "BrokerClient.autocomplete posts JSON to the generated AUTOCOMPLETE_PATH (/v1/autocomplete).",
+        "BrokerClient.cancel posts to the generated CANCEL_PATH_PREFIX (/v1/cancel/:request_id).",
+        "Provider selection, prompting, postprocessing, privacy policy, and pi subprocess logic remain in Rust broker/provider crates and are not referenced by clients."
+      ]
+    },
+    "debounce_and_stale_cancellation": {
+      "status": "passed",
+      "evidence": [
+        "BrokerAutocompleteSession cancels the current pending request before accepting a replacement, aborts local fetch via AbortController, calls broker cancel for the stale request_id, and resolves stale completions as null.",
+        "clients/protocol/test/client.test.js verifies a stale in-flight request is cancelled and its late response ignored.",
+        "VS Code provider uses BrokerAutocompleteSession and adapts VS Code cancellation tokens to AbortSignal; extension-core tests verify replacement cancellation before rendering fresh ghost text.",
+        "Obsidian controller uses BrokerAutocompleteSession, increments a local documentVersion, clears suggestions on state changes, and only stores suggestions matching the current version; plugin-core tests verify stale cancellation and Tab acceptance."
+      ]
+    },
+    "ghost_text_and_acceptance": {
+      "status": "passed_by_host_glue_tests",
+      "evidence": [
+        "VS Code provider returns vscode.InlineCompletionItem(insertText, range) for fresh ok responses, which is the editor's inline ghost-text path.",
+        "Obsidian main.js creates CodeMirror widget decorations for suggestion text and a high-priority Tab keymap that accepts only when a current suggestion is present.",
+        "Tests verify VS Code item construction and Obsidian controller insertion transaction on Tab acceptance."
+      ],
+      "remaining_evidence_gap": "No real editor-host smoke was configured or run in this verification task."
+    },
+    "test_quality": {
+      "status": "passed_with_gaps",
+      "strengths": [
+        "Tests exercise protocol shape and host glue with fake editor/runtime objects rather than only shallow import checks.",
+        "Cancellation is tested at shared session level and through both editor cores.",
+        "Boundary scanning is automated to catch provider-pi leakage into clients.",
+        "Rust protocol/server/provider tests still pass, reducing risk that client protocol artifacts drifted from broker behavior."
+      ],
+      "gaps_not_blocking": [
+        "No VS Code Extension Development Host smoke test.",
+        "No disposable Obsidian vault/plugin load smoke test.",
+        "No packaging/bundling test proving repo-relative shared protocol imports work after installation.",
+        "No explicit test for VS Code token cancellation without a replacement request, although the adapter code is present."
+      ]
+    },
+    "mvp_usability_gaps": {
+      "blockers_for_this_source_slice": [],
+      "limitations_for_mvp_acceptance": [
+        "Actual UI display and Tab acceptance remain to be proven in real editors.",
+        "Packaging/build instructions are minimal, especially for Obsidian CodeMirror dependencies and shared protocol helper inclusion.",
+        "No visible broker health/error UX exists yet; broker downtime appears as absent suggestions.",
+        "Dynamic settings reload is limited for already-created providers/controllers.",
+        "Autocomplete quality/latency with real pi remains explicitly unmeasured and should remain in MVP-050."
+      ]
+    }
+  },
+  "issues": [],
+  "blockers": [],
+  "spawned_tasks": [],
+  "queue_recommendation": "Proceed to MVP-050 runtime smoke and measurement. Focus that slice on proving real VS Code and Obsidian loading/rendering, validating packaging/module resolution assumptions, and recording pi/mock latency before final MVP acceptance."
+}
