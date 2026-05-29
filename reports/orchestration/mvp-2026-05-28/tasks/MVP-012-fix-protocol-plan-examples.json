@@ -1,0 +1,55 @@
+{
+  "id": "MVP-012",
+  "type": "fix + tests",
+  "priority": 88,
+  "dependencies": [
+    "MVP-011"
+  ],
+  "title": "Fix protocol plan-example validation gap",
+  "spawned_by": "MVP-011",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-011-verify-protocol-core.json",
+      "Cargo.toml"
+    ],
+    "read_if_needed": [
+      "crates/autocomplete-protocol/",
+      "examples/fixtures/",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Resolve only the blocking MVP-011 finding that exact protocol examples embedded in the MVP plan do not validate against the implemented protocol/schema.",
+  "goals": [
+    "Use the tdd skill if changing code or tests.",
+    "Make the exact JSON examples at reports/autocomplete-engine-mvp-plan-2026-05-28.json protocol.autocomplete_request_example, protocol.autocomplete_response_example, and protocol.error_response_example validate through AutocompleteRequest/AutocompleteResponse deserialization, generated JSON Schema, and semantic Validate.",
+    "Prefer updating the plan examples to include protocol_version: 1 and valid UUID request_id values matching the v1 fixtures over weakening the required versioned protocol contract.",
+    "Add or extend a protocol regression test/check so cargo test fails if those embedded plan examples drift out of validity again.",
+    "Preserve the Rust protocol crate boundaries: no HTTP server, provider, VS Code client, or Obsidian client work in this task."
+  ],
+  "non_goals": [
+    "Do not implement server, provider, postprocessing, VS Code, or Obsidian functionality.",
+    "Do not relax protocol_version requirements unless an explicit design decision is recorded and independently verified.",
+    "Do not modify unrelated orchestration files or pre-existing dirty worktree changes."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Do not edit files tagged human-written unless explicitly authorized by the user.",
+    "Preserve unrelated changes.",
+    "No destructive git commands."
+  ],
+  "success_criteria": [
+    "cargo fmt --all --check passes.",
+    "cargo test passes.",
+    "A checker equivalent to MVP-011's temporary plan-example checker reports schema_valid=true, deserialize=ok, and semantic_valid=true for the request, ok response, and error response examples embedded in the MVP plan.",
+    "Write a handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-012-fix-protocol-plan-examples.json summarizing files changed, tests run, and whether MVP-011 can now be considered passable after independent recheck."
+  ],
+  "worker_token_budget": 150000
+}

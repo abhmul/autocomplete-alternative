@@ -1,0 +1,116 @@
+{
+  "task_id": "MVP-011",
+  "status": "completed",
+  "verification_result": "failed",
+  "created_on": "2026-05-28",
+  "scope": "Independent verification of the Rust protocol crate, fixtures, schema, docs, and tests produced by MVP-010.",
+  "verdict": "The Rust protocol crate, fixture tests, generated schema functions, and protocol README mostly satisfy the MVP-010 implementation boundaries and pass cargo checks. Verification fails because the exact protocol examples embedded in the MVP plan do not validate against the current protocol/schema: they use the placeholder request_id \"uuid\" and omit required protocol_version fields.",
+  "commands_run": [
+    {
+      "command": "git status --short && cargo fmt --all --check && cargo test",
+      "result": "passed for cargo fmt --all --check and cargo test; git status showed pre-existing unrelated deleted/untracked orchestration and skill files before this task's report files were written"
+    },
+    {
+      "command": "temporary cargo checker against reports/autocomplete-engine-mvp-plan-2026-05-28.json protocol examples using autocomplete-protocol public API, generated schemas, and Validate",
+      "result": "failed: all three embedded plan examples were schema_valid=false and failed AutocompleteRequest/AutocompleteResponse deserialization with UUID parsing failed: invalid character: found `u` at 1"
+    },
+    {
+      "command": "temporary cargo checker for generated schema contents",
+      "result": "passed: request and response schemas contain protocol_version; response schema contains representative error-code enum values unsupported_protocol_version, provider_timeout, and internal_error; all_schemas exports autocomplete-request.v1.schema.json and autocomplete-response.v1.schema.json"
+    }
+  ],
+  "goals_checked": [
+    {
+      "goal": "Run the relevant cargo tests.",
+      "result": "passed",
+      "evidence": [
+        "cargo fmt --all --check passed",
+        "cargo test passed: 8 integration tests plus crate/doc test harnesses passed"
+      ]
+    },
+    {
+      "goal": "Inspect whether tests verify behavior through public interfaces.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-protocol/tests/request_fixture.rs imports AutocompleteRequest, Validate, and schema from autocomplete_protocol and validates fixture deserialization, semantic validation, and generated schema validation.",
+        "crates/autocomplete-protocol/tests/response_fixtures.rs imports AutocompleteResponse, ErrorCode, Validate, and schema from autocomplete_protocol and validates response fixtures plus stable error-code wire names.",
+        "crates/autocomplete-protocol/tests/schema_export.rs imports autocomplete_protocol::schema and verifies exported schema files compile.",
+        "crates/autocomplete-protocol/tests/validation.rs imports public AutocompleteRequest, AutocompleteResponse, Validate, and ValidationLimits and checks semantic error behavior."
+      ]
+    },
+    {
+      "goal": "Confirm examples from the MVP plan validate.",
+      "result": "failed",
+      "evidence": [
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:116-143 request example omits protocol_version and uses request_id: \"uuid\" at line 117.",
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:144-155 ok response example omits protocol_version and uses request_id: \"uuid\" at line 145.",
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:156-164 error response example omits protocol_version and uses request_id: \"uuid\" at line 157.",
+        "crates/autocomplete-protocol/src/types.rs:9-11 requires AutocompleteRequest.protocol_version and a UUID request_id.",
+        "crates/autocomplete-protocol/src/types.rs:62-65 requires AutocompleteResponse ok variants to include protocol_version and a UUID request_id.",
+        "Temporary checker output: schema_valid=false for all three plan examples; deserialization failed for all three with UUID parsing failed: invalid character: found `u` at 1."
+      ]
+    },
+    {
+      "goal": "Confirm JSON Schema/protocol docs include versioning and error codes.",
+      "result": "passed",
+      "evidence": [
+        "crates/autocomplete-protocol/README.md:7-12 documents /v1 path versioning, protocol_version: 1 payload versioning, unsupported_protocol_version rejection, and snake_case wire names.",
+        "crates/autocomplete-protocol/README.md:48-61 lists stable error-code wire names.",
+        "crates/autocomplete-protocol/src/schema.rs exposes request/response schema generators and export_schema_files for v1 schema filenames.",
+        "Temporary schema checker found protocol_version in both generated schemas and representative error-code enum values in the response schema."
+      ]
+    },
+    {
+      "goal": "Check that implementation is Rust and respects boundaries.",
+      "result": "passed",
+      "evidence": [
+        "Cargo.toml defines a Rust workspace with members = [\"crates/autocomplete-protocol\"].",
+        "crates/autocomplete-protocol contains Rust source for protocol types, validation, and schema generation only.",
+        "No HTTP server, provider, VS Code client, or Obsidian client was introduced in MVP-010.",
+        "Source grep found no provider/pi/client implementation in the protocol crate; std::fs usage is limited to explicit schema export helper writes."
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "id": "MVP-011-I001",
+      "severity": "blocking",
+      "title": "Exact MVP plan protocol examples do not validate against the implemented protocol/schema",
+      "locations": [
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:116-117",
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:144-145",
+        "reports/autocomplete-engine-mvp-plan-2026-05-28.json:156-157",
+        "crates/autocomplete-protocol/src/types.rs:9-11",
+        "crates/autocomplete-protocol/src/types.rs:62-65"
+      ],
+      "details": "The plan examples use request_id: \"uuid\", which is not a UUID, and omit protocol_version, while the implemented public Rust types and generated schemas require a UUID request_id and protocol_version payload field. The workspace fixtures in examples/fixtures are corrected versions and pass, but the exact MVP plan examples do not.",
+      "impact": "Fails MVP-011's plan-example validation goal and prevents marking the protocol artifacts fully trusted without either updating the plan examples or adding explicit tests/documentation that the plan examples are placeholders rather than valid fixtures.",
+      "recommended_fix": "Add a fix task before MVP-020 that reconciles the plan examples and tests: preferably update the MVP plan examples to include protocol_version: 1 and valid UUIDs matching the fixtures, then add or extend a test/check that loads those plan examples through generated schemas and the public Validate API. Do not weaken the required protocol_version unless the architecture decision is intentionally changed."
+    }
+  ],
+  "artifact_trust": {
+    "trusted": [
+      "Rust workspace compiles and tests for the current protocol crate slice.",
+      "examples/fixtures/autocomplete-request.v1.json validates through the public request type, semantic validator, and generated request schema.",
+      "examples/fixtures/autocomplete-response-ok.v1.json and autocomplete-response-error.v1.json validate through the public response type, semantic validator, and generated response schema.",
+      "Protocol README documents versioning, endpoints, request/response fields, and error codes."
+    ],
+    "not_fully_trusted": [
+      "The protocol artifact set as a whole, because exact MVP plan examples are not currently valid contract examples."
+    ]
+  },
+  "spawned_tasks": [
+    {
+      "id": "MVP-012",
+      "file": "reports/orchestration/mvp-2026-05-28/tasks/MVP-012-fix-protocol-plan-examples.json",
+      "reason": "Fix or explicitly reconcile the blocking plan-example validation failure before downstream tasks depend on the protocol contract."
+    }
+  ],
+  "revived_tasks": [],
+  "queue_recommendation": "Run MVP-012 before MVP-020; downstream work should not treat MVP-011 as a trust-raising pass until MVP-012 is fixed and independently rechecked.",
+  "worktree_notes": [
+    "Pre-existing unrelated deleted reports/orchestration/* files and untracked .agents/.claude/.pi-workers/archive/mvp orchestration files were visible in git status before this verification wrote its handoff/task files.",
+    "This task did not read tmp/, archive/, prompt-buffer.md, or unrelated ~/dev directories.",
+    "This task made no source-code changes."
+  ]
+}
