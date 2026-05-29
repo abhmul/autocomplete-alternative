@@ -1,0 +1,527 @@
+{
+  "schema_version": "autocomplete-engine-mvp-plan-v1",
+  "created_on": "2026-05-28",
+  "status": "ready_for_orchestrator",
+  "objective": "Build an extensible MVP autocomplete engine that is independent of deployment platforms. The engine should initially serve VS Code and Obsidian clients, while remaining usable from future clients such as Android apps, browser extensions, terminal tools, or other editors.",
+  "core_design_decision": {
+    "decision": "Implement a standalone local autocomplete broker with a stable protocol. Editor/platform integrations are thin clients that collect context, call the broker, render ghost text, and accept/dismiss suggestions.",
+    "rationale": [
+      "Keeps provider logic, prompt construction, addons, caching, cancellation, and postprocessing out of editor-specific code.",
+      "Allows replacing the pi/GPT provider with a persistent pi RPC provider, direct OpenAI API, Mistral FIM, Ollama, llama.cpp, or another backend without changing clients.",
+      "Makes VS Code, Obsidian, and future clients consume one contract instead of duplicating autocomplete logic."
+    ]
+  },
+  "architecture": {
+    "diagram": [
+      "clients/vscode-extension -> local broker protocol",
+      "clients/obsidian-plugin -> local broker protocol",
+      "future clients/android-browser-terminal -> same broker protocol",
+      "broker/server -> protocol validation -> context/prompt addons -> provider -> postprocessors -> response"
+    ],
+    "components": [
+      {
+        "name": "protocol",
+        "path_suggestion": "packages/protocol",
+        "responsibilities": [
+          "Define request and response schemas.",
+          "Publish TypeScript types and JSON Schema.",
+          "Version protocol fields explicitly."
+        ]
+      },
+      {
+        "name": "server",
+        "path_suggestion": "packages/server",
+        "responsibilities": [
+          "Expose local HTTP endpoints.",
+          "Validate protocol messages.",
+          "Apply debounce/cancellation semantics.",
+          "Load config and addons.",
+          "Call providers.",
+          "Run postprocessors and return insertable text."
+        ]
+      },
+      {
+        "name": "pi provider",
+        "path_suggestion": "packages/provider-pi",
+        "responsibilities": [
+          "Invoke pi non-interactively for MVP.",
+          "Use GPT 5.5 with low/minimal thinking.",
+          "Disable tools and session/context discovery for inline autocomplete.",
+          "Parse and validate structured JSON output.",
+          "Enforce timeout and cancellation."
+        ]
+      },
+      {
+        "name": "addons",
+        "path_suggestion": "packages/addons",
+        "responsibilities": [
+          "Provide configurable context providers.",
+          "Provide prompt templates.",
+          "Provide postprocessors.",
+          "Keep addon APIs separate from client APIs."
+        ]
+      },
+      {
+        "name": "VS Code client",
+        "path_suggestion": "clients/vscode",
+        "responsibilities": [
+          "Register InlineCompletionItemProvider.",
+          "Collect current document prefix/suffix/cursor metadata.",
+          "Call broker only.",
+          "Render inline ghost text and accept with Tab."
+        ]
+      },
+      {
+        "name": "Obsidian client",
+        "path_suggestion": "clients/obsidian",
+        "responsibilities": [
+          "Register a CodeMirror view plugin for ghost text.",
+          "Collect note prefix/suffix/cursor metadata.",
+          "Call broker only.",
+          "Render inline ghost text and accept with Tab."
+        ]
+      }
+    ]
+  },
+  "protocol": {
+    "transport_mvp": "local_http_json",
+    "future_transports": [
+      "stdio_json_rpc",
+      "websocket_streaming",
+      "unix_socket_or_named_pipe",
+      "remote_http_with_auth_for_mobile_or_android"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/health",
+        "purpose": "Check broker availability and provider status."
+      },
+      {
+        "method": "POST",
+        "path": "/v1/autocomplete",
+        "purpose": "Request one inline autocomplete suggestion."
+      },
+      {
+        "method": "POST",
+        "path": "/v1/cancel/:request_id",
+        "purpose": "Cancel a pending autocomplete request."
+      },
+      {
+        "method": "POST",
+        "path": "/v1/reload",
+        "purpose": "Reload config/addons during development."
+      }
+    ],
+    "autocomplete_request_example": {
+      "request_id": "uuid",
+      "client": {
+        "name": "vscode",
+        "version": "0.1.0"
+      },
+      "document": {
+        "uri": "file:///repo/src/app.ts",
+        "language_id": "typescript",
+        "version": 12
+      },
+      "cursor": {
+        "line": 42,
+        "character": 18,
+        "offset": 1234
+      },
+      "context": {
+        "prefix": "text before cursor",
+        "suffix": "text after cursor",
+        "selected_text": ""
+      },
+      "options": {
+        "mode": "inline_tab",
+        "max_chars": 180,
+        "deadline_ms": 2500,
+        "trigger": "idle"
+      }
+    },
+    "autocomplete_response_example": {
+      "request_id": "uuid",
+      "status": "ok",
+      "insert_text": "completion only",
+      "confidence": 0.71,
+      "source": "pi:gpt-5.5",
+      "metadata": {
+        "latency_ms": 1340,
+        "provider_latency_ms": 1210,
+        "postprocessed": true
+      }
+    },
+    "error_response_example": {
+      "request_id": "uuid",
+      "status": "error",
+      "error": {
+        "code": "provider_timeout",
+        "message": "Autocomplete provider exceeded deadline."
+      }
+    }
+  },
+  "pi_provider_mvp": {
+    "mode": "subprocess",
+    "command_template": [
+      "pi",
+      "-p",
+      "--no-tools",
+      "--no-session",
+      "--no-context-files",
+      "--mode",
+      "json",
+      "--model",
+      "openai/gpt-5.5",
+      "--thinking",
+      "minimal",
+      "--system-prompt",
+      "<rendered-system-prompt>",
+      "<rendered-request-json>"
+    ],
+    "prompt_contract": {
+      "system_prompt_goal": "Return only valid JSON containing the text to insert at the cursor. No markdown, no commentary, no repeated prefix.",
+      "provider_response_schema": {
+        "insert_text": "string",
+        "confidence": "number between 0 and 1",
+        "reason": "optional short internal diagnostic string; broker should not expose it to editor UI by default"
+      }
+    },
+    "required_runtime_controls": [
+      "Timeout per request.",
+      "Cancellation when the document changes or cursor moves.",
+      "One retry on malformed JSON using a smaller repair prompt.",
+      "Provider stdout/stderr capture with secret redaction.",
+      "No file read/write/bash tools for autocomplete requests."
+    ],
+    "known_risks": [
+      "Subprocess startup plus model latency may be too slow for keystroke-level autocomplete.",
+      "Generic chat-style models may produce lower-quality inline completions than FIM-specific models.",
+      "Malformed JSON and overlong completions need robust postprocessing.",
+      "If pi gains or requires session/context state, stale context could leak into suggestions unless disabled."
+    ]
+  },
+  "addon_model": {
+    "principle": "Addons run inside the broker and never inside platform clients.",
+    "addon_types": [
+      {
+        "type": "context_provider",
+        "examples": [
+          "nearby_text_window",
+          "language_imports",
+          "workspace_symbols",
+          "open_files",
+          "markdown_headings",
+          "project_style_notes"
+        ]
+      },
+      {
+        "type": "prompt_template",
+        "examples": [
+          "code_inline_completion",
+          "markdown_prose_completion",
+          "frontmatter_aware_note_completion",
+          "test_file_completion"
+        ]
+      },
+      {
+        "type": "postprocessor",
+        "examples": [
+          "strip_markdown_fences",
+          "remove_repeated_prefix",
+          "truncate_to_max_chars",
+          "reject_explanations",
+          "reject_multifile_edits",
+          "normalize_newlines"
+        ]
+      },
+      {
+        "type": "policy",
+        "examples": [
+          "ignore_secret_files",
+          "limit_remote_context_bytes",
+          "disable_remote_provider_for_sensitive_paths",
+          "workspace_allowlist"
+        ]
+      }
+    ],
+    "config_example": {
+      "provider": "pi-gpt55",
+      "trigger": {
+        "mode": "idle_or_manual",
+        "idle_delay_ms": 500,
+        "min_prefix_chars": 8
+      },
+      "context": {
+        "prefix_chars": 3500,
+        "suffix_chars": 1200,
+        "include_open_files": false,
+        "include_workspace_symbols": false
+      },
+      "privacy": {
+        "remote_context_byte_limit": 6000,
+        "excluded_globs": [
+          "**/.env*",
+          "**/secrets/**",
+          "**/prompt-buffer.md"
+        ]
+      }
+    }
+  },
+  "implementation_tasks": [
+    {
+      "id": "T001",
+      "title": "Scaffold repository structure",
+      "type": "implementation",
+      "dependencies": [],
+      "deliverables": [
+        "packages/protocol",
+        "packages/server",
+        "packages/provider-pi",
+        "clients/vscode",
+        "clients/obsidian",
+        "examples/fixtures"
+      ],
+      "success_criteria": [
+        "Build/test tooling runs locally.",
+        "Packages have clear boundaries.",
+        "No editor client imports provider-pi directly."
+      ]
+    },
+    {
+      "id": "T002",
+      "title": "Define protocol schemas and docs",
+      "type": "implementation",
+      "dependencies": [
+        "T001"
+      ],
+      "deliverables": [
+        "TypeScript request/response types",
+        "JSON Schema",
+        "Protocol README",
+        "Fixture requests/responses"
+      ],
+      "success_criteria": [
+        "Schemas validate the examples in this plan.",
+        "Protocol includes versioning and error codes."
+      ]
+    },
+    {
+      "id": "T003",
+      "title": "Implement broker server with mock provider",
+      "type": "implementation",
+      "dependencies": [
+        "T002"
+      ],
+      "deliverables": [
+        "/health endpoint",
+        "/v1/autocomplete endpoint",
+        "/v1/cancel/:request_id endpoint",
+        "Mock provider returning deterministic suggestions"
+      ],
+      "success_criteria": [
+        "Server handles valid requests and rejects invalid requests.",
+        "Cancellation is represented in the request lifecycle.",
+        "Mock provider can serve both VS Code and Obsidian clients."
+      ]
+    },
+    {
+      "id": "T004",
+      "title": "Implement postprocessing pipeline",
+      "type": "implementation",
+      "dependencies": [
+        "T003"
+      ],
+      "deliverables": [
+        "Postprocessor interface",
+        "Strip markdown fences",
+        "Remove repeated prefix",
+        "Max character enforcement",
+        "Explanation rejection"
+      ],
+      "success_criteria": [
+        "Malformed or unsuitable completions are rejected or repaired.",
+        "Unit tests cover common model-output failures."
+      ]
+    },
+    {
+      "id": "T005",
+      "title": "Implement pi provider",
+      "type": "implementation",
+      "dependencies": [
+        "T003",
+        "T004"
+      ],
+      "deliverables": [
+        "Subprocess provider",
+        "Prompt renderer",
+        "Timeout/cancellation handling",
+        "JSON parser and repair retry",
+        "Provider-level tests with a fake pi executable"
+      ],
+      "success_criteria": [
+        "Provider invokes pi with --no-tools, --no-session, --no-context-files, --mode json, --thinking minimal.",
+        "Provider can be swapped with mock provider by config only.",
+        "Provider never writes files or shells out except to pi."
+      ]
+    },
+    {
+      "id": "T006",
+      "title": "Implement VS Code thin client",
+      "type": "implementation",
+      "dependencies": [
+        "T003"
+      ],
+      "deliverables": [
+        "VS Code extension",
+        "InlineCompletionItemProvider integration",
+        "Settings for broker URL, debounce, max context",
+        "Tab accept behavior"
+      ],
+      "success_criteria": [
+        "Displays mock-provider ghost text.",
+        "Accepts with Tab.",
+        "Cancels stale requests on cursor/document change.",
+        "Does not know about pi provider internals."
+      ]
+    },
+    {
+      "id": "T007",
+      "title": "Implement Obsidian thin client",
+      "type": "implementation",
+      "dependencies": [
+        "T003"
+      ],
+      "deliverables": [
+        "Obsidian plugin",
+        "CodeMirror ghost-text view plugin",
+        "Settings for broker URL, debounce, max context",
+        "Tab accept behavior"
+      ],
+      "success_criteria": [
+        "Displays mock-provider ghost text in a note.",
+        "Accepts with Tab.",
+        "Cancels stale requests on cursor/document change.",
+        "Does not know about pi provider internals."
+      ]
+    },
+    {
+      "id": "T008",
+      "title": "Runtime smoke test with pi provider",
+      "type": "verification",
+      "dependencies": [
+        "T005",
+        "T006",
+        "T007"
+      ],
+      "deliverables": [
+        "Latency measurements",
+        "Simple TypeScript completion test",
+        "Simple Markdown completion test",
+        "Failure-mode notes"
+      ],
+      "success_criteria": [
+        "At least one real pi-backed suggestion appears in VS Code.",
+        "At least one real pi-backed suggestion appears in Obsidian.",
+        "Median and p95 latency are recorded.",
+        "Known blockers for daily-use quality are documented."
+      ]
+    },
+    {
+      "id": "T009",
+      "title": "Add minimal addon system",
+      "type": "implementation",
+      "dependencies": [
+        "T003",
+        "T004",
+        "T005"
+      ],
+      "deliverables": [
+        "Context provider interface",
+        "Prompt template registry",
+        "Postprocessor registry",
+        "Config file loading"
+      ],
+      "success_criteria": [
+        "Changing prompt/context behavior does not require client changes.",
+        "At least one code prompt and one markdown prompt are selectable by language_id."
+      ]
+    },
+    {
+      "id": "T010",
+      "title": "Prepare MVP handoff documentation",
+      "type": "documentation",
+      "dependencies": [
+        "T008",
+        "T009"
+      ],
+      "deliverables": [
+        "README with dev setup",
+        "Protocol docs",
+        "Client setup docs",
+        "Known limitations",
+        "Next-step optimization plan"
+      ],
+      "success_criteria": [
+        "A new developer can start the broker and connect at least one client.",
+        "Limitations around pi latency and autocomplete quality are explicit."
+      ]
+    }
+  ],
+  "mvp_acceptance_criteria": [
+    "A single broker serves both VS Code and Obsidian.",
+    "VS Code and Obsidian clients call the same protocol.",
+    "Switching provider from mock to pi requires no client changes.",
+    "VS Code displays inline ghost text and accepts it with Tab.",
+    "Obsidian displays inline ghost text and accepts it with Tab.",
+    "Requests are debounced and cancellable.",
+    "pi provider can complete simple code and Markdown examples.",
+    "Core tests cover protocol validation, provider parsing, postprocessing, timeout, and cancellation."
+  ],
+  "non_goals_for_mvp": [
+    "Copilot-level latency on every keystroke.",
+    "Multi-file agentic edits.",
+    "Automatic workspace-wide context indexing.",
+    "Cloud-hosted broker.",
+    "Mobile UI implementation.",
+    "Marketplace publication."
+  ],
+  "quality_gates": [
+    "No platform client imports provider-specific code.",
+    "No autocomplete request enables pi tools.",
+    "No autocomplete request implicitly reads arbitrary files.",
+    "All provider outputs pass postprocessing before reaching clients.",
+    "All requests have deadline and cancellation handling.",
+    "Sensitive path exclusions are applied before remote provider calls."
+  ],
+  "risks_and_mitigations": [
+    {
+      "risk": "pi subprocess startup and GPT 5.5 latency are too slow for live autocomplete.",
+      "mitigation": "Start with manual or idle-after-pause triggers. Keep provider behind broker interface. Later replace subprocess mode with pi RPC/persistent worker or direct FIM provider."
+    },
+    {
+      "risk": "Model returns explanations or malformed JSON.",
+      "mitigation": "Use strict response schema, postprocessors, and one repair retry. Reject unsafe/verbose outputs."
+    },
+    {
+      "risk": "Obsidian ghost text and Tab handling conflict with editor behavior or other plugins.",
+      "mitigation": "Smoke-test in a disposable vault and make keybinding configurable."
+    },
+    {
+      "risk": "Context addons leak too much data to remote providers.",
+      "mitigation": "Centralize privacy policy in broker, enforce byte limits and excluded globs, and make remote/local provider state visible."
+    },
+    {
+      "risk": "Generic chat completion is lower quality than FIM autocomplete.",
+      "mitigation": "Keep provider interface compatible with FIM providers and add Mistral FIM, llama.cpp /infill, or Ollama adapters after MVP if needed."
+    }
+  ],
+  "handoff_notes_for_orchestrator": [
+    "Build the broker/protocol/mock provider first before touching editor integrations.",
+    "Keep the editor clients intentionally thin.",
+    "Use the mock provider to verify UI behavior before debugging pi latency.",
+    "Do not optimize context addons until the end-to-end path works.",
+    "Treat pi-backed autocomplete as source-based/runtime experimental until measured."
+  ]
+}
