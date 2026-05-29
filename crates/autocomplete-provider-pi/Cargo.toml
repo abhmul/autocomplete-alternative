@@ -1,0 +1,24 @@
+[package]
+name = "autocomplete-provider-pi"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+autocomplete-core = { path = "../autocomplete-core" }
+autocomplete-protocol = { path = "../autocomplete-protocol" }
+async-trait.workspace = true
+regex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+tempfile.workspace = true

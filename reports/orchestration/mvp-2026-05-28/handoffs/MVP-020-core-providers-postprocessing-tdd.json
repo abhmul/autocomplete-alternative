@@ -1,0 +1,88 @@
+{
+  "task_id": "MVP-020",
+  "status": "completed",
+  "created_on": "2026-05-28",
+  "scope": "Implemented Rust core provider abstraction, engine orchestration, deterministic mock provider, postprocessing pipeline, and fake-tested pi subprocess provider. No HTTP endpoints, editor clients, or real pi smoke tests were implemented or run.",
+  "summary": [
+    "Added crates/autocomplete-core with a dyn-safe async CompletionProvider trait, AutocompleteEngine, typed provider errors, deterministic MockProvider, and default postprocessors.",
+    "Added postprocessors for newline normalization, markdown fence stripping, repeated-prefix removal, max-character truncation, and explanation/prose rejection.",
+    "Added crates/autocomplete-provider-pi with strict prompt rendering, pi subprocess command construction, JSONL assistant-event extraction, provider-response JSON parsing, one malformed-output repair retry, timeout/cancellation handling, and stdout/stderr secret redaction.",
+    "Updated the Cargo workspace and lockfile for the new Rust crates and dependencies."
+  ],
+  "tdd_notes": [
+    "Started with a failing core engine test for mock-provider output passing through repeated-prefix postprocessing, then implemented the minimal core path to green.",
+    "Added focused behavior tests for dyn provider use, VS Code and Obsidian-style mock requests, timeout, cancellation, and individual postprocessors.",
+    "Started pi-provider work with a failing fake-pi invocation/JSONL parsing test, then added repair, timeout, cancellation, and redaction tests without invoking real pi."
+  ],
+  "changed_files": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "crates/autocomplete-core/Cargo.toml",
+    "crates/autocomplete-core/src/lib.rs",
+    "crates/autocomplete-core/src/engine.rs",
+    "crates/autocomplete-core/src/mock.rs",
+    "crates/autocomplete-core/src/postprocess.rs",
+    "crates/autocomplete-core/src/provider.rs",
+    "crates/autocomplete-core/tests/engine.rs",
+    "crates/autocomplete-core/tests/postprocessors.rs",
+    "crates/autocomplete-provider-pi/Cargo.toml",
+    "crates/autocomplete-provider-pi/src/lib.rs",
+    "crates/autocomplete-provider-pi/src/parser.rs",
+    "crates/autocomplete-provider-pi/src/prompt.rs",
+    "crates/autocomplete-provider-pi/src/provider.rs",
+    "crates/autocomplete-provider-pi/src/redaction.rs",
+    "crates/autocomplete-provider-pi/tests/pi_provider.rs",
+    "reports/orchestration/mvp-2026-05-28/handoffs/MVP-020-core-providers-postprocessing-tdd.json"
+  ],
+  "behavior_coverage": [
+    "Provider abstraction accepts AutocompleteRequest values behind Arc<dyn CompletionProvider> and returns ProviderOutput or ProviderError.",
+    "AutocompleteEngine validates protocol requests, enforces request deadlines, observes CancellationToken cancellation, maps provider failures into protocol responses, and never returns provider text before postprocessing.",
+    "MockProvider returns deterministic insert_text for VS Code fixture requests and Obsidian-style Markdown requests.",
+    "Postprocessor tests cover markdown fences, repeated prefix removal through the engine path, max_chars truncation, explanation rejection, and newline normalization.",
+    "Pi-provider fake executable tests assert command args include --no-tools, --no-session, --no-context-files, --mode json, --thinking minimal, and stricter isolation flags --no-extensions, --no-skills, --no-prompt-templates.",
+    "Pi-provider tests cover JSONL assistant-text extraction, malformed JSON repair with exactly one retry, timeout, cancellation, and redaction of bearer/API-key-like values and pi auth paths from diagnostics."
+  ],
+  "commands_run": [
+    {
+      "command": "cargo test -p autocomplete-core --test engine",
+      "result": "passed after the initial RED compile failure and implementation"
+    },
+    {
+      "command": "cargo test -p autocomplete-core --test postprocessors",
+      "result": "passed after correcting one test expectation for char-count truncation"
+    },
+    {
+      "command": "cargo test -p autocomplete-provider-pi --test pi_provider pi_provider_invokes_pi_with_isolation_flags_and_parses_jsonl_success",
+      "result": "passed after the initial RED unresolved-import failure and implementation"
+    },
+    {
+      "command": "cargo test -p autocomplete-provider-pi --test pi_provider",
+      "result": "passed"
+    },
+    {
+      "command": "cargo fmt --all && cargo test",
+      "result": "passed"
+    },
+    {
+      "command": "cargo fmt --all --check && cargo test",
+      "result": "passed"
+    }
+  ],
+  "safety_notes": [
+    "No real pi subprocess was invoked; all pi-provider tests use tempdir fake executables.",
+    "PiProvider uses std::process::Command/tokio::process::Command directly and only spawns the configured pi command; it does not expose file reads, shell tools, or workspace context loading.",
+    "Autocomplete pi invocations include --no-tools, --no-session, --no-context-files, --no-extensions, --no-skills, --no-prompt-templates, and --no-themes.",
+    "Provider stdout/stderr diagnostics are redacted before being stored in ProviderError diagnostics.",
+    "Did not read prompt-buffer.md, tmp/, or unrelated ~/dev directories. A broad grep did return archive/ hits early in the session; no archive files were opened or edited."
+  ],
+  "known_limitations": [
+    "Repair retry prompt includes the parse error and original request JSON, but not the raw malformed assistant text. This is sufficient for current fake-pi coverage; a future improvement could include bounded/redacted malformed text.",
+    "Subprocess cancellation kills the direct configured process and bounds pipe-drain waits after interruption; process-group cleanup for providers that spawn detached descendants is not implemented in this MVP slice.",
+    "The pi model remains configurable and defaults to openai/gpt-5.5; model availability was not runtime-verified here."
+  ],
+  "worktree_notes": [
+    "Pre-existing unrelated deleted legacy reports/orchestration/* files and untracked orchestration/skill/archive paths were present before this task and were preserved.",
+    "This task intentionally modified only Cargo workspace files, new core/provider-pi crates, and this MVP-020 handoff."
+  ],
+  "next_recommended_task": "MVP-021 independent verification of core/provider/postprocessing behavior."
+}

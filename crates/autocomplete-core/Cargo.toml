@@ -1,0 +1,22 @@
+[package]
+name = "autocomplete-core"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+autocomplete-protocol = { path = "../autocomplete-protocol" }
+async-trait.workspace = true
+regex.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+serde_json.workspace = true
