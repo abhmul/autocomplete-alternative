@@ -1,0 +1,58 @@
+{
+  "id": "MVP-020",
+  "type": "implement + write tests",
+  "priority": 85,
+  "dependencies": [
+    "MVP-013"
+  ],
+  "title": "TDD Rust core engine, postprocessors, mock provider, and pi provider",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "/home/abhmul/Documents/vaults/agent-vault/skills/tdd/SKILL.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-005-rust-architecture-research.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-013-verify-protocol-plan-example-fix.json"
+    ],
+    "read_if_needed": [
+      "Cargo.toml",
+      "crates/",
+      "examples/fixtures/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Implement reusable Rust core engine behavior before the server: provider trait, postprocessing, mock provider, pi subprocess provider, prompt rendering, timeout/cancellation, JSON parsing, and repair retry using fake pi tests.",
+  "goals": [
+    "Use the tdd skill: one behavior test at a time, then minimal implementation.",
+    "Implement provider abstraction that accepts protocol requests and returns protocol responses or errors.",
+    "Implement deterministic mock provider for VS Code/Obsidian UI tests.",
+    "Implement postprocessors: strip markdown fences, remove repeated prefix, enforce max chars, reject explanations, normalize newlines.",
+    "Implement pi provider subprocess invocation with --no-tools, --no-session, --no-context-files, --mode json, --thinking minimal.",
+    "Implement deadline timeout and cancellation handling.",
+    "Implement structured JSON parse and one repair retry for malformed provider output.",
+    "Redact secrets from provider stdout/stderr diagnostics."
+  ],
+  "non_goals": [
+    "Do not implement HTTP endpoints in this task.",
+    "Do not implement editor clients in this task.",
+    "Do not run real pi smoke tests; use fake pi executable tests."
+  ],
+  "safety": [
+    "No autocomplete provider test may permit arbitrary file reads or tools.",
+    "Do not read forbidden paths.",
+    "Use Cargo for dependencies; no system package installs.",
+    "Preserve unrelated worktree changes."
+  ],
+  "success_criteria": [
+    "cargo test passes for core/provider/postprocessor slices.",
+    "Tests prove pi command arguments disable tools/session/context files.",
+    "Tests cover malformed JSON repair retry, overlong output, repeated prefix, explanation rejection, timeout, and cancellation.",
+    "Write a handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-020-core-providers-postprocessing-tdd.json."
+  ],
+  "worker_token_budget": 150000
+}

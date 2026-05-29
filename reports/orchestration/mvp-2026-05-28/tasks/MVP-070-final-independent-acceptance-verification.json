@@ -1,0 +1,53 @@
+{
+  "id": "MVP-070",
+  "type": "verify correctness + verify claims + acceptance verification",
+  "priority": 50,
+  "dependencies": [
+    "MVP-060"
+  ],
+  "title": "Final independent verification against MVP acceptance criteria",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-060-docs-tdd-handoff.json"
+    ],
+    "read_if_needed": [
+      "reports/orchestration/mvp-2026-05-28/handoffs/",
+      "Cargo.toml",
+      "crates/",
+      "clients/",
+      "examples/fixtures/",
+      "README.md",
+      "docs/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Last verification task. Determine whether the objective is actually achieved.",
+  "goals": [
+    "Run the full test suite and relevant static checks.",
+    "Check each MVP acceptance criterion from the plan and mark pass/fail/partial with evidence.",
+    "Check quality gates from the plan.",
+    "Verify no client imports provider-specific code.",
+    "Verify provider switching from mock to pi requires no client changes.",
+    "Verify docs accurately describe limitations and smoke results."
+  ],
+  "non_goals": [
+    "Do not make implementation changes unless they are tiny documentation corrections; spawn fix tasks for real defects."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes."
+  ],
+  "success_criteria": [
+    "Write final verification report to reports/orchestration/mvp-2026-05-28/handoffs/MVP-070-final-independent-acceptance-verification.json.",
+    "If objective is not achieved, list concrete blocker/fix tasks.",
+    "If objective is achieved, state that the MVP is working and cite commands/evidence."
+  ],
+  "worker_token_budget": 150000
+}

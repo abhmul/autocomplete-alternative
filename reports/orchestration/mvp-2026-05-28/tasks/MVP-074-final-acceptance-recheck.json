@@ -1,0 +1,55 @@
+{
+  "id": "MVP-074",
+  "type": "verify correctness + acceptance verification",
+  "priority": 46,
+  "dependencies": [
+    "MVP-073",
+    "MVP-077"
+  ],
+  "title": "Final acceptance recheck after blocker tasks",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-070-final-independent-acceptance-verification.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-071-real-editor-host-smoke.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-073-verify-strict-clippy-fix.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-076-verify-obsidian-plugin-smoke.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-077-fix-obsidian-fetch-binding.json"
+    ],
+    "read_if_needed": [
+      "README.md",
+      "docs/",
+      "crates/",
+      "clients/",
+      "reports/orchestration/mvp-2026-05-28/handoffs/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Re-run the final acceptance decision after the two MVP-070 blocker tasks have completed.",
+  "goals": [
+    "Run the full static/test suite including cargo fmt, cargo clippy -D warnings, cargo test, and npm test --prefix clients.",
+    "Evaluate all MVP acceptance criteria again, with explicit pass/fail/partial evidence.",
+    "Do not claim GUI editor acceptance unless MVP-071 provides real editor evidence.",
+    "If a blocker remains due unavailable GUI tooling, document that the broker/source MVP works but end-to-end GUI acceptance requires manual user action."
+  ],
+  "non_goals": [
+    "Do not implement fixes except tiny report corrections.",
+    "Do not hide limitations."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes."
+  ],
+  "success_criteria": [
+    "Write final recheck report to reports/orchestration/mvp-2026-05-28/handoffs/MVP-074-final-acceptance-recheck.json.",
+    "If fully accepted, state the MVP is working and cite evidence.",
+    "If not fully accepted, list remaining blockers and exact user/manual steps if needed."
+  ],
+  "worker_token_budget": 150000
+}

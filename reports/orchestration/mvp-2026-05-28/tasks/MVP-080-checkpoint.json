@@ -1,0 +1,47 @@
+{
+  "id": "MVP-080",
+  "type": "maintenance + checkpoint",
+  "priority": 45,
+  "dependencies": [
+    "MVP-074"
+  ],
+  "title": "Run checkpoint skill for coherent completed MVP slice",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "/home/abhmul/Documents/vaults/agent-vault/skills/checkpoint/SKILL.md",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-074-final-acceptance-recheck.json"
+    ],
+    "read_if_needed": [
+      "daily-notes/2026-05-28.md",
+      "git status output"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Checkpoint the completed coherent MVP slice as required by project instructions.",
+  "goals": [
+    "Use the checkpoint skill.",
+    "Update today's daily note with concise work performed and verification state.",
+    "Commit only the coherent current-task slice if safe, without reverting unrelated user changes.",
+    "If committing is unsafe due unrelated changes, document exact reason and leave handoff."
+  ],
+  "non_goals": [
+    "Do not modify implementation except checkpoint metadata/daily note.",
+    "Do not revert unrelated deletions or untracked files."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Do not run destructive git commands.",
+    "Do not commit unrelated user changes."
+  ],
+  "success_criteria": [
+    "Write checkpoint handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-080-checkpoint.json.",
+    "Daily note and commit state are clear."
+  ],
+  "worker_token_budget": 150000
+}

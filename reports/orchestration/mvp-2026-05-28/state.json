@@ -188,7 +188,7 @@
     },
     {
       "id": "MVP-074",
-      "status": "pending",
+      "status": "completed",
       "priority": 44,
       "dependencies": [
         "MVP-073",
@@ -234,7 +234,7 @@
     },
     {
       "id": "MVP-080",
-      "status": "pending",
+      "status": "completed",
       "priority": 43,
       "dependencies": [
         "MVP-074"
@@ -253,7 +253,7 @@
       "Obsidian real GUI mock acceptance after fetch-binding fix: plugin load, /v1/autocomplete POST, visible ghost text, and Tab note.md change verified in MVP-078"
     ],
     "untrusted": [
-      "core engine/provider/postprocessor/server/client implementations not yet built"
+      "No MVP acceptance blockers remain; see MVP-074 for non-blocking latency, scope, and packaging limitations."
     ]
   },
   "blockers": [],
@@ -460,6 +460,24 @@
       "status": "completed",
       "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-078-verify-obsidian-fetch-binding.json",
       "last_watch": "worker finished exit 0; independent verification passed; Obsidian GUI mock acceptance trusted and MVP-076-B001 cleared"
+    },
+    {
+      "task_id": "MVP-074",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-020006-650112-19291",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-074-final-acceptance-recheck.json",
+      "commit": "a25eb42 Record MVP final acceptance recheck",
+      "last_watch": "worker finished exit 0; final acceptance fully_accepted_with_limitations; fresh static/test validation passed"
+    },
+    {
+      "task_id": "MVP-080",
+      "runner": "pi-worker-watch.sh",
+      "run_dir": ".pi-workers/pi-worker-20260529-020438-655910-27671",
+      "status": "completed",
+      "handoff": "reports/orchestration/mvp-2026-05-28/handoffs/MVP-080-checkpoint.json",
+      "commit": "649039b Checkpoint accepted MVP slice",
+      "last_watch": "worker finished exit 0; checkpoint artifacts committed and unrelated/pre-existing dirty state left untouched"
     }
   ],
   "environment": {
@@ -475,5 +493,5 @@
       "reason": "Stopped by orchestrator after user added Rust implementation constraint before the worker completed."
     }
   ],
-  "last_updated": "2026-05-29T01:56:09-05:00"
+  "last_updated": "2026-05-29T02:09:01-05:00"
 }

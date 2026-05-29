@@ -1,0 +1,56 @@
+{
+  "id": "MVP-050",
+  "type": "verify implementation + runtime smoke test + measurement",
+  "priority": 60,
+  "dependencies": [
+    "MVP-021",
+    "MVP-031",
+    "MVP-041"
+  ],
+  "title": "Runtime smoke test broker with mock and pi providers and record latency/failure notes",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-021-verify-core-providers-postprocessing.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-031-verify-server-addons.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-041-verify-editor-clients.json"
+    ],
+    "read_if_needed": [
+      "Cargo.toml",
+      "crates/",
+      "examples/fixtures/",
+      "clients/",
+      "README.md"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Verify runnable MVP behavior from the outside. Use mock provider first, then a bounded real pi provider smoke if pi is available and responsive.",
+  "goals": [
+    "Build and test the workspace.",
+    "Run the Rust broker with mock provider and submit simple TypeScript and Markdown autocomplete requests.",
+    "Run the Rust broker with pi provider using strict timeout if practical; record whether pi returns at least one code and one markdown suggestion.",
+    "Record median and p95 latency for bounded repeated requests where feasible.",
+    "Document failure-mode notes without overstating quality."
+  ],
+  "non_goals": [
+    "Do not require GUI editor automation if host environments are unavailable.",
+    "Do not run unbounded pi calls."
+  ],
+  "safety": [
+    "Use strict deadlines for real pi calls.",
+    "Do not read forbidden paths.",
+    "Do not send sensitive file content to pi."
+  ],
+  "success_criteria": [
+    "Write smoke results to reports/orchestration/mvp-2026-05-28/handoffs/MVP-050-runtime-smoke-and-measurement.json.",
+    "If real pi smoke cannot complete, include exact command, timeout, and observed failure.",
+    "If acceptance criteria are blocked, spawn concrete fix tasks."
+  ],
+  "worker_token_budget": 150000
+}

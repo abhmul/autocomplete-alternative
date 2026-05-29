@@ -1,0 +1,46 @@
+{
+  "id": "MVP-073",
+  "type": "verify implementation + verify tests",
+  "priority": 47,
+  "dependencies": [
+    "MVP-072"
+  ],
+  "title": "Independently verify strict clippy fix",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-072-fix-strict-clippy.json",
+      "Cargo.toml"
+    ],
+    "read_if_needed": [
+      "crates/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Independent verification only. Confirm strict clippy, formatting, and tests pass after MVP-072.",
+  "goals": [
+    "Run cargo fmt --all --check.",
+    "Run cargo clippy --all-targets -- -D warnings.",
+    "Run cargo test.",
+    "Inspect the changed files to confirm the fix is limited to clippy cleanup and did not change behavior."
+  ],
+  "non_goals": [
+    "Do not implement features.",
+    "Do not run real editor smoke."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes."
+  ],
+  "success_criteria": [
+    "Write verification result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-073-verify-strict-clippy-fix.json.",
+    "If verification fails, revive MVP-072 or spawn a focused fix task.",
+    "If verification passes, mark strict static checks trusted for final acceptance."
+  ],
+  "worker_token_budget": 150000
+}

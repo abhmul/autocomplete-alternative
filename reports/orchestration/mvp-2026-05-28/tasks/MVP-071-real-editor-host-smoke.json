@@ -1,0 +1,55 @@
+{
+  "id": "MVP-071",
+  "type": "verification + runtime smoke test",
+  "priority": 49,
+  "dependencies": [
+    "MVP-070"
+  ],
+  "title": "Run real editor-host acceptance smoke for VS Code and Obsidian",
+  "spawned_by": "MVP-070",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-070-final-independent-acceptance-verification.json",
+      "docs/client-setup.md",
+      "README.md"
+    ],
+    "read_if_needed": [
+      "clients/",
+      "crates/",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-041-verify-editor-clients.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-050-runtime-smoke-and-measurement.json"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Attempt real VS Code Extension Development Host and disposable Obsidian vault/plugin smoke. Verify visible ghost text and Tab acceptance with mock provider first, then one bounded pi request per editor if practical. If GUI tooling is unavailable, document exact missing commands/environment and precise manual steps.",
+  "goals": [
+    "Run existing cargo/npm tests first as a sanity check.",
+    "Start the broker with mock provider and verify VS Code client can render inline ghost text and accept with Tab in an actual Extension Development Host if available.",
+    "Start the broker with mock provider and verify Obsidian client can render ghost text and accept with Tab in a disposable vault if available.",
+    "If real editor smoke succeeds with mock provider, attempt one bounded pi request per editor only if safe and practical.",
+    "Record exact commands, setup paths, screenshots/logs if available, and pass/fail/blocked status for each editor."
+  ],
+  "non_goals": [
+    "Do not publish marketplace packages.",
+    "Do not require sudo or system package installation.",
+    "Do not send repository or sensitive file content to pi; use synthetic disposable documents only."
+  ],
+  "safety": [
+    "Use disposable files/vaults only.",
+    "Use strict timeouts for real pi calls.",
+    "Do not read forbidden paths.",
+    "Preserve unrelated worktree changes."
+  ],
+  "success_criteria": [
+    "Write smoke result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-071-real-editor-host-smoke.json.",
+    "If both editor GUI smokes pass, provide evidence sufficient for final acceptance.",
+    "If either editor GUI smoke is blocked by missing GUI tooling or manual-only host setup, include exact blocker and human steps needed; do not claim acceptance for that criterion."
+  ],
+  "worker_token_budget": 150000
+}

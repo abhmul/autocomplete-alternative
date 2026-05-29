@@ -1,0 +1,49 @@
+{
+  "id": "MVP-021",
+  "type": "verify implementation + verify tests + verify security boundaries",
+  "priority": 84,
+  "dependencies": [
+    "MVP-020"
+  ],
+  "title": "Independently verify Rust core, providers, postprocessors, timeout, cancellation, and pi safety",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-020-core-providers-postprocessing-tdd.json",
+      "Cargo.toml"
+    ],
+    "read_if_needed": [
+      "crates/",
+      "examples/fixtures/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Independent verification only. Focus on behavior, security boundaries, cancellation, and test adequacy.",
+  "goals": [
+    "Run relevant cargo tests.",
+    "Inspect fake-pi tests and confirm command arguments disable tools/session/context files.",
+    "Verify provider outputs cannot bypass postprocessing.",
+    "Verify timeout/cancellation behavior is tested through public APIs.",
+    "Check for accidental arbitrary shell/file access outside intended pi subprocess execution."
+  ],
+  "non_goals": [
+    "Do not add features.",
+    "Do not run real pi unless needed for a tiny command-inspection check."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes."
+  ],
+  "success_criteria": [
+    "Write verification result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-021-verify-core-providers-postprocessing.json.",
+    "If verification fails, include concrete issues and revive MVP-020 or spawn a fix task.",
+    "If verification passes, mark core/provider/postprocessing artifacts as trusted in the handoff."
+  ],
+  "worker_token_budget": 150000
+}

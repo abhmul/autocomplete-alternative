@@ -1,0 +1,39 @@
+{
+  "task_id": "MVP-000",
+  "status": "completed_by_orchestrator_after_worker_hang",
+  "summary": "Initialized orchestration state and replaced the original plan's TypeScript package assumptions with a Rust workspace architecture. VS Code and Obsidian clients are constrained to host-required TypeScript/JavaScript glue only; reusable protocol/client logic and all broker/provider/core logic must be Rust.",
+  "worker_runs": [
+    {
+      "run_dir": ".pi-workers/pi-worker-20260528-221253-336299-29709",
+      "status": "interrupted",
+      "reason": "User added Rust implementation constraint after dispatch."
+    },
+    {
+      "run_dir": ".pi-workers/pi-worker-20260528-221455-338638-5278",
+      "status": "interrupted",
+      "reason": "Worker stayed silent with a live pi process for several minutes; orchestrator proceeded with queue management."
+    }
+  ],
+  "spawned_tasks": [
+    "MVP-005",
+    "MVP-010",
+    "MVP-011",
+    "MVP-020",
+    "MVP-021",
+    "MVP-030",
+    "MVP-031",
+    "MVP-040",
+    "MVP-041",
+    "MVP-050",
+    "MVP-051",
+    "MVP-060",
+    "MVP-070",
+    "MVP-080"
+  ],
+  "blockers": [],
+  "notes": [
+    "Implementation workers must use the tdd skill.",
+    "Verifier workers must be independent from implementers and must not trust implementer claims.",
+    "Rust crates may be added through Cargo when justified."
+  ]
+}

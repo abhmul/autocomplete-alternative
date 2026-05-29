@@ -1,0 +1,51 @@
+{
+  "id": "MVP-031",
+  "type": "verify implementation + verify tests + verify simplicity/low complexity",
+  "priority": 79,
+  "dependencies": [
+    "MVP-030"
+  ],
+  "title": "Independently verify Rust broker server, config, cancellation, and addon boundaries",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-030-server-addons-tdd.json",
+      "Cargo.toml"
+    ],
+    "read_if_needed": [
+      "crates/",
+      "examples/fixtures/",
+      "README.md",
+      "docs/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Independent verification only. Verify endpoint behavior, config semantics, provider boundary, addon boundary, and test quality.",
+  "goals": [
+    "Run cargo test.",
+    "Run the broker locally with mock provider if practical and hit /health and /v1/autocomplete.",
+    "Confirm provider switching is config-only and clients/protocol do not import provider-pi.",
+    "Confirm all provider outputs pass postprocessing before response.",
+    "Assess complexity and flag avoidable abstraction or missing deep-module boundaries."
+  ],
+  "non_goals": [
+    "Do not add features.",
+    "Do not rewrite architecture unless severe issues are found."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated worktree changes."
+  ],
+  "success_criteria": [
+    "Write verification result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-031-verify-server-addons.json.",
+    "If verification fails, include concrete issues and revive MVP-030 or spawn a fix task.",
+    "If verification passes, mark broker/server/addon artifacts as trusted in the handoff."
+  ],
+  "worker_token_budget": 150000
+}

@@ -1,0 +1,63 @@
+{
+  "id": "MVP-077",
+  "type": "implement + tests + runtime smoke",
+  "priority": 44.5,
+  "dependencies": [
+    "MVP-076"
+  ],
+  "title": "Fix Obsidian broker fetch binding and rerun GUI smoke",
+  "spawned_by": "MVP-076",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      ".agents/skills/tdd/SKILL.md",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-076-verify-obsidian-plugin-smoke.json",
+      "clients/protocol/src/client.js",
+      "clients/protocol/test/client.test.js",
+      "clients/obsidian/scripts/build-artifact.js",
+      "clients/obsidian/main.js",
+      "docs/client-setup.md"
+    ],
+    "read_if_needed": [
+      "clients/obsidian/",
+      "clients/package.json",
+      "crates/",
+      "README.md"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Fix the Obsidian/Electron runtime transport failure where BrokerClient stores an unbound Window.fetch and then calls it as an instance method, causing `Illegal invocation` before any broker request reaches the mock broker.",
+  "goals": [
+    "Use TDD: first add a protocol-client regression test that fails when the default global fetch requires the global/window receiver, then implement the smallest fix.",
+    "Bind or wrap the default global fetch so BrokerClient works in browser/Electron hosts while preserving custom fetchImpl injection for tests.",
+    "Regenerate clients/obsidian/main.js and keep the artifact freshness check passing.",
+    "Run npm test --prefix clients and relevant syntax/build checks.",
+    "Rerun the disposable-vault Obsidian GUI mock smoke; verify a broker request is sent, ghost text appears, Tab accepts it, and note.md changes by the mock insertion.",
+    "If the mock smoke passes and it is safe, run one bounded pi-backed Obsidian Markdown request with synthetic note content only."
+  ],
+  "non_goals": [
+    "Do not change provider logic or broker protocol semantics.",
+    "Do not publish or install globally.",
+    "Do not send repository content to pi."
+  ],
+  "safety": [
+    "Use disposable vaults and synthetic notes.",
+    "Use strict timeouts for real pi.",
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes."
+  ],
+  "success_criteria": [
+    "A regression test fails before the fix and passes after the fix for global fetch binding behavior.",
+    "npm test --prefix clients passes.",
+    "node clients/obsidian/scripts/build-artifact.js --check and node --check clients/obsidian/main.js pass after regenerating the artifact.",
+    "Real Obsidian disposable-vault mock GUI smoke passes: no failed-load toast, broker POST observed, visible ghost text screenshot captured, Tab acceptance changes note.md.",
+    "If mock passes, bounded pi-backed Obsidian Markdown smoke is attempted or explicitly skipped with a safety reason.",
+    "Write handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-077-fix-obsidian-fetch-binding.json."
+  ],
+  "worker_token_budget": 150000
+}

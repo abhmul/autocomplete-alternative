@@ -1,0 +1,56 @@
+{
+  "id": "MVP-040",
+  "type": "implement + write tests",
+  "priority": 70,
+  "dependencies": [
+    "MVP-031"
+  ],
+  "title": "TDD thin VS Code and Obsidian clients against the Rust broker protocol",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "/home/abhmul/Documents/vaults/agent-vault/skills/tdd/SKILL.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-031-verify-server-addons.json"
+    ],
+    "read_if_needed": [
+      "Cargo.toml",
+      "crates/",
+      "examples/fixtures/",
+      "clients/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Implement minimal thin host clients. Core implementation remains Rust; TypeScript/JavaScript is allowed only for VS Code and Obsidian extension host glue where those platforms require it.",
+  "goals": [
+    "Use the tdd skill with vertical slices where tests are practical.",
+    "Create clients/vscode with InlineCompletionItemProvider host glue that collects prefix/suffix/cursor metadata, debounces requests, cancels stale requests, calls the broker, renders ghost text, and relies on Tab acceptance.",
+    "Create clients/obsidian with CodeMirror view plugin host glue that collects note context, debounces requests, cancels stale requests, calls the broker, renders ghost text, and accepts with Tab.",
+    "Do not import or reference provider-pi internals from either client.",
+    "Share protocol shape through generated schema/fixtures or a tiny generated client artifact from Rust where feasible; avoid duplicating provider logic.",
+    "Add tests or static checks that verify request construction and stale-request cancellation behavior for the host glue."
+  ],
+  "non_goals": [
+    "Do not publish marketplace packages.",
+    "Do not implement rich settings UI beyond minimal config.",
+    "Do not move provider logic into clients."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Do not add non-Rust core logic beyond unavoidable editor host glue.",
+    "Use package manager dependencies only if needed for client build/test scaffolding."
+  ],
+  "success_criteria": [
+    "Relevant client tests/static checks pass.",
+    "VS Code and Obsidian clients call the same /v1/autocomplete protocol.",
+    "Clients include settings for broker URL, debounce, and max context.",
+    "Clients cancel stale requests on cursor/document changes.",
+    "Write a handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-040-editor-clients-tdd.json."
+  ],
+  "worker_token_budget": 150000
+}

@@ -1,0 +1,58 @@
+{
+  "id": "MVP-030",
+  "type": "implement + write tests",
+  "priority": 80,
+  "dependencies": [
+    "MVP-021"
+  ],
+  "title": "TDD Rust broker server, endpoints, config, cancellation lifecycle, and minimal addon registries",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "/home/abhmul/Documents/vaults/agent-vault/skills/tdd/SKILL.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-005-rust-architecture-research.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-021-verify-core-providers-postprocessing.json"
+    ],
+    "read_if_needed": [
+      "Cargo.toml",
+      "crates/",
+      "examples/fixtures/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Implement the standalone Rust local broker server and minimal addon system.",
+  "goals": [
+    "Use the tdd skill with vertical slices.",
+    "Expose GET /health, POST /v1/autocomplete, POST /v1/cancel/:request_id, and POST /v1/reload.",
+    "Validate protocol messages and reject invalid requests.",
+    "Route requests to mock or pi provider by config only; clients must not need provider changes.",
+    "Apply context/prompt/postprocessor registries inside the broker.",
+    "Add config loading with privacy exclusions, remote context byte limit, provider selection, trigger defaults, and language-specific code/markdown prompt selection.",
+    "Represent debounce/cancellation semantics in request lifecycle and tests.",
+    "Provide a runnable broker binary."
+  ],
+  "non_goals": [
+    "Do not implement editor UI.",
+    "Do not add workspace indexing.",
+    "Do not create cloud auth or remote broker support."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "No autocomplete request may implicitly read arbitrary files.",
+    "Sensitive path exclusions must be enforced before remote/pi calls.",
+    "Use Cargo dependencies only."
+  ],
+  "success_criteria": [
+    "cargo test passes for server/addon/config slices.",
+    "HTTP tests cover health, valid autocomplete, invalid autocomplete, cancel, reload, provider selection, and postprocessing path.",
+    "Mock provider can serve VS Code and Obsidian-style requests.",
+    "Write a handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-030-server-addons-tdd.json."
+  ],
+  "worker_token_budget": 150000
+}

@@ -1,0 +1,58 @@
+{
+  "id": "MVP-075",
+  "type": "implement + write tests + documentation",
+  "priority": 46,
+  "dependencies": [
+    "MVP-071"
+  ],
+  "title": "Fix Obsidian plugin artifact loading for real runtime",
+  "spawned_by": "MVP-071",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "/home/abhmul/Documents/vaults/agent-vault/skills/tdd/SKILL.md",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-071-real-editor-host-smoke.json",
+      "clients/obsidian/manifest.json",
+      "clients/obsidian/src/main.js",
+      "clients/obsidian/src/plugin-core.js",
+      "docs/client-setup.md"
+    ],
+    "read_if_needed": [
+      "clients/",
+      "clients/package.json",
+      "README.md",
+      "docs/limitations-and-next-steps.md"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Make clients/obsidian usable as a real Obsidian plugin artifact in a disposable vault. Address the missing root main.js and module-resolution issue found by MVP-071. Keep provider logic out of the client.",
+  "goals": [
+    "Use the tdd skill discipline: reproduce/encode the packaging/load expectation, implement the smallest artifact/build fix, then rerun tests.",
+    "Provide a root-level Obsidian plugin artifact or build script that gives Obsidian root manifest.json, main.js, and styles.css.",
+    "Ensure Obsidian runtime imports for obsidian and CodeMirror resolve in the actual plugin host, while local Node tests can still cover pure logic.",
+    "Update docs/client-setup.md and clients/README.md so the documented disposable-vault setup matches the real artifact.",
+    "Add or update tests/static checks to prevent regression to a missing root main.js artifact."
+  ],
+  "non_goals": [
+    "Do not implement provider logic in the Obsidian client.",
+    "Do not change broker protocol or provider behavior.",
+    "Do not run real pi unless needed by a verifier; this task should focus on artifact/loadability."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Use disposable temp paths for any local packaging checks.",
+    "Preserve unrelated changes."
+  ],
+  "success_criteria": [
+    "npm test --prefix clients passes.",
+    "node --check or an equivalent syntax/build check passes for the produced Obsidian main artifact.",
+    "A disposable-vault artifact layout check confirms Obsidian sees root manifest.json/main.js/styles.css.",
+    "Write handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-075-fix-obsidian-plugin-artifact.json."
+  ],
+  "worker_token_budget": 150000
+}

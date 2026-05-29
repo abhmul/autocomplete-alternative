@@ -1,0 +1,55 @@
+{
+  "id": "MVP-000",
+  "type": "exploration + verify assumptions + design",
+  "priority": 100,
+  "dependencies": [],
+  "title": "Initialize orchestration state and implementation queue for autocomplete MVP",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/state.json"
+    ],
+    "read_if_needed": [
+      "reports/autocomplete-subscription-options-2026-05-28.json",
+      "CLAUDE.md",
+      "daily-notes/2026-05-28.md"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Extract the objective, deliverables, constraints, forbidden reads, acceptance criteria, and quality gates from the project instructions and MVP plan. Design the next task queue needed to complete the MVP with delegated workers.",
+  "goals": [
+    "Verify the plan file is structurally readable and list any ambiguity or invalid assumption that affects implementation.",
+    "Inspect only the safe repository surface needed to understand whether source scaffolding already exists.",
+    "Update reports/orchestration/mvp-2026-05-28/state.json with a rigorous queue of follow-up tasks.",
+    "Use varied task types where useful: research, exploration, design, implement, write tests, verify correctness, verify implementation, verify simplicity, documentation, maintenance/checkpoint.",
+    "Ensure every implementation task says the worker must use the tdd skill and must create/update tests before implementation in vertical slices.",
+    "Ensure every implementation task has a dependent independent verifier task by a different worker.",
+    "Set Rust as the hard implementation language for the broker, protocol, providers, and reusable client/protocol libraries where applicable.",
+    "Allow workers to add Rust crates and development dependencies through Cargo when justified."
+  ],
+  "non_goals": [
+    "Do not implement source code in this task.",
+    "Do not edit the MVP plan file.",
+    "Do not revive or revert unrelated deleted files already shown in git status."
+  ],
+  "safety": [
+    "Do not read tmp/, archive/, prompt-buffer.md, or unrelated paths outside this repository.",
+    "Do not edit files tagged human-written.",
+    "Preserve unrelated worktree changes.",
+    "No destructive git commands.",
+    "Do not use TypeScript as the primary implementation language; TypeScript may be used only where required by VS Code or Obsidian plugin host APIs, with core autocomplete logic and protocol/client reusable logic kept in Rust where feasible."
+  ],
+  "success_criteria": [
+    "State file has complete constraints, queue, artifact trust, blockers, and acceptance criteria.",
+    "The queue can drive implementation without inherited context.",
+    "Verifier tasks are independent and explicitly do not trust implementer claims.",
+    "A handoff is written to reports/orchestration/mvp-2026-05-28/handoffs/MVP-000-init-state-and-queue.json with completed status, spawned tasks, and any blockers."
+  ],
+  "worker_token_budget": 150000
+}

@@ -1,0 +1,50 @@
+{
+  "id": "MVP-060",
+  "type": "documentation + content complexity reduction",
+  "priority": 55,
+  "dependencies": [
+    "MVP-050"
+  ],
+  "title": "Prepare MVP README, protocol/client setup docs, limitations, and next-step optimization plan",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-050-runtime-smoke-and-measurement.json"
+    ],
+    "read_if_needed": [
+      "README.md",
+      "docs/",
+      "crates/",
+      "clients/",
+      "examples/fixtures/"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Write concise MVP handoff documentation for developers.",
+  "goals": [
+    "Document setup, build, test, broker run commands, mock/pi provider config, protocol, and client setup.",
+    "Document known limitations around pi latency, quality, Obsidian/VS Code host testing, and future provider replacements.",
+    "Document next-step optimization plan.",
+    "Keep docs concise and operational; avoid tutorial framing."
+  ],
+  "non_goals": [
+    "Do not add features.",
+    "Do not hide failed smoke results."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Do not edit files tagged human-written."
+  ],
+  "success_criteria": [
+    "README lets a new developer start the broker and connect at least one client.",
+    "Protocol docs and client setup docs are discoverable.",
+    "Write handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-060-docs-tdd-handoff.json."
+  ],
+  "worker_token_budget": 150000
+}

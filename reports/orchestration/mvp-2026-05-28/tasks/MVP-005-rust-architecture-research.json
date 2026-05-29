@@ -1,0 +1,49 @@
+{
+  "id": "MVP-005",
+  "type": "research + design + verify assumptions",
+  "priority": 95,
+  "dependencies": [],
+  "title": "Select Rust MVP architecture and dependency stack",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/state.json"
+    ],
+    "read_if_needed": [
+      "reports/autocomplete-subscription-options-2026-05-28.json",
+      "Cargo.toml",
+      "crates/*/Cargo.toml",
+      "clients/**/package.json"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Decide the Rust workspace crate layout, public interfaces, dependency stack, and test strategy for the MVP. This is not an implementation task.",
+  "goals": [
+    "Map the plan's packages to Rust crates and minimal host glue for VS Code and Obsidian.",
+    "Choose pragmatic Rust crates for HTTP server, JSON schema generation, validation, subprocess management, config, cancellation, and tests.",
+    "State assumptions and uncertainties explicitly, especially around VS Code/Obsidian TypeScript host requirements and pi CLI behavior.",
+    "Produce a concise implementation order with TDD slices and verifier expectations."
+  ],
+  "non_goals": [
+    "Do not edit source code.",
+    "Do not install dependencies.",
+    "Do not run long external smoke tests."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated worktree changes.",
+    "Do not modify files tagged human-written."
+  ],
+  "success_criteria": [
+    "Write a handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-005-rust-architecture-research.json.",
+    "The handoff includes crate layout, dependency choices, test strategy, implementation order, and any blockers.",
+    "Claims about Rust crate APIs or VS Code/Obsidian constraints are either cited from local docs/config or marked as assumptions."
+  ],
+  "worker_token_budget": 150000
+}

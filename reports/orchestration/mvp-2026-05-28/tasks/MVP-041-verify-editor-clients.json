@@ -1,0 +1,51 @@
+{
+  "id": "MVP-041",
+  "type": "verify implementation + verify tests + criticize",
+  "priority": 69,
+  "dependencies": [
+    "MVP-040"
+  ],
+  "title": "Independently verify VS Code and Obsidian thin clients",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-040-editor-clients-tdd.json"
+    ],
+    "read_if_needed": [
+      "clients/",
+      "crates/",
+      "examples/fixtures/",
+      "package.json",
+      "Cargo.toml"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Independent verification of editor host glue, thin-client boundaries, tests, and protocol consistency.",
+  "goals": [
+    "Run relevant client tests/static checks.",
+    "Inspect clients for provider-pi imports or provider-specific logic.",
+    "Verify both clients construct the same protocol shape and call broker only.",
+    "Verify debounce and stale cancellation behavior.",
+    "Criticize usability gaps for MVP acceptance and distinguish blockers from limitations."
+  ],
+  "non_goals": [
+    "Do not add features except tiny verification fixups.",
+    "Do not run full GUI editor smoke tests unless already configured and cheap."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated worktree changes."
+  ],
+  "success_criteria": [
+    "Write verification result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-041-verify-editor-clients.json.",
+    "If verification fails, include concrete issues and revive MVP-040 or spawn a fix task.",
+    "If verification passes, mark client artifacts as trusted in the handoff."
+  ],
+  "worker_token_budget": 150000
+}

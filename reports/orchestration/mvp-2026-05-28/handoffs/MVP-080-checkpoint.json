@@ -1,6 +1,6 @@
 {
   "task_id": "MVP-080",
-  "status": "checkpoint_validated_for_commit",
+  "status": "completed",
   "created_on": "2026-05-29",
   "scope": "Run the checkpoint skill for the completed MVP acceptance slice without modifying implementation files or staging unrelated worktree changes.",
   "inputs_reviewed": [
@@ -54,8 +54,9 @@
     }
   ],
   "commit_result": {
-    "status": "reported_by_checkpoint_runner",
-    "message": "The commit cannot record its own hash inside this committed handoff; the checkpoint runner reports the final hash or no-commit reason after the commit attempt.",
+    "status": "committed",
+    "commit": "649039b Checkpoint accepted MVP slice",
+    "message": "Checkpoint runner committed the daily-note and MVP-080 handoff artifacts only; final orchestrator state metadata is committed separately.",
     "staged_files": [
       "daily-notes/2026-05-29.md",
       "reports/orchestration/mvp-2026-05-28/handoffs/MVP-080-checkpoint.json"

@@ -1,0 +1,51 @@
+{
+  "id": "MVP-072",
+  "type": "maintenance + implement + write tests",
+  "priority": 48,
+  "dependencies": [
+    "MVP-070"
+  ],
+  "title": "Make cargo clippy --all-targets -- -D warnings pass",
+  "spawned_by": "MVP-070",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "/home/abhmul/Documents/vaults/agent-vault/skills/tdd/SKILL.md",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-070-final-independent-acceptance-verification.json",
+      "Cargo.toml"
+    ],
+    "read_if_needed": [
+      "crates/autocomplete-addons/src/lib.rs",
+      "crates/autocomplete-provider-pi/src/parser.rs",
+      "crates/autocomplete-provider-pi/src/provider.rs"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Resolve only the strict clippy failures reported by MVP-070. This is a narrow code-maintenance task.",
+  "goals": [
+    "Use the tdd skill discipline for code changes: reproduce the failing check first, make the smallest fixes, then rerun checks.",
+    "Replace default() calls for unit structs with direct unit struct construction where clippy reported default-constructed unit struct lints.",
+    "Remove the clone-on-copy SecretRedactor clone reported by clippy.",
+    "Run cargo fmt --all --check, cargo clippy --all-targets -- -D warnings, and cargo test."
+  ],
+  "non_goals": [
+    "Do not change behavior, protocol, provider logic, server endpoints, clients, or docs unless required by the lint fix.",
+    "Do not address real editor smoke in this task."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes.",
+    "No destructive git commands."
+  ],
+  "success_criteria": [
+    "cargo clippy --all-targets -- -D warnings passes.",
+    "cargo fmt --all --check and cargo test pass.",
+    "Write handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-072-fix-strict-clippy.json."
+  ],
+  "worker_token_budget": 150000
+}

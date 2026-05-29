@@ -1,0 +1,52 @@
+{
+  "id": "MVP-013",
+  "type": "verify implementation + verify tests + verify correctness",
+  "priority": 87,
+  "dependencies": [
+    "MVP-012"
+  ],
+  "title": "Independently recheck protocol plan-example fix",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-011-verify-protocol-core.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-012-fix-protocol-plan-examples.json",
+      "Cargo.toml"
+    ],
+    "read_if_needed": [
+      "crates/autocomplete-protocol/",
+      "examples/fixtures/",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Independent verification only. Confirm MVP-012 fixed the exact blocking MVP-011 finding and did not weaken the protocol contract.",
+  "goals": [
+    "Run cargo fmt --all --check and cargo test.",
+    "Verify the exact plan examples deserialize through public AutocompleteRequest/AutocompleteResponse types, validate against generated schemas, and pass semantic Validate.",
+    "Verify regression tests exist so plan examples drifting invalid breaks cargo test.",
+    "Verify protocol_version remains required unless an explicit design change was documented and justified.",
+    "Verify no server/provider/client code was added in the fix task."
+  ],
+  "non_goals": [
+    "Do not implement new source features.",
+    "Do not alter the protocol contract except for tiny test/doc corrections if absolutely necessary."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes.",
+    "No destructive git commands."
+  ],
+  "success_criteria": [
+    "Write verification result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-013-verify-protocol-plan-example-fix.json.",
+    "If verification passes, mark the protocol artifacts as trusted for downstream core/provider work.",
+    "If verification fails, include concrete file/line issues and revive MVP-012 or spawn a new fix task."
+  ],
+  "worker_token_budget": 150000
+}

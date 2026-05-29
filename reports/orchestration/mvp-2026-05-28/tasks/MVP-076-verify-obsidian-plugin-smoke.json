@@ -1,0 +1,56 @@
+{
+  "id": "MVP-076",
+  "type": "verify implementation + runtime smoke test",
+  "priority": 45,
+  "dependencies": [
+    "MVP-075"
+  ],
+  "title": "Independently verify Obsidian plugin artifact and real GUI smoke",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-075-fix-obsidian-plugin-artifact.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-071-real-editor-host-smoke.json",
+      "docs/client-setup.md"
+    ],
+    "read_if_needed": [
+      "clients/obsidian/",
+      "clients/protocol/",
+      "clients/package.json",
+      "crates/",
+      "README.md"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Independent verification of the Obsidian packaging/load fix and real GUI ghost-text/Tab acceptance.",
+  "goals": [
+    "Immediately write an initial in-progress JSON object to reports/orchestration/mvp-2026-05-28/handoffs/MVP-076-verify-obsidian-plugin-smoke.json before running long GUI checks.",
+    "Use explicit shell timeouts for every broker, npm, Obsidian, Playwright, or GUI automation command; do not wait indefinitely.",
+    "Run npm test --prefix clients and relevant syntax/build checks.",
+    "Run a disposable-vault Obsidian GUI smoke with mock provider. Verify the plugin loads without failed-load toast, sends a broker request, displays ghost text, accepts with Tab, and changes the disposable note.",
+    "If mock succeeds and it is safe, run one bounded pi-backed Obsidian Markdown request with synthetic content.",
+    "Record exact commands, temp paths, screenshots/logs if available, and pass/fail status."
+  ],
+  "non_goals": [
+    "Do not publish or install globally.",
+    "Do not send repository content to pi."
+  ],
+  "safety": [
+    "Use disposable vaults and synthetic notes.",
+    "Use strict timeouts for real pi.",
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes."
+  ],
+  "success_criteria": [
+    "Write verification result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-076-verify-obsidian-plugin-smoke.json.",
+    "If Obsidian mock and bounded pi smoke pass, mark Obsidian GUI acceptance trusted.",
+    "If verification fails, include concrete file/line or environment blockers and revive MVP-075 or spawn a focused fix task.",
+    "If the local GUI environment prevents a real Obsidian smoke, record the exact blocker and the best available artifact/runtime evidence rather than hanging."
+  ],
+  "worker_token_budget": 150000
+}

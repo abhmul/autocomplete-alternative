@@ -1,0 +1,53 @@
+{
+  "id": "MVP-010",
+  "type": "implement + write tests",
+  "priority": 90,
+  "dependencies": [
+    "MVP-005"
+  ],
+  "title": "TDD Rust workspace, protocol crate, fixtures, and schema export",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "/home/abhmul/Documents/vaults/agent-vault/skills/tdd/SKILL.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-005-rust-architecture-research.json"
+    ],
+    "read_if_needed": [
+      "reports/autocomplete-subscription-options-2026-05-28.json"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Create the Rust workspace foundation and protocol crate for autocomplete requests/responses.",
+  "goals": [
+    "Use the tdd skill: implement in vertical red-green-refactor slices.",
+    "Create a Cargo workspace with Rust crates under crates/ and example fixtures under examples/fixtures.",
+    "Implement protocol request/response/error/client/document/cursor/context/options types with serde support.",
+    "Implement protocol versioning, validation, JSON Schema export, and fixture validation tests.",
+    "Add a Protocol README describing transport, endpoints, request/response fields, versioning, and error codes.",
+    "Keep primary implementation in Rust."
+  ],
+  "non_goals": [
+    "Do not implement the HTTP server yet.",
+    "Do not implement pi provider yet.",
+    "Do not create VS Code or Obsidian host glue in this task."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Do not edit files tagged human-written.",
+    "Use Cargo for Rust dependencies; do not install system packages.",
+    "Preserve unrelated worktree changes."
+  ],
+  "success_criteria": [
+    "cargo test passes for the protocol crate/workspace slice.",
+    "Fixture examples based on the MVP plan validate successfully.",
+    "JSON Schema can be generated from Rust types.",
+    "Write a handoff to reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json with tests run, files changed, and remaining risks."
+  ],
+  "worker_token_budget": 150000
+}

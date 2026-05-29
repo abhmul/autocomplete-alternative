@@ -1,0 +1,52 @@
+{
+  "id": "MVP-011",
+  "type": "verify implementation + verify tests + verify correctness",
+  "priority": 89,
+  "dependencies": [
+    "MVP-010"
+  ],
+  "title": "Independently verify Rust protocol crate, fixtures, schema, and tests",
+  "relevant_files": {
+    "read_first": [
+      "AGENTS.md",
+      "reports/autocomplete-engine-mvp-plan-2026-05-28.json",
+      "reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json",
+      "Cargo.toml"
+    ],
+    "read_if_needed": [
+      "crates/",
+      "examples/fixtures/",
+      "docs/",
+      "README.md"
+    ],
+    "do_not_read": [
+      "tmp/",
+      "archive/",
+      "prompt-buffer.md",
+      "other directories in ~/dev unless explicitly referenced"
+    ]
+  },
+  "scope": "Independent verification only. Do not trust implementer claims without checking files and running tests.",
+  "goals": [
+    "Run the relevant cargo tests.",
+    "Inspect whether tests verify behavior through public interfaces.",
+    "Confirm examples from the MVP plan validate.",
+    "Confirm JSON Schema/protocol docs include versioning and error codes.",
+    "Check that implementation is Rust and respects boundaries."
+  ],
+  "non_goals": [
+    "Do not add new features.",
+    "Only make small fixups if required to make verification runnable; otherwise report issues for revival."
+  ],
+  "safety": [
+    "Do not read forbidden paths.",
+    "Preserve unrelated changes.",
+    "No destructive git commands."
+  ],
+  "success_criteria": [
+    "Write verification result to reports/orchestration/mvp-2026-05-28/handoffs/MVP-011-verify-protocol-core.json.",
+    "If verification fails, include concrete file/line issues and spawn/revive a fix task.",
+    "If verification passes, mark the protocol artifacts as trusted in the handoff."
+  ],
+  "worker_token_budget": 150000
+}
