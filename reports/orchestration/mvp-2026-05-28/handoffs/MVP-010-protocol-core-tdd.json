@@ -1,0 +1,109 @@
+{
+  "task_id": "MVP-010",
+  "status": "completed",
+  "created_on": "2026-05-28",
+  "scope_completed": [
+    "Created a Rust Cargo workspace with an autocomplete-protocol crate under crates/.",
+    "Added protocol request, response, error, client, document, cursor, context, options, health, cancel, and reload types with serde and schemars support.",
+    "Implemented protocol_version payload versioning, stable snake_case wire enums, serde unknown-field rejection, semantic validation, and configurable validation limits.",
+    "Added JSON Schema generation/export helpers for autocomplete request and response schemas.",
+    "Added workspace-level examples/fixtures for request, ok response, and error response.",
+    "Added fixture, schema, validation, and endpoint wire-name tests.",
+    "Added crates/autocomplete-protocol/README.md documenting transport, endpoints, fields, versioning, schema export, and error codes."
+  ],
+  "tdd_evidence": [
+    {
+      "cycle": 1,
+      "red": "Request fixture test failed because schema, AutocompleteRequest, and Validate did not exist.",
+      "green": "Implemented request-side protocol types, validation, and request schema generation."
+    },
+    {
+      "cycle": 2,
+      "red": "Response fixture tests failed because AutocompleteResponse, ErrorCode, and response schema generation did not exist.",
+      "green": "Implemented tagged response variants, protocol error/code types, metadata, response validation, and response schema generation."
+    },
+    {
+      "cycle": 3,
+      "red": "Validation tests failed because ValidationErrors exposed no public iterator.",
+      "green": "Added public iter() and into_inner() helpers and completed semantic validation assertions."
+    },
+    {
+      "cycle": 4,
+      "red": "Schema export test failed because export_schema_files did not exist.",
+      "green": "Implemented all_schemas() and export_schema_files(output_dir)."
+    },
+    {
+      "cycle": 5,
+      "red": "Endpoint response wire-name test failed because health/cancel/reload response types did not exist.",
+      "green": "Implemented HealthResponse, CancelResponse, ReloadResponse, and associated status/provider enums."
+    }
+  ],
+  "files_changed": [
+    ".gitignore",
+    "Cargo.lock",
+    "Cargo.toml",
+    "crates/autocomplete-protocol/Cargo.toml",
+    "crates/autocomplete-protocol/README.md",
+    "crates/autocomplete-protocol/src/lib.rs",
+    "crates/autocomplete-protocol/src/schema.rs",
+    "crates/autocomplete-protocol/src/types.rs",
+    "crates/autocomplete-protocol/src/validation.rs",
+    "crates/autocomplete-protocol/tests/endpoint_response_types.rs",
+    "crates/autocomplete-protocol/tests/request_fixture.rs",
+    "crates/autocomplete-protocol/tests/response_fixtures.rs",
+    "crates/autocomplete-protocol/tests/schema_export.rs",
+    "crates/autocomplete-protocol/tests/validation.rs",
+    "examples/fixtures/autocomplete-request.v1.json",
+    "examples/fixtures/autocomplete-response-error.v1.json",
+    "examples/fixtures/autocomplete-response-ok.v1.json",
+    "reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json"
+  ],
+  "tests_run": [
+    {
+      "command": "python -m json.tool reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json >/dev/null",
+      "result": "passed"
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed"
+    },
+    {
+      "command": "cargo test",
+      "result": "passed"
+    }
+  ],
+  "public_interfaces": [
+    "PROTOCOL_VERSION",
+    "AutocompleteRequest",
+    "AutocompleteResponse",
+    "ClientInfo",
+    "DocumentInfo",
+    "CursorPosition",
+    "AutocompleteContext",
+    "AutocompleteOptions",
+    "AutocompleteMode",
+    "TriggerKind",
+    "ProtocolError",
+    "ErrorCode",
+    "ResponseMetadata",
+    "HealthResponse",
+    "CancelResponse",
+    "ReloadResponse",
+    "Validate",
+    "ValidationLimits",
+    "schema::autocomplete_request_schema()",
+    "schema::autocomplete_response_schema()",
+    "schema::all_schemas()",
+    "schema::export_schema_files(output_dir)"
+  ],
+  "remaining_risks": [
+    "Cursor plausibility is only partially validated because prefix/suffix may be truncated by clients; future server/client work should decide when offset must match full-document context.",
+    "Only autocomplete request/response schemas are exported by default. Health/cancel/reload types derive JsonSchema but are not yet included in export_schema_files because downstream schema consumers are not defined.",
+    "Response metadata currently requires latency_ms, provider_latency_ms, and postprocessed whenever metadata is present; future provider/server work may need optional provider latency for cache/no-provider paths.",
+    "No HTTP server, provider, postprocessing pipeline, VS Code client, or Obsidian client was implemented in this task by design."
+  ],
+  "worktree_notes": [
+    "Pre-existing unrelated deleted/untracked orchestration files are visible in git status; this task did not modify or restore them.",
+    "target/ is ignored via the new .gitignore after cargo test generated build artifacts."
+  ]
+}

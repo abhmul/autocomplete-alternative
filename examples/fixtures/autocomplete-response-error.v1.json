@@ -1,0 +1,14 @@
+{
+  "protocol_version": 1,
+  "request_id": "018f160e-7152-7b43-9d9a-6083e0bd3cc8",
+  "status": "error",
+  "error": {
+    "code": "provider_timeout",
+    "message": "Autocomplete provider exceeded deadline."
+  },
+  "metadata": {
+    "latency_ms": 2500,
+    "provider_latency_ms": 2500,
+    "postprocessed": false
+  }
+}

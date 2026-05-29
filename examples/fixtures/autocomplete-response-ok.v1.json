@@ -1,0 +1,13 @@
+{
+  "protocol_version": 1,
+  "request_id": "018f160e-7152-7b43-9d9a-6083e0bd3cc8",
+  "status": "ok",
+  "insert_text": "\"Ada\")",
+  "confidence": 0.71,
+  "source": "pi:gpt-5.5",
+  "metadata": {
+    "latency_ms": 1340,
+    "provider_latency_ms": 1210,
+    "postprocessed": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "protocol_version": 1,
+  "request_id": "018f160e-7152-7b43-9d9a-6083e0bd3cc8",
+  "client": {
+    "name": "vscode",
+    "version": "0.1.0"
+  },
+  "document": {
+    "uri": "file:///repo/src/app.ts",
+    "language_id": "typescript",
+    "version": 12
+  },
+  "cursor": {
+    "line": 42,
+    "character": 18,
+    "offset": 1234
+  },
+  "context": {
+    "prefix": "function greet(name: string) {\n  return `Hello, ${name}`;\n}\n\ngreet(",
+    "suffix": ");\n",
+    "selected_text": ""
+  },
+  "options": {
+    "mode": "inline_tab",
+    "max_chars": 180,
+    "deadline_ms": 2500,
+    "trigger": "idle"
+  }
+}
