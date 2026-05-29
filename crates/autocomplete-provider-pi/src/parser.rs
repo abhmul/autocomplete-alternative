@@ -121,7 +121,7 @@ mod tests {
 "#;
 
         assert_eq!(
-            PiEventStreamParser::default()
+            PiEventStreamParser
                 .final_assistant_text(stdout)
                 .expect("assistant text"),
             "second"

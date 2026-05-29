@@ -226,7 +226,7 @@ exit 7
 
 #[test]
 fn secret_redactor_redacts_common_secret_shapes() {
-    let redacted = SecretRedactor::default().redact(
+    let redacted = SecretRedactor.redact(
         "Authorization: Bearer abcdefghijklmnop\napi_key=sk-1234567890abcdef\n/home/me/.config/pi/auth.json",
     );
 

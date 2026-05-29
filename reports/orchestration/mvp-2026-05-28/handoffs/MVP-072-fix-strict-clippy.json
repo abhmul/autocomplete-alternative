@@ -1,0 +1,74 @@
+{
+  "task_id": "MVP-072",
+  "status": "completed",
+  "created_on": "2026-05-29",
+  "scope": "Make cargo clippy --all-targets -- -D warnings pass by applying only strict clippy lint fixes from MVP-070 and the same lint class newly exposed during rerun.",
+  "summary": "Reproduced the strict clippy failure, replaced default() construction of unit structs with direct unit struct values, removed clone() from Copy SecretRedactor, and verified fmt, clippy, and tests pass.",
+  "changes": [
+    {
+      "file": "crates/autocomplete-addons/src/lib.rs",
+      "details": "Construct PostprocessorRegistry directly instead of PostprocessorRegistry::default()."
+    },
+    {
+      "file": "crates/autocomplete-provider-pi/src/parser.rs",
+      "details": "Construct PiEventStreamParser directly in the parser unit test instead of PiEventStreamParser::default()."
+    },
+    {
+      "file": "crates/autocomplete-provider-pi/src/provider.rs",
+      "details": "Construct PiEventStreamParser and SecretRedactor directly, and copy SecretRedactor into ProcessOutput instead of cloning it."
+    },
+    {
+      "file": "crates/autocomplete-provider-pi/tests/pi_provider.rs",
+      "details": "Construct SecretRedactor directly in the redaction test after clippy exposed the same default-constructed unit struct lint on rerun."
+    }
+  ],
+  "commands_run": [
+    {
+      "command": "git status --short",
+      "result": "completed before edits; showed pre-existing unrelated deleted legacy reports/orchestration/* entries and untracked orchestration/archive/worker paths. These were not modified."
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "result": "failed as expected before fixes with default-constructed unit struct lints and clone-on-copy SecretRedactor lint."
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "result": "failed after first fix pass with one remaining default-constructed unit struct lint in crates/autocomplete-provider-pi/tests/pi_provider.rs; fixed it directly."
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed with no output."
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "result": "passed."
+    },
+    {
+      "command": "cargo test",
+      "result": "passed; all workspace unit, integration, and doc tests passed."
+    }
+  ],
+  "success_criteria": [
+    {
+      "criterion": "cargo clippy --all-targets -- -D warnings passes",
+      "result": "passed"
+    },
+    {
+      "criterion": "cargo fmt --all --check passes",
+      "result": "passed"
+    },
+    {
+      "criterion": "cargo test passes",
+      "result": "passed"
+    },
+    {
+      "criterion": "handoff report written",
+      "result": "passed"
+    }
+  ],
+  "safety_notes": [
+    "No behavior, protocol, provider command, server endpoint, client, or docs logic was changed.",
+    "Did not read forbidden prompt-buffer.md, tmp/, archive/, or unrelated directories under ~/dev.",
+    "Pre-existing unrelated dirty/untracked worktree entries were preserved."
+  ]
+}

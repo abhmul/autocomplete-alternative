@@ -47,8 +47,8 @@ impl PiProvider {
     pub fn new(config: PiProviderConfig) -> Self {
         Self {
             config,
-            parser: PiEventStreamParser::default(),
-            redactor: SecretRedactor::default(),
+            parser: PiEventStreamParser,
+            redactor: SecretRedactor,
         }
     }
 
@@ -140,7 +140,7 @@ impl PiProvider {
         let output = ProcessOutput {
             stdout,
             stderr,
-            redactor: self.redactor.clone(),
+            redactor: self.redactor,
         };
 
         let status = status_result?;

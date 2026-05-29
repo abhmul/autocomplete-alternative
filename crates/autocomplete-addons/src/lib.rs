@@ -49,7 +49,7 @@ impl AddonRuntime {
                 settings.suffix_chars,
             ),
             prompt_templates: PromptTemplateRegistry::default(),
-            postprocessors: PostprocessorRegistry::default(),
+            postprocessors: PostprocessorRegistry,
             policy: PolicyEngine::new(settings.remote_context_byte_limit, settings.excluded_globs)?,
         })
     }
