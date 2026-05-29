@@ -1,0 +1,13 @@
+Completed `MVP-012`.
+
+- Updated `reports/autocomplete-engine-mvp-plan-2026-05-28.json` examples with `protocol_version: 1` and valid fixture UUIDs.
+- Added regression test: `crates/autocomplete-protocol/tests/plan_examples.rs`.
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-012-fix-protocol-plan-examples.json`.
+- Validation passed:
+  - `cargo test -p autocomplete-protocol --test plan_examples -- --nocapture`
+  - `cargo fmt --all --check && cargo test`
+  - handoff JSON parse check
+- Plan-example checker now reports schema/deserialization/semantic validation success for request, ok response, and error response.
+- Checkpoint done: daily note updated and committed as `4a1bf7d` (`Fix protocol plan examples`).
+
+Unrelated pre-existing dirty files/untracked directories were left untouched.

@@ -1,0 +1,13 @@
+Completed `MVP-005`.
+
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-005-rust-architecture-research.json`
+- Added checkpoint note: `daily-notes/2026-05-28.md`
+- Commit: `e3fdf16 Add Rust architecture handoff`
+- Validation:
+  - `python3 -m json.tool ...MVP-005-rust-architecture-research.json`
+  - `git diff --check`
+  - checked `pi --help`, `pi --version`, and targeted external docs
+
+Key implementation warning captured in the handoff: `pi --mode json` emits JSONL events, so the pi provider must extract assistant text before parsing the completion JSON.
+
+Unrelated pre-existing dirty/untracked files were left untouched.

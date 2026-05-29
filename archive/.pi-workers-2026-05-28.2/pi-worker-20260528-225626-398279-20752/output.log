@@ -1,0 +1,14 @@
+Completed MVP-013.
+
+- Wrote verification handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-013-verify-protocol-plan-example-fix.json`
+- Verdict: passed; protocol artifacts marked trusted for downstream core/provider work.
+- Validation run:
+  - `cargo fmt --all --check`
+  - `cargo test`
+  - `cargo test -p autocomplete-protocol --test plan_examples -- --nocapture`
+  - JSON validation for handoff
+  - `git diff --check`
+- Checkpointed daily note: `daily-notes/2026-05-28.md`
+- Commit: `fa3ace5 Verify protocol plan examples`
+
+Unrelated pre-existing dirty files/untracked worker artifacts were left untouched.

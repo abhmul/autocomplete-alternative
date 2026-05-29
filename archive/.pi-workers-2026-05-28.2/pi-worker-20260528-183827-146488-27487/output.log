@@ -1,0 +1,16 @@
+Completed `reports/orchestration/handoffs/T045-web-discovery-enrichment.json`.
+
+Key enrichments:
+- Added Kilo Code as a material missed VS Code autocomplete option.
+- Flagged non-official Codex Autocomplete as a needs-review ChatGPT/Codex subscription-backed inline candidate.
+- Added Claudian as a major missed Obsidian Claude Code/Codex near-scope tool.
+- Preserved official conclusion: OpenAI Codex and Claude Code official IDE tools are not documented inline Tab autocomplete.
+
+Validation:
+- `python3 -m json.tool reports/orchestration/handoffs/T045-web-discovery-enrichment.json`
+- `git diff --check`
+
+Checkpoint:
+- Daily note updated: `daily-notes/2026-05-28.md`
+- Commit: `8a27f61 Add T045 web discovery enrichment`
+- Left unrelated untracked files untouched: `.agents/skills/web-discovery`, `.claude/skills/web-discovery`, `.pi-workers/`

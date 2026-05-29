@@ -1,0 +1,18 @@
+Done: implemented MVP-040 and wrote `reports/orchestration/mvp-2026-05-28/handoffs/MVP-040-editor-clients-tdd.json`.
+
+Key additions:
+- `clients/protocol/`: generated Rust-derived protocol constants/schemas plus shared broker client/debounce/cancel session.
+- `clients/vscode/`: VS Code inline completion provider glue and settings.
+- `clients/obsidian/`: Obsidian CodeMirror ghost-text plugin glue, settings, and Tab accept.
+- Tests for request construction, stale cancellation, endpoint use, and provider-boundary separation.
+
+Validation passed:
+- `npm test --prefix clients`
+- `node --check clients/obsidian/src/main.js && node --check clients/vscode/src/extension.js && node --check clients/protocol/src/client.js`
+- `cargo fmt --all --check && cargo test`
+- Handoff JSON parse check
+
+Checkpoint completed:
+- Updated `daily-notes/2026-05-28.md`
+- Committed current slice: `526a108 Implement thin editor clients`
+- Left unrelated pre-existing dirty/untracked files untouched.

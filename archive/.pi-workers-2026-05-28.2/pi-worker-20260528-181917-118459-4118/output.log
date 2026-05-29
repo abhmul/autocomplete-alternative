@@ -1,0 +1,16 @@
+Completed `reports/orchestration/tasks/T040-open-source-self-hosted.json`.
+
+Wrote and validated:
+- `reports/orchestration/handoffs/T040-open-source-self-hosted.json`
+- JSON parse check passed
+- Source URL recheck passed
+- `git diff --check` passed
+
+Checkpoint:
+- Added T040 entry to `daily-notes/2026-05-28.md`
+- Commit: `4cc6981 Add T040 self-hosted architecture research`
+
+Left unrelated dirty files untouched:
+- `daily-notes/2026-05-28.md` unstaged T020 hunk
+- `reports/orchestration/handoffs/T020-vscode-options.json`
+- `.agents/skills/web-discovery`, `.claude/skills/web-discovery`, `.pi-workers/`

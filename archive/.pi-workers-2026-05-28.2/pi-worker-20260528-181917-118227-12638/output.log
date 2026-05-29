@@ -1,0 +1,19 @@
+Wrote and committed `reports/orchestration/handoffs/T010-subscription-constraints.json`.
+
+Key result: no verified official ChatGPT/Claude subscription path for Copilot-style inline Tab autocomplete; official Codex/Claude Code subscription paths are agentic IDE tools, while third-party autocomplete needs separate API billing.
+
+Validation:
+- `python3 -m json.tool reports/orchestration/handoffs/T010-subscription-constraints.json`
+- `git diff --check`
+
+Checkpoint:
+- Daily note updated: `daily-notes/2026-05-28.md`
+- Commit: `90862c1 Add subscription constraints handoff`
+
+Unrelated dirty files left untouched:
+- `daily-notes/2026-05-28.md` post-commit T040 entry
+- `.agents/skills/web-discovery`
+- `.claude/skills/web-discovery`
+- `.pi-workers/`
+- `reports/orchestration/handoffs/T020-vscode-options.json`
+- `reports/orchestration/handoffs/T040-open-source-self-hosted.json`

@@ -1,0 +1,13 @@
+Completed `MVP-080` checkpoint.
+
+- Daily note updated: `daily-notes/2026-05-29.md`
+- Handoff written: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-080-checkpoint.json`
+- Committed checkpoint artifacts only: `649039b` (`Checkpoint accepted MVP slice`)
+
+Validation:
+- `python3 -m json.tool reports/orchestration/mvp-2026-05-28/handoffs/MVP-080-checkpoint.json >/dev/null`
+- `git diff --check`
+- `git diff --cached --check`
+- Reviewed staged diff before commit.
+
+Left unrelated/pre-existing dirty state untouched, including legacy report deletions, modified `reports/orchestration/mvp-2026-05-28/state.json`, untracked task/handoff JSONs, `.pi-workers/`, web-discovery skill dirs, and `archive/`.

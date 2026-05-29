@@ -1,0 +1,15 @@
+Completed MVP-031 verification.
+
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-031-verify-server-addons.json`
+- Verdict: `passed_with_notes`; no blockers or spawned fix tasks.
+- Key note: no editor clients exist yet, so client/provider-pi boundary must be rechecked after MVP-040.
+- Validation run:
+  - `cargo test` passed
+  - `cargo fmt --all --check` passed
+  - Live mock broker smoke against `/health` and `/v1/autocomplete` passed
+  - `python -m json.tool ...MVP-031...json` passed
+  - `git diff --check` passed
+- Checkpoint:
+  - Updated `daily-notes/2026-05-28.md`
+  - Committed current task slice: `1435acf Verify MVP server addons`
+- Left pre-existing unrelated dirty/untracked files untouched.

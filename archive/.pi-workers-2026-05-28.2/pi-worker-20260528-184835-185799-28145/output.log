@@ -1,0 +1,15 @@
+Done: `reports/autocomplete-subscription-options-2026-05-28.json`
+
+Validation:
+- `jq empty reports/autocomplete-subscription-options-2026-05-28.json`
+- `jq` section-count summary
+- `git diff --check`
+
+Checkpoint:
+- Daily note updated: `daily-notes/2026-05-28.md`
+- Commit: `5e05f0c Synthesize autocomplete research report`
+
+Left untouched as unrelated untracked files:
+- `.agents/skills/web-discovery`
+- `.claude/skills/web-discovery`
+- `.pi-workers/`

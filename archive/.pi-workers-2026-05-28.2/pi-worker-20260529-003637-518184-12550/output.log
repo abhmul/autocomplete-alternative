@@ -1,0 +1,23 @@
+Completed `MVP-072`.
+
+Changed:
+- `crates/autocomplete-addons/src/lib.rs`
+- `crates/autocomplete-provider-pi/src/parser.rs`
+- `crates/autocomplete-provider-pi/src/provider.rs`
+- `crates/autocomplete-provider-pi/tests/pi_provider.rs`
+
+Wrote handoff:
+- `reports/orchestration/mvp-2026-05-28/handoffs/MVP-072-fix-strict-clippy.json`
+
+Validation passed:
+- `cargo fmt --all --check`
+- `cargo clippy --all-targets -- -D warnings`
+- `cargo test`
+- `python -m json.tool ...`
+- `git diff --check`
+
+Checkpoint:
+- Updated `daily-notes/2026-05-29.md`
+- Committed as `ea793d9` (`Fix strict clippy warnings`)
+
+Unrelated pre-existing dirty/untracked files remain untouched.

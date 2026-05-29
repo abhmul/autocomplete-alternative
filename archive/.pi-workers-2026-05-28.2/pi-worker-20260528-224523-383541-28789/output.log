@@ -1,0 +1,20 @@
+Completed `MVP-011`.
+
+Verdict: verification failed, but the verification task itself is complete.
+
+Key result:
+- `cargo fmt --all --check` passed.
+- `cargo test` passed.
+- Protocol tests use public interfaces.
+- Schema/docs include versioning and error codes.
+- Blocking issue: exact examples in `reports/autocomplete-engine-mvp-plan-2026-05-28.json` use `"request_id": "uuid"` and omit required `protocol_version`, so they do not validate against the implemented protocol/schema.
+
+Artifacts:
+- Wrote `reports/orchestration/mvp-2026-05-28/handoffs/MVP-011-verify-protocol-core.json`
+- Spawned fix task `reports/orchestration/mvp-2026-05-28/tasks/MVP-012-fix-protocol-plan-examples.json`
+
+Checkpoint:
+- Updated `daily-notes/2026-05-28.md`
+- Committed current-task slice: `4ebf40e Record MVP-011 protocol verification`
+
+Unrelated dirty/untracked files were left untouched.

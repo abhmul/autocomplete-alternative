@@ -1,0 +1,15 @@
+Completed `MVP-020`.
+
+Summary:
+- Added `crates/autocomplete-core` with provider trait, engine, mock provider, postprocessors, timeout/cancellation behavior.
+- Added `crates/autocomplete-provider-pi` with fake-tested subprocess invocation, isolated pi args, JSONL parsing, repair retry, redaction.
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-020-core-providers-postprocessing-tdd.json`
+- Updated checkpoint note: `daily-notes/2026-05-28.md`
+- Committed current-task slice: `7e053d3 Implement core providers and postprocessing`
+
+Validation:
+- `cargo fmt --all --check && cargo test` passed
+- `python -m json.tool ...MVP-020...json >/dev/null` passed
+- `git diff --check` passed
+
+Left untouched: pre-existing deleted legacy orchestration files and untracked orchestration/skill/archive paths.

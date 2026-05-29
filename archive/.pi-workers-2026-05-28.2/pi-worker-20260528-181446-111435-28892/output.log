@@ -1,0 +1,10 @@
+Completed `T005`.
+
+- Wrote `reports/orchestration/handoffs/T005-web-and-schema.json`
+- Confirmed web access via Anthropic/OpenAI official pages and Continue marketplace/GitHub pages
+- Added common handoff schema with claim/source/option/confidence/evidence fields, autocomplete mode taxonomy, and subscription/API/session automation access fields
+- Validation: `python -m json.tool ...` and `git diff --check`
+- Checkpointed in `daily-notes/2026-05-28.md`
+- Commit: `1627231 Add T005 web access schema handoff`
+
+Left unrelated untracked files untouched: `.pi-workers/`, orchestration state, and task JSON files.

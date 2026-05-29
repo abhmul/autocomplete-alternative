@@ -1,0 +1,25 @@
+Completed `MVP-060`.
+
+Changed:
+- Added `README.md`
+- Added `docs/protocol.md`
+- Added `docs/client-setup.md`
+- Added `docs/limitations-and-next-steps.md`
+- Updated `clients/README.md`
+- Updated `crates/autocomplete-protocol/README.md`
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-060-docs-tdd-handoff.json`
+
+Validation passed:
+- `cargo fmt --all --check`
+- `cargo test`
+- `npm test --prefix clients`
+- `node --check clients/vscode/src/extension.js`
+- `node --check clients/obsidian/src/main.js`
+- `python3 -m json.tool ...MVP-060-docs-tdd-handoff.json`
+- `git diff --check`
+
+Checkpoint:
+- Daily note: `daily-notes/2026-05-29.md`
+- Commit: `414ee52 Document MVP setup and handoff`
+
+Unrelated pre-existing dirty/untracked report/archive/skill paths were left untouched.

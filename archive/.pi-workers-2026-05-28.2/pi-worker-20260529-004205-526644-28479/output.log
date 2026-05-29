@@ -1,0 +1,16 @@
+Completed MVP-075.
+
+- Added root Obsidian artifact: `clients/obsidian/main.js`
+- Added build/check script: `clients/obsidian/scripts/build-artifact.js`
+- Added regression test: `clients/obsidian/test/artifact.test.js`
+- Updated docs: `docs/client-setup.md`, `clients/README.md`
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-075-fix-obsidian-plugin-artifact.json`
+- Checkpointed daily note and committed: `8be489b Fix Obsidian plugin artifact loading`
+
+Validation passed:
+- `npm test --prefix clients`
+- `npm run --prefix clients build:obsidian && node clients/obsidian/scripts/build-artifact.js --check`
+- `node --check clients/obsidian/main.js`
+- disposable-vault symlink layout check for root `manifest.json/main.js/styles.css`
+
+No real Obsidian GUI smoke was run; that remains for MVP-076. Pre-existing unrelated dirty/untracked files were left untouched.

@@ -1,0 +1,14 @@
+Completed `reports/orchestration/tasks/T030-obsidian-options.json`.
+
+Wrote: `reports/orchestration/handoffs/T030-obsidian-options.json`
+
+Validation:
+- JSON parse check passed.
+- Source/claim reference integrity check passed.
+- `git diff --check` passed.
+
+Checkpoint:
+- Updated `daily-notes/2026-05-28.md`.
+- Committed as `84db365` (`Add T030 Obsidian autocomplete research`).
+
+Left unrelated untracked files untouched: `.agents/skills/web-discovery`, `.claude/skills/web-discovery`, `.pi-workers/`, `reports/orchestration/handoffs/T020-vscode-options.json`.

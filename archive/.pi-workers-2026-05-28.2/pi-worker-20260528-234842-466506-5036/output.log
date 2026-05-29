@@ -1,0 +1,17 @@
+Completed `MVP-041`.
+
+- Wrote verification handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-041-verify-editor-clients.json`
+- Status: `passed_with_notes`; client artifacts marked trusted.
+- No blockers found. Main limitations: real VS Code/Obsidian smoke not run, packaging/module-resolution still unproven, minimal broker error UX.
+- Validation run:
+  - `npm test --prefix clients`
+  - `node --check` on client/protocol JS files
+  - protocol artifact re-export + `diff -ru`
+  - `cargo test`
+  - `cargo fmt --all --check`
+  - JSON validation
+  - `git diff --check`
+- Checkpoint done: updated `daily-notes/2026-05-28.md`
+- Commit: `b7d28c3 Verify editor thin clients`
+
+Unrelated pre-existing dirty/untracked files under legacy `reports/orchestration`, `.agents/.claude`, `.pi-workers`, `archive`, and MVP queue task/state files were left untouched.

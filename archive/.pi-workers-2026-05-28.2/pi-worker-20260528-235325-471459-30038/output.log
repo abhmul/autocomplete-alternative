@@ -1,0 +1,20 @@
+Done.
+
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-050-runtime-smoke-and-measurement.json`
+- Checkpointed daily note: `daily-notes/2026-05-28.md`
+- Committed: `ad221b9 Record MVP-050 runtime smoke results`
+
+Validation run:
+- `cargo fmt --all --check && cargo test`
+- `npm test --prefix clients`
+- `cargo build`
+- live mock broker smoke
+- live pi broker smoke with strict timeouts
+- `python3 -m json.tool ...MVP-050-runtime-smoke-and-measurement.json`
+
+Key results:
+- Mock broker: 12 requests, median `0.921 ms`, p95 `1.939 ms`
+- Pi broker via `openai-codex/gpt-5.5`: TypeScript and Markdown both returned `ok`; median `5391.979 ms`, p95 `6254.653 ms` over n=2
+- Default `openai/gpt-5.5` path failed on this host: `No API key found for openai`
+
+Unrelated pre-existing dirty/untracked files were left untouched.

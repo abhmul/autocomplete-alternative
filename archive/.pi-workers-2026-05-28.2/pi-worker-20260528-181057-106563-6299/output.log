@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "handoff_path": "reports/orchestration/handoffs/T000-init-state.json",
+  "validation": ["jq valid", "git diff --check clean"],
+  "checkpoint": {
+    "daily_note": "daily-notes/2026-05-28.md",
+    "commit": "cd40803"
+  },
+  "unrelated_untracked_left_untouched": [
+    ".pi-workers/",
+    "reports/orchestration/autocomplete-research-state.json",
+    "reports/orchestration/tasks/"
+  ]
+}

@@ -1,0 +1,18 @@
+Completed `MVP-074`.
+
+- Wrote final report: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-074-final-acceptance-recheck.json`
+- Decision: `fully_accepted_with_limitations`
+- Fresh validation passed:
+  - `cargo fmt --all --check`
+  - `cargo clippy --all-targets -- -D warnings`
+  - `cargo test`
+  - `npm test --prefix clients`
+  - Obsidian artifact freshness + node syntax checks
+- Acceptance cites VS Code GUI evidence from `MVP-071` and Obsidian GUI evidence from `MVP-078`.
+- Remaining blockers: none; noted non-blocking latency/packaging/scope limitations.
+
+Checkpoint done:
+- Updated `daily-notes/2026-05-29.md`
+- Committed as `a25eb42 Record MVP final acceptance recheck`
+
+Unrelated pre-existing dirty/untracked files were left untouched.

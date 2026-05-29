@@ -1,0 +1,10 @@
+Implemented `MVP-010` and checkpointed it.
+
+- Added Rust Cargo workspace and `crates/autocomplete-protocol`.
+- Implemented serde/schemars protocol types, validation, schema export helpers, fixtures, and protocol README.
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-010-protocol-core-tdd.json`.
+- Updated daily note: `daily-notes/2026-05-28.md`.
+- Validation passed: `python -m json.tool ...`, `cargo fmt --all --check`, `cargo test`.
+- Committed checkpoint: `245dffa Implement protocol crate foundation`.
+
+Unrelated pre-existing dirty/untracked orchestration/environment files were left untouched.

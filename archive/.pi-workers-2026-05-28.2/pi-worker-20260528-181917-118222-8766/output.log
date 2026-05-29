@@ -1,0 +1,15 @@
+Completed `reports/orchestration/tasks/T020-vscode-options.json`.
+
+Wrote: `reports/orchestration/handoffs/T020-vscode-options.json`
+
+Validated:
+- `jq empty`
+- required-field/count `jq` check
+- `git diff --check`
+- `git diff --cached --check`
+
+Checkpoint:
+- Commit: `969188e Add VS Code autocomplete options handoff`
+- Daily note: `daily-notes/2026-05-28.md`
+
+Left unrelated dirty files untouched, including `.pi-workers/`, web-discovery skill dirs, and the current unstaged daily-note T040 entry.

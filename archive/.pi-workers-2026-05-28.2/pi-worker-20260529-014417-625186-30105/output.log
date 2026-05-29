@@ -1,0 +1,15 @@
+Completed `MVP-078`.
+
+- Handoff written: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-078-verify-obsidian-fetch-binding.json`
+- State updated: MVP-078 completed, Obsidian GUI mock acceptance trusted, `MVP-076-B001` cleared.
+- Checkpoint committed: `78d3375 Verify Obsidian fetch binding`
+
+Validation passed:
+- `npm test --prefix clients`
+- `node clients/obsidian/scripts/build-artifact.js --check`
+- `node --check clients/obsidian/main.js`
+- Obsidian mock GUI smoke: passed; evidence under `/tmp/mvp078-obsidian-mock-2XUqDh`
+- Obsidian pi request-only GUI smoke: passed with exactly one `/v1/autocomplete` POST; evidence under `/tmp/mvp078-obsidian-pi-hw6VAj`
+- JSON validation and `git diff --check`
+
+Unrelated pre-existing dirty/untracked files were left untouched.

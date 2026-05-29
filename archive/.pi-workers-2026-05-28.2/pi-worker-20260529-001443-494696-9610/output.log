@@ -1,0 +1,10 @@
+Completed `MVP-071`.
+
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-071-real-editor-host-smoke.json`
+- Result: VS Code real Extension Development Host smoke passed with mock and one bounded pi request; Obsidian smoke is blocked because the local-source plugin does not load as a real Obsidian plugin artifact.
+- Key blocker: Obsidian setup fails with `Failed to load plugin "autocomplete-alternative"`; diagnostic shim captured `Cannot find module 'obsidian'`.
+- Validation: `cargo test`, `npm test --prefix clients`, VS Code mock/pi GUI smokes, JSON validation, and `git diff --check`.
+- Checkpoint done: updated `daily-notes/2026-05-29.md`
+- Commit: `ccb5728 Record real editor host smoke`
+
+Unrelated pre-existing dirty/untracked files were left untouched.

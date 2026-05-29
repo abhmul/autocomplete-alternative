@@ -1,0 +1,11 @@
+Implemented `MVP-030` and checkpointed.
+
+- Added `crates/autocomplete-addons` for context trimming, privacy policy, prompt selection, and postprocessor registry.
+- Added `crates/autocomplete-server` with `/health`, `/v1/autocomplete`, `/v1/cancel/{request_id}`, `/v1/reload`, config loading, provider selection, cancellation lifecycle, and `autocomplete-broker` binary.
+- Extended core provider context so broker-selected prompts can reach providers.
+- Wrote handoff: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-030-server-addons-tdd.json`.
+- Updated daily note: `daily-notes/2026-05-28.md`.
+- Validation passed: `cargo fmt --all --check && cargo test`, JSON handoff validation, `git diff --check`.
+- Committed: `77a16c9 Implement MVP-030 broker server addons`.
+
+Unrelated pre-existing dirty files/untracked directories were left untouched.

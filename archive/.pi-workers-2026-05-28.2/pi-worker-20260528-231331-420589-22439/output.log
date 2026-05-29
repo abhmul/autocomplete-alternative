@@ -1,0 +1,15 @@
+Completed MVP-021 verification.
+
+- Result: passed
+- Handoff written: `reports/orchestration/mvp-2026-05-28/handoffs/MVP-021-verify-core-providers-postprocessing.json`
+- Validation run:
+  - `cargo fmt --all --check && cargo test`
+  - `python -m json.tool ...MVP-021-verify-core-providers-postprocessing.json`
+  - `git diff --check`
+- Checkpoint:
+  - Daily note updated: `daily-notes/2026-05-28.md`
+  - Commit: `4dcd652 Verify MVP-020 core provider slice`
+
+Notes:
+- No real `pi` smoke test was run; that remains for the later runtime smoke/measurement task.
+- Pre-existing unrelated dirty/untracked files were left untouched.
