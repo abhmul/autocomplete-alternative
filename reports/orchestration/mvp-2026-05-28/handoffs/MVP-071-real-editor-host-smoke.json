@@ -1,0 +1,247 @@
+{
+  "task_id": "MVP-071",
+  "status": "partial_pass_obsidian_blocked",
+  "created_on": "2026-05-29",
+  "scope": "Real editor-host acceptance smoke for VS Code Extension Development Host and a disposable Obsidian vault/plugin, using mock provider first and one bounded pi-backed VS Code request after mock success.",
+  "summary": {
+    "result": "VS Code real Extension Development Host smoke passed for mock provider and for one bounded pi-backed synthetic TypeScript request: ghost text was visible in screenshots and Tab acceptance changed the disposable file. Obsidian GUI tooling was available and a disposable vault launched under Xvfb, but the Obsidian client could not be loaded as a real plugin from the documented local-source setup; therefore Obsidian ghost text/Tab acceptance remains blocked and not accepted.",
+    "acceptance_statement": "Do not claim full end-to-end editor GUI MVP acceptance yet. VS Code is accepted for this smoke slice; Obsidian is blocked by plugin packaging/runtime module-resolution defects before any broker request is made."
+  },
+  "environment": {
+    "cwd": "/home/abhmul/dev/autocomplete-alternative",
+    "display": ":0 was available, but smokes used xvfb-run for isolated virtual GUI sessions",
+    "tooling": {
+      "code": "/usr/bin/code, version 1.120.0",
+      "obsidian": "/usr/bin/obsidian, launched Obsidian 1.12.7 in smoke logs",
+      "xvfb_run": "/usr/bin/xvfb-run",
+      "xclip": "/usr/bin/xclip",
+      "xdotool": "not installed; automation used Python ctypes with X11 XTEST",
+      "pi": "/home/abhmul/.local/bin/pi, version 0.75.5"
+    }
+  },
+  "commands_run": [
+    {
+      "command": "git status --short",
+      "result": "completed before writes. It showed pre-existing unrelated deleted legacy reports/orchestration/* entries plus untracked orchestration/archive/worker paths; these were preserved."
+    },
+    {
+      "command": "cargo test",
+      "result": "passed. Rust workspace tests and doc tests passed across autocomplete-addons, autocomplete-core, autocomplete-protocol, autocomplete-provider-pi, and autocomplete-server."
+    },
+    {
+      "command": "npm test --prefix clients",
+      "result": "passed. 9 Node tests passed across shared protocol, VS Code host glue, Obsidian host glue, stale cancellation, and provider-boundary checks."
+    },
+    {
+      "command": "command -v code obsidian xvfb-run xclip pi; code --version; pi --version",
+      "result": "passed for required commands. code reported 1.120.0; pi reported 0.75.5. Obsidian does not print a useful CLI --version, but smoke logs reported Obsidian 1.12.7."
+    },
+    {
+      "command": "xvfb-run -a -s '-screen 0 1280x900x24' python3 /tmp/mvp071_vscode_smoke.py",
+      "result": "passed for VS Code mock smoke. The script started a mock broker on 127.0.0.1:32148, launched an isolated VS Code Extension Development Host with --extensionDevelopmentPath clients/vscode, opened a disposable /tmp sample.ts, triggered inline suggestion via the command palette, captured visible ghost text, pressed Tab, saved, and verified file content changed to include `return n + 1`."
+    },
+    {
+      "command": "xvfb-run -a -s '-screen 0 1280x900x24' timeout 150s python3 /tmp/mvp071_vscode_pi_smoke.py",
+      "result": "passed for one bounded VS Code pi-backed smoke. The script started a pi broker on 127.0.0.1:32151 with provider=openai-codex, model=gpt-5.5, thinking=minimal, timeout_ms=10000 and client deadlineMs=12000, used only a synthetic TypeScript file, triggered inline suggestion, waited 13 s, captured visible ghost text, pressed Tab, saved, and verified file content changed to `return n + 1;`."
+    },
+    {
+      "command": "xvfb-run -a -s '-screen 0 1280x900x24' env MVP071_OBS_MODE=docs python3 /tmp/mvp071_obsidian_smoke.py",
+      "result": "failed/blocking for documented Obsidian local-source setup. The script started a mock broker on 127.0.0.1:32149, created a disposable vault, symlinked clients/obsidian and clients/protocol exactly as docs/client-setup.md describes, trusted the vault, attempted to enable the plugin, and Obsidian displayed `Failed to load plugin \"autocomplete-alternative\"`. No broker request was observed and the note stayed unchanged."
+    },
+    {
+      "command": "xvfb-run -a -s '-screen 0 1280x900x24' env MVP071_OBS_MODE=shim python3 /tmp/mvp071_obsidian_smoke.py",
+      "result": "failed/blocking diagnostic. With a temporary root main.js wrapper added only inside the disposable plugin folder, plugin load still failed before any broker request. The wrapper captured `Error: Cannot find module 'obsidian'` from clients/obsidian/src/main.js, indicating the unbundled source is not directly loadable as a real Obsidian plugin artifact."
+    }
+  ],
+  "vs_code_smoke": {
+    "status": "passed",
+    "mock_provider": {
+      "status": "passed",
+      "broker": {
+        "bind_addr": "127.0.0.1:32148",
+        "provider.kind": "mock",
+        "mock.insert_text": " n + 1",
+        "health": {
+          "protocol_version": 1,
+          "status": "ok",
+          "provider": {
+            "name": "mock",
+            "status": "available"
+          }
+        }
+      },
+      "editor_host": {
+        "command_shape": "code --user-data-dir <tmp>/user-data --extensions-dir <tmp>/extensions --extensionDevelopmentPath /home/abhmul/dev/autocomplete-alternative/clients/vscode --disable-workspace-trust --disable-gpu --new-window --wait -g <tmp>/sample.ts:2:9",
+        "host_title_observed": "[Extension Development Host] Search",
+        "disposable_file_initial": "function increment(n: number): number {\n  return\n}\n",
+        "disposable_file_after_tab": "function increment(n: number): number {\n  return n + 1\n}\n",
+        "ghost_text_evidence": "Screenshot /tmp/mvp071-vscode-0ctulj9_/vscode-before-tab.png shows grey inline text ` n + 1` after `return` before Tab; /tmp/mvp071-vscode-0ctulj9_/vscode-after-tab.png was captured after acceptance.",
+        "tab_acceptance_evidence": "After pressing Tab and saving, sample.ts contained the mock insert text at the cursor."
+      }
+    },
+    "pi_provider": {
+      "status": "passed_with_notes",
+      "broker": {
+        "bind_addr": "127.0.0.1:32151",
+        "provider.kind": "pi",
+        "pi.command": "pi",
+        "pi.provider": "openai-codex",
+        "pi.model": "gpt-5.5",
+        "pi.thinking": "minimal",
+        "pi.timeout_ms": 10000,
+        "pi.repair_retry": true,
+        "health": {
+          "protocol_version": 1,
+          "status": "ok",
+          "provider": {
+            "name": "pi:gpt-5.5",
+            "status": "unknown"
+          }
+        }
+      },
+      "bounds": {
+        "provider_timeout_ms": 10000,
+        "client_deadline_ms": 12000,
+        "outer_command_timeout_s": 150,
+        "post_trigger_wait_ms": 13000.1
+      },
+      "editor_host": {
+        "disposable_file_initial": "function increment(n: number): number {\n  return\n}\n",
+        "disposable_file_after_tab": "function increment(n: number): number {\n  return n + 1;\n}\n",
+        "ghost_text_evidence": "Screenshot /tmp/mvp071-vscode-pi-cuxvdc3m/vscode-pi-before-tab.png shows grey inline text ` n + 1;` after `return` before Tab.",
+        "tab_acceptance_evidence": "After pressing Tab and saving, sample.ts contained the pi insert text at the cursor."
+      },
+      "notes": [
+        "The editor-path smoke used a fixed wait after trigger rather than direct provider latency instrumentation, so it proves bounded end-to-end success but not precise latency.",
+        "The pi request used only synthetic TypeScript content in /tmp and the broker's no-tools/no-context-files pi isolation path."
+      ]
+    }
+  },
+  "obsidian_smoke": {
+    "status": "blocked_failed_to_load_plugin",
+    "mock_provider": {
+      "status": "failed_before_broker_request",
+      "broker": {
+        "bind_addr": "127.0.0.1:32149",
+        "provider.kind": "mock",
+        "mock.insert_text": " the broker smoke",
+        "health": {
+          "protocol_version": 1,
+          "status": "ok",
+          "provider": {
+            "name": "mock",
+            "status": "available"
+          }
+        }
+      },
+      "documented_setup_attempt": {
+        "vault": "/tmp/mvp071-obsidian-docs-smdnr6k2/vault",
+        "plugin_setup": "ln -s $PWD/clients/obsidian <vault>/.obsidian/plugins/autocomplete-alternative; ln -s $PWD/clients/protocol <vault>/.obsidian/plugins/protocol; trusted the vault; attempted to enable plugin in Community plugins settings. A broker data.json setting attempt was not material to the result because the plugin failed before loading.",
+        "observed_ui": "Obsidian 1.12.7 displayed a toast: `Failed to load plugin \"autocomplete-alternative\"` after enabling the plugin.",
+        "evidence": "Screenshot /tmp/mvp071-obsidian-docs-smdnr6k2/docs-after-enable-click.png shows the failed-load toast. Broker log remained empty and note.md remained `# Smoke\n\nToday I measured` after Tab.",
+        "likely_primary_blocker": "clients/obsidian is not a loadable Obsidian plugin artifact as documented because the plugin root has no main.js; it contains manifest.json, package.json, src/main.js, styles.css, and tests. Obsidian plugin loading expects a root main.js artifact."
+      },
+      "diagnostic_shim_attempt": {
+        "status": "failed_before_broker_request",
+        "setup": "A temporary disposable-vault-only root main.js wrapper was added to require the repository source and capture load errors; no repository files were changed.",
+        "captured_error": "Error: Cannot find module 'obsidian'\nRequire stack:\n- /home/abhmul/dev/autocomplete-alternative/clients/obsidian/src/main.js\n- electron/js2c/renderer_init",
+        "evidence": "Captured at /tmp/mvp071-obsidian-shim-8ze0aepb/plugin-error.txt; screenshot /tmp/mvp071-obsidian-shim-8ze0aepb/shim-after-enable-click.png again shows `Failed to load plugin \"autocomplete-alternative\"`. No broker request was observed and note.md remained unchanged.",
+        "interpretation": "Even with a root entrypoint shim, the unbundled source is not directly loadable in the actual Obsidian runtime. The Obsidian client needs a real plugin build/bundle or a loader-compatible root main.js that resolves `obsidian` and CodeMirror imports correctly."
+      }
+    },
+    "pi_provider": {
+      "status": "not_attempted",
+      "reason": "Obsidian mock provider smoke did not reach plugin load or broker request; attempting a real pi request would not test editor ghost text and would waste a bounded provider call."
+    },
+    "manual_steps_needed_after_fix": [
+      "Create or build a real Obsidian plugin artifact under .obsidian/plugins/autocomplete-alternative with root manifest.json, main.js, styles.css, and any bundled dependencies or Obsidian-compatible externals.",
+      "Use a disposable vault, write .obsidian/community-plugins.json or enable via Settings → Community plugins, trust the vault, and enable Autocomplete Alternative without a failed-load toast.",
+      "Start the mock broker, set the plugin Broker URL to http://127.0.0.1:32145 or the chosen port, open a Markdown note, place the cursor in synthetic text, wait for ghost text, press Tab, and verify the note content changes.",
+      "Only after mock passes, repeat once with a bounded pi broker and synthetic Markdown context."
+    ]
+  },
+  "acceptance_criteria": [
+    {
+      "criterion": "Run existing cargo/npm tests first as a sanity check.",
+      "result": "passed",
+      "evidence": [
+        "cargo test passed.",
+        "npm test --prefix clients passed with 9 tests."
+      ]
+    },
+    {
+      "criterion": "VS Code client renders inline ghost text and accepts with Tab in an actual Extension Development Host against mock provider.",
+      "result": "passed",
+      "evidence": [
+        "Xvfb-launched VS Code 1.120.0 Extension Development Host loaded clients/vscode via --extensionDevelopmentPath.",
+        "Screenshot before Tab shows mock ghost text ` n + 1` after `return`.",
+        "After Tab and save, disposable sample.ts contained `return n + 1`."
+      ]
+    },
+    {
+      "criterion": "VS Code client can complete one bounded pi-backed request if safe and practical.",
+      "result": "passed_with_notes",
+      "evidence": [
+        "Broker pi health returned status ok with provider name pi:gpt-5.5.",
+        "Screenshot before Tab shows pi ghost text ` n + 1;` after `return`.",
+        "After Tab and save, disposable sample.ts contained `return n + 1;`.",
+        "The run used provider timeout 10000 ms, client deadline 12000 ms, outer timeout 150 s, and synthetic /tmp TypeScript content only."
+      ]
+    },
+    {
+      "criterion": "Obsidian client renders ghost text and accepts with Tab in a disposable vault against mock provider.",
+      "result": "blocked_failed",
+      "evidence": [
+        "Obsidian 1.12.7 launched under Xvfb with a disposable vault and trusted plugins.",
+        "Documented symlink setup failed to load the plugin with UI toast `Failed to load plugin \"autocomplete-alternative\"`.",
+        "No autocomplete broker request was observed and note.md did not change after Tab.",
+        "Diagnostic wrapper captured `Cannot find module 'obsidian'` when requiring the unbundled source."
+      ]
+    },
+    {
+      "criterion": "Obsidian client can complete one bounded pi-backed request if mock succeeds.",
+      "result": "not_attempted",
+      "evidence": [
+        "Not safe/practical because Obsidian mock smoke failed before plugin load and before any broker request."
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "id": "MVP-071-B001",
+      "title": "Obsidian local-source client is not a loadable plugin artifact",
+      "details": "The documented symlink setup points Obsidian at clients/obsidian, but that directory has no root main.js. Enabling the plugin in Obsidian 1.12.7 fails with a `Failed to load plugin` toast before any broker request.",
+      "blocks": [
+        "Obsidian visible ghost text acceptance",
+        "Obsidian Tab acceptance",
+        "Obsidian pi-backed editor smoke"
+      ]
+    },
+    {
+      "id": "MVP-071-B002",
+      "title": "Obsidian source needs bundling or runtime-compatible module resolution",
+      "details": "A disposable-vault-only root main.js wrapper reached clients/obsidian/src/main.js but failed with `Cannot find module 'obsidian'`, so simply exposing src/main.js as root main.js is insufficient. A real plugin bundle or loader-compatible artifact is needed for actual Obsidian runtime smoke."
+    }
+  ],
+  "recommended_follow_ups": [
+    {
+      "title": "Add an Obsidian plugin build/local artifact task",
+      "details": "Create a root main.js artifact for clients/obsidian, bundle or externalize Obsidian/CodeMirror imports correctly, update docs/client-setup.md, then rerun MVP-071 Obsidian mock and pi smokes."
+    },
+    {
+      "title": "Make editor smoke automation durable",
+      "details": "Check in or document a minimal opt-in smoke harness for VS Code and Obsidian using Xvfb/XTEST and disposable files, while keeping real pi calls explicitly bounded."
+    }
+  ],
+  "safety_notes": [
+    "All editor documents/vaults used for smoke were disposable /tmp paths with synthetic content only.",
+    "The only real pi editor-path request sent synthetic TypeScript prefix/suffix from /tmp/sample.ts; no repository content or sensitive files were sent.",
+    "Did not read prompt-buffer.md, repo tmp/, archive contents, or unrelated ~/dev directories.",
+    "Pre-existing unrelated worktree changes were preserved.",
+    "One smoke-script attempt briefly created untracked clients/obsidian/data.json through a symlinked disposable-vault plugin path; it was removed before checkpointing and is not present in final git status."
+  ],
+  "worktree_notes": [
+    "Final intended repository changes for this task are reports/orchestration/mvp-2026-05-28/handoffs/MVP-071-real-editor-host-smoke.json and checkpoint daily-note bookkeeping.",
+    "Temporary automation scripts and screenshots were left under /tmp paths named mvp071-* and were not added to the repository."
+  ]
+}
