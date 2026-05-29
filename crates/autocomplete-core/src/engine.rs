@@ -1,5 +1,6 @@
 use crate::{
     CompletionProvider, PostprocessError, PostprocessorPipeline, ProviderError, ProviderOutput,
+    ProviderRequestContext,
 };
 use autocomplete_protocol::{
     AutocompleteRequest, AutocompleteResponse, ErrorCode, PROTOCOL_VERSION, ProtocolError,
@@ -40,6 +41,20 @@ impl AutocompleteEngine {
         request: AutocompleteRequest,
         cancellation: CancellationToken,
     ) -> AutocompleteResponse {
+        self.complete_with_provider_context(
+            request,
+            ProviderRequestContext::default(),
+            cancellation,
+        )
+        .await
+    }
+
+    pub async fn complete_with_provider_context(
+        &self,
+        request: AutocompleteRequest,
+        provider_context: ProviderRequestContext,
+        cancellation: CancellationToken,
+    ) -> AutocompleteResponse {
         let started = Instant::now();
         let request_id = request.request_id;
 
@@ -67,7 +82,11 @@ impl AutocompleteEngine {
         let provider_token = cancellation.child_token();
         let deadline = Duration::from_millis(request.options.deadline_ms);
         let provider = Arc::clone(&self.provider);
-        let provider_future = provider.complete(request.clone(), provider_token.clone());
+        let provider_future = provider.complete_with_context(
+            request.clone(),
+            provider_context,
+            provider_token.clone(),
+        );
 
         let provider_result = tokio::select! {
             biased;

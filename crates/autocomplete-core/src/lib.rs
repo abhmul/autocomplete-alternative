@@ -13,5 +13,5 @@ pub use postprocess::{
 };
 pub use provider::{
     CompletionCandidate, CompletionProvider, ProviderDiagnostics, ProviderError, ProviderOutput,
-    ProviderResult,
+    ProviderRequestContext, ProviderResult,
 };

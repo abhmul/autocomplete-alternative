@@ -10,6 +10,13 @@ pub struct RenderedPrompt {
 
 impl RenderedPrompt {
     pub fn for_completion(request: &AutocompleteRequest) -> Result<Self, ProviderError> {
+        Self::for_completion_with_system_prompt(request, None)
+    }
+
+    pub fn for_completion_with_system_prompt(
+        request: &AutocompleteRequest,
+        system_prompt: Option<String>,
+    ) -> Result<Self, ProviderError> {
         let request_json = serde_json::to_string(&json!({
             "task": "inline_autocomplete",
             "contract": {
@@ -36,7 +43,7 @@ impl RenderedPrompt {
         })?;
 
         Ok(Self {
-            system_prompt: completion_system_prompt(),
+            system_prompt: system_prompt.unwrap_or_else(completion_system_prompt),
             request_json,
         })
     }

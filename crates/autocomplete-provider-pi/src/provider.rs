@@ -2,7 +2,7 @@ use crate::{PiEventStreamParser, RenderedPrompt, SecretRedactor};
 use async_trait::async_trait;
 use autocomplete_core::{
     CompletionCandidate, CompletionProvider, ProviderDiagnostics, ProviderError, ProviderOutput,
-    ProviderResult,
+    ProviderRequestContext, ProviderResult,
 };
 use autocomplete_protocol::AutocompleteRequest;
 use serde::Deserialize;
@@ -192,16 +192,20 @@ impl Default for PiProvider {
 
 #[async_trait]
 impl CompletionProvider for PiProvider {
-    async fn complete(
+    async fn complete_with_context(
         &self,
         request: AutocompleteRequest,
+        provider_context: ProviderRequestContext,
         cancellation: CancellationToken,
     ) -> ProviderResult {
         let timeout = self
             .config
             .timeout
             .min(Duration::from_millis(request.options.deadline_ms));
-        let prompt = RenderedPrompt::for_completion(&request)?;
+        let prompt = RenderedPrompt::for_completion_with_system_prompt(
+            &request,
+            provider_context.system_prompt,
+        )?;
 
         match self
             .run_completion_attempt(prompt.clone(), timeout, cancellation.clone())

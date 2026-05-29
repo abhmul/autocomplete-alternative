@@ -1,5 +1,6 @@
 use crate::{
-    CompletionCandidate, CompletionProvider, ProviderError, ProviderOutput, ProviderResult,
+    CompletionCandidate, CompletionProvider, ProviderError, ProviderOutput, ProviderRequestContext,
+    ProviderResult,
 };
 use async_trait::async_trait;
 use autocomplete_protocol::AutocompleteRequest;
@@ -48,9 +49,10 @@ impl Default for MockProvider {
 
 #[async_trait]
 impl CompletionProvider for MockProvider {
-    async fn complete(
+    async fn complete_with_context(
         &self,
         _request: AutocompleteRequest,
+        _provider_context: ProviderRequestContext,
         cancellation: CancellationToken,
     ) -> ProviderResult {
         if cancellation.is_cancelled() {

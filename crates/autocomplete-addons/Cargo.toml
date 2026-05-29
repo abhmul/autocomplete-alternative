@@ -1,0 +1,20 @@
+[package]
+name = "autocomplete-addons"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+autocomplete-core = { path = "../autocomplete-core" }
+autocomplete-protocol = { path = "../autocomplete-protocol" }
+globset.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+url.workspace = true
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+serde_json.workspace = true

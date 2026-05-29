@@ -3,11 +3,36 @@ use autocomplete_protocol::AutocompleteRequest;
 use thiserror::Error;
 use tokio_util::sync::CancellationToken;
 
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ProviderRequestContext {
+    pub prompt_name: Option<String>,
+    pub system_prompt: Option<String>,
+}
+
+impl ProviderRequestContext {
+    pub fn with_prompt(prompt_name: impl Into<String>, system_prompt: impl Into<String>) -> Self {
+        Self {
+            prompt_name: Some(prompt_name.into()),
+            system_prompt: Some(system_prompt.into()),
+        }
+    }
+}
+
 #[async_trait]
 pub trait CompletionProvider: Send + Sync {
     async fn complete(
         &self,
         request: AutocompleteRequest,
+        cancellation: CancellationToken,
+    ) -> ProviderResult {
+        self.complete_with_context(request, ProviderRequestContext::default(), cancellation)
+            .await
+    }
+
+    async fn complete_with_context(
+        &self,
+        request: AutocompleteRequest,
+        provider_context: ProviderRequestContext,
         cancellation: CancellationToken,
     ) -> ProviderResult;
 }

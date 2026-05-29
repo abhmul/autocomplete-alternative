@@ -1,0 +1,79 @@
+{
+  "task_id": "MVP-030",
+  "status": "completed",
+  "created_on": "2026-05-28",
+  "scope": "Implemented the Rust local broker HTTP server, config loading/reload, cancellation lifecycle, and minimal built-in addon registries for context, prompt, policy, and postprocessing. No editor UI, workspace indexing, remote broker, cloud auth, or real pi smoke test was implemented.",
+  "summary": {
+    "new_crates": [
+      "crates/autocomplete-addons",
+      "crates/autocomplete-server"
+    ],
+    "server_endpoints": [
+      "GET /health",
+      "POST /v1/autocomplete",
+      "POST /v1/cancel/{request_id}",
+      "POST /v1/reload"
+    ],
+    "binary": "autocomplete-broker via crates/autocomplete-server/src/bin/autocomplete-broker.rs",
+    "provider_selection": "BrokerConfig.provider.kind selects mock or pi inside the broker; clients continue to call the same /v1/autocomplete protocol.",
+    "addon_pipeline": "AddonRuntime trims request-supplied context, enforces privacy policy, selects code/markdown prompt templates, and builds the core postprocessor pipeline before provider responses reach clients. The core provider trait now supports ProviderRequestContext so the server-selected prompt system prompt is passed to providers; PiProvider uses it when rendering pi prompts."
+  },
+  "implementation_notes": [
+    "Added autocomplete-addons with AddonSettings, AddonRuntime, ContextProviderRegistry, NearbyTextWindow, PromptTemplateRegistry, code/markdown prompt templates, PostprocessorRegistry, and PolicyEngine using globset/url.",
+    "Added autocomplete-server with BrokerConfig TOML loading, defaults for trigger/context/privacy/provider settings, AppState, axum Router construction, in-flight cancellation token tracking, reload-from-config-path support, provider factory, and runnable CLI binary.",
+    "Autocomplete HTTP handler parses JSON, validates protocol requests, applies addon preparation before provider invocation, registers in-flight cancellation tokens, calls AutocompleteEngine, and returns protocol-compatible responses.",
+    "Cancel endpoint is best-effort and idempotent while in-flight; completed request_ids are tracked and return already_completed after completion.",
+    "Reload endpoint rebuilds runtime state from the config path when AppState was constructed from a file, otherwise returns unchanged.",
+    "Privacy policy rejects excluded file:// paths and over-budget remote context before provider invocation. Built-in context providers use only explicit request context and do not read files.",
+    "Health reports mock as available and pi as unknown without invoking pi. Real pi availability/latency remains deferred to runtime smoke work."
+  ],
+  "tests_added": [
+    "crates/autocomplete-addons/tests/addon_runtime.rs covers context trimming, excluded path rejection, and code/markdown prompt selection.",
+    "crates/autocomplete-server/tests/config_loading.rs covers partial TOML config loading, provider selection, privacy override loading, trigger defaults, and disabled open-file/workspace-symbol defaults.",
+    "crates/autocomplete-server/tests/http_endpoints.rs covers /health, valid mock autocomplete with postprocessing, invalid autocomplete rejection, cancellation lifecycle, reload changing mock behavior without client changes, pi provider selection in health, excluded-path privacy rejection, remote context byte-limit rejection, and Obsidian-style Markdown requests."
+  ],
+  "commands_run": [
+    {
+      "command": "cargo test -p autocomplete-addons addon_runtime_trims_context_selects_code_prompt_and_rejects_excluded_paths",
+      "result": "initial red failed on missing AddonRuntime/AddonSettings/PromptKind, then passed after autocomplete-addons implementation"
+    },
+    {
+      "command": "cargo test -p autocomplete-server health_reports_configured_mock_provider",
+      "result": "initial red failed on missing app/AppState/BrokerConfig/ProviderKind, then passed after server implementation"
+    },
+    {
+      "command": "cargo test -p autocomplete-server",
+      "result": "passed after fixing TOML format loading and preserving request_id on addon policy errors"
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "initially reported formatting diffs; cargo fmt --all was run"
+    },
+    {
+      "command": "cargo fmt --all --check && cargo test",
+      "result": "passed for the full workspace"
+    }
+  ],
+  "success_criteria": {
+    "cargo_test_passes_for_server_addon_config_slices": true,
+    "http_tests_cover_required_endpoints_and_paths": true,
+    "mock_provider_serves_vscode_and_obsidian_style_requests": true,
+    "provider_selection_is_config_only": true,
+    "privacy_exclusions_before_provider_calls": true,
+    "runnable_broker_binary_present": true
+  },
+  "safety_notes": [
+    "No autocomplete request path reads arbitrary files; the MVP context provider only trims prefix/suffix supplied in the request.",
+    "Excluded globs include **/.env*, **/secrets/**, and **/prompt-buffer.md by default and are enforced before provider invocation.",
+    "Pi provider remains isolated by prior fake-pi tests and now accepts broker-selected prompt context without changing client protocol.",
+    "No forbidden paths were read; archive/tmp/prompt-buffer.md were not opened. Existing unrelated worktree deletions and untracked orchestration/archive paths were preserved."
+  ],
+  "known_limits": [
+    "Pi health does not spawn or validate the real pi executable; it reports provider status unknown until later runtime smoke work.",
+    "Reload errors return HTTP 500 with reload status unchanged rather than a richer typed reload error body because the protocol currently defines only ReloadResponse.",
+    "Completed request_id tracking is in-memory and unbounded in this MVP implementation."
+  ],
+  "blockers": [],
+  "spawned_tasks": [],
+  "queue_recommendation": "Proceed to independent verification MVP-031. Runtime pi latency/model availability remains deferred to MVP-050."
+}
